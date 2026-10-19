@@ -1,0 +1,6 @@
+{
+  "name": "Expresa Te — Bienestar y Orientación Escolar",
+  "description": "Espacio seguro y confidencial para el bienestar emocional, recursos de autocuidado y orientación escolar para estudiantes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
