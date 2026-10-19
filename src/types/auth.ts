@@ -7,8 +7,11 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'estudiante' | 'orientador' | 'docente';
+  documento?: string;
+  role: 'estudiante' | 'orientador' | 'psicologo' | 'administrativo' | 'docente';
+  perfil?: 'Orientación Escolar' | 'Psicología' | 'Estudiante';
   grade: string;
+  sede?: string;
   password?: string;
   isVerified: boolean;
   verificationCode?: string;
@@ -22,7 +25,11 @@ export interface SessionMetadata {
   userId: string;
   userEmail: string;
   userName: string;
+  documento?: string;
   role: string;
+  perfil?: string;
+  grade?: string;
+  sede?: string;
   isVerified: boolean;
   createdAt: string;
   expiresAt: string;

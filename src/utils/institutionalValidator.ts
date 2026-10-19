@@ -31,9 +31,62 @@ export function normalizeEmail(email: string | null | undefined): string {
 }
 
 /**
- * Validates institutional email address.
- * Allowed: Exactly ends with @colegio.edu.co with a valid local part.
- * Rejects personal domains (gmail, hotmail, etc.) and any unauthorized domain.
+ * Validates any valid standard email format (allowing personal, institutional, or any custom domain).
+ */
+export function validateAnyEmail(
+  rawEmail: string | null | undefined,
+  lang: 'es' | 'en' = 'es'
+): ValidationResult {
+  const normalized = normalizeEmail(rawEmail);
+
+  if (!normalized) {
+    return {
+      isValid: false,
+      normalizedEmail: '',
+      errorCode: 'EMPTY_EMAIL',
+      error:
+        lang === 'es'
+          ? 'El correo electrónico es obligatorio.'
+          : 'Email address is required.',
+    };
+  }
+
+  // Standard email format test (localpart@domain.tld)
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+  if (!emailRegex.test(normalized)) {
+    return {
+      isValid: false,
+      normalizedEmail: normalized,
+      errorCode: 'INVALID_FORMAT',
+      error:
+        lang === 'es'
+          ? 'El formato del correo es inválido.'
+          : 'Invalid email format.',
+    };
+  }
+
+  const parts = normalized.split('@');
+  if (parts.length !== 2 || !parts[0] || !parts[1] || !parts[1].includes('.')) {
+    return {
+      isValid: false,
+      normalizedEmail: normalized,
+      errorCode: 'INVALID_FORMAT',
+      error:
+        lang === 'es'
+          ? 'Ingresa un correo electrónico válido.'
+          : 'Please enter a valid email address.',
+    };
+  }
+
+  return {
+    isValid: true,
+    normalizedEmail: normalized,
+    domain: parts[1],
+  };
+}
+
+/**
+ * Legacy validator for specific @colegio.edu.co domain checks.
  */
 export function validateInstitutionalEmail(
   rawEmail: string | null | undefined,
@@ -53,7 +106,6 @@ export function validateInstitutionalEmail(
     };
   }
 
-  // Basic RFC email format test (localpart@domain)
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
   if (!emailRegex.test(normalized)) {
     return {
@@ -62,8 +114,8 @@ export function validateInstitutionalEmail(
       errorCode: 'INVALID_FORMAT',
       error:
         lang === 'es'
-          ? 'El formato del correo es inválido. Debe incluir nombre de usuario y dominio.'
-          : 'Invalid email format. Must include a username and domain.',
+          ? 'El formato del correo es inválido.'
+          : 'Invalid email format.',
     };
   }
 
@@ -95,7 +147,6 @@ export function validateInstitutionalEmail(
     };
   }
 
-  // Check personal domain rejection with explicit message
   if (PERSONAL_DOMAINS.includes(domain)) {
     return {
       isValid: false,
@@ -104,12 +155,11 @@ export function validateInstitutionalEmail(
       domain,
       error:
         lang === 'es'
-          ? `Dominio personal no permitido (@${domain}). Debes ingresar tu correo institucional terminado en @${INSTITUTIONAL_DOMAIN}.`
-          : `Personal domain rejected (@${domain}). You must use your institutional email ending in @${INSTITUTIONAL_DOMAIN}.`,
+          ? `Dominio personal no permitido (@${domain}).`
+          : `Personal domain rejected (@${domain}).`,
     };
   }
 
-  // Exact institutional domain verification
   if (domain !== INSTITUTIONAL_DOMAIN) {
     return {
       isValid: false,
@@ -118,8 +168,8 @@ export function validateInstitutionalEmail(
       domain,
       error:
         lang === 'es'
-          ? `Dominio no autorizado (@${domain}). Este sistema es exclusivo para la comunidad institucional (@${INSTITUTIONAL_DOMAIN}).`
-          : `Unauthorized domain (@${domain}). This system is exclusive to the institutional community (@${INSTITUTIONAL_DOMAIN}).`,
+          ? `Dominio no autorizado (@${domain}).`
+          : `Unauthorized domain (@${domain}).`,
     };
   }
 

@@ -5,38 +5,23 @@
 
 import { AuthResponse, SessionMetadata, User, ValidationResult } from '../types/auth';
 import {
-  INSTITUTIONAL_DOMAIN,
+  STUDENTS_CENSUS,
+  ADMINISTRATIVE_CENSUS,
+  lookupCensusByDocument,
+  StudentCensusRecord,
+  AdministrativeCensusRecord,
+  CensusRecord,
+} from '../data/institutionalCensus';
+import {
   normalizeEmail,
-  validateInstitutionalEmail,
+  validateAnyEmail,
 } from '../utils/institutionalValidator';
 
-const USERS_STORAGE_KEY = 'expresa_te_users_v3';
-const SESSION_STORAGE_KEY = 'expresa_te_active_session_v3';
+const USERS_STORAGE_KEY = 'expresa_te_users_v6';
+const SESSION_STORAGE_KEY = 'expresa_te_active_session_v6';
 
-const DEFAULT_USERS: User[] = [
-  {
-    id: 'usr_orientador',
-    name: 'Equipo de Orientación',
-    email: 'orientador@colegio.edu.co',
-    role: 'orientador',
-    grade: 'Equipo Docente y Consejería',
-    password: 'Bienestar2026',
-    isVerified: true,
-    createdAt: '2026-01-15T08:30:00.000Z',
-  },
-  {
-    id: 'usr_estudiante_demo',
-    name: 'Estudiante Nuevo',
-    email: 'estudiante@colegio.edu.co',
-    role: 'estudiante',
-    grade: 'Grado 11° - Secundaria A',
-    password: 'Bienestar2026',
-    isVerified: false,
-    verificationCode: '482910',
-    verificationCodeExpiresAt: Date.now() + 15 * 60 * 1000,
-    createdAt: '2026-03-01T14:20:00.000Z',
-  },
-];
+// No pre-registered test accounts: allows registering any of the 15 students and 3 admins fresh
+const DEFAULT_USERS: User[] = [];
 
 class AuthService {
   private users: User[] = [];
@@ -49,38 +34,17 @@ class AuthService {
   private initStorage() {
     if (typeof window === 'undefined') return;
     try {
-      // Clean legacy v2 keys if they exist
-      localStorage.removeItem('expresa_te_users_v2');
-      localStorage.removeItem('expresa_te_active_session_v2');
-
       const stored = localStorage.getItem(USERS_STORAGE_KEY);
       if (stored) {
-        const parsed: User[] = JSON.parse(stored);
-        // Guarantee no test user 'Camila R.' / 'c.rodriguez@colegio.edu.co' persists
-        this.users = parsed.filter(
-          (u) =>
-            u.email !== 'c.rodriguez@colegio.edu.co' &&
-            u.id !== 'usr_4829' &&
-            u.name !== 'Camila R.'
-        );
+        this.users = JSON.parse(stored);
       } else {
         this.users = [...DEFAULT_USERS];
+        this.persistUsers();
       }
-      this.persistUsers();
 
       const storedSession = localStorage.getItem(SESSION_STORAGE_KEY);
       if (storedSession) {
-        const session: SessionMetadata = JSON.parse(storedSession);
-        if (
-          session.userEmail === 'c.rodriguez@colegio.edu.co' ||
-          session.userId === 'usr_4829' ||
-          session.userName === 'Camila R.'
-        ) {
-          this.activeSession = null;
-          localStorage.removeItem(SESSION_STORAGE_KEY);
-        } else {
-          this.activeSession = session;
-        }
+        this.activeSession = JSON.parse(storedSession);
       }
     } catch {
       this.users = [...DEFAULT_USERS];
@@ -104,10 +68,6 @@ class AuthService {
     }
   }
 
-  public validateEmail(email: string, lang: 'es' | 'en' = 'es'): ValidationResult {
-    return validateInstitutionalEmail(email, lang);
-  }
-
   public getUsers(): User[] {
     return [...this.users];
   }
@@ -117,323 +77,303 @@ class AuthService {
   }
 
   /**
-   * Registers a new institutional account.
-   * Enforces @colegio.edu.co domain check.
-   * Generates a 6-digit one-time verification code with 15-minute expiration.
+   * Consulta el censo escolar previo por documento y comprueba si ya tiene cuenta.
    */
-  public async register(
-    name: string,
-    rawEmail: string,
-    password: string,
-    grade: string,
-    lang: 'es' | 'en' = 'es'
-  ): Promise<AuthResponse<{ user: User; verificationCode: string }>> {
-    // 1. First, attempt to call the backend API endpoint
-    try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email: rawEmail, password, grade, lang }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        // Sync local cache
-        const registeredUser = data.data.user;
-        const existingIdx = this.users.findIndex((u) => u.email === registeredUser.email);
-        if (existingIdx >= 0) {
-          this.users[existingIdx] = registeredUser;
-        } else {
-          this.users.push(registeredUser);
-        }
-        this.persistUsers();
-        return data;
-      } else if (!response.ok) {
-        return {
-          success: false,
-          message: data.error || data.message || 'Error en el servidor',
-          errorCode: data.errorCode || 'SERVER_ERROR',
-        };
-      }
-    } catch {
-      // Backend not reached or fallback to client-side validation logic
-    }
-
-    // 2. Strict client-side validation with identical domain verification rules
-    const validation = validateInstitutionalEmail(rawEmail, lang);
-    if (!validation.isValid) {
+  public verifyCensusDocument(
+    doc: string,
+    expectedRole?: 'estudiante' | 'administrativo'
+  ): {
+    found: boolean;
+    alreadyRegistered: boolean;
+    record: CensusRecord | null;
+    message: string;
+  } {
+    const cleanDoc = doc.trim().replace(/\D/g, '');
+    if (!cleanDoc) {
       return {
-        success: false,
-        message: validation.error || 'Correo no permitido.',
-        errorCode: validation.errorCode,
+        found: false,
+        alreadyRegistered: false,
+        record: null,
+        message: 'Por favor ingresa un número de documento válido.',
       };
     }
 
-    const normalized = validation.normalizedEmail;
+    const record = lookupCensusByDocument(cleanDoc);
 
-    if (!name.trim()) {
+    if (!record) {
+      return {
+        found: false,
+        alreadyRegistered: false,
+        record: null,
+        message: `El documento ${cleanDoc} no se encuentra registrado en el censo de la institución. Verifica el número o contacta a secretaría.`,
+      };
+    }
+
+    // Role check if specified
+    if (expectedRole && record.rol !== expectedRole) {
+      const roleName = expectedRole === 'estudiante' ? 'estudiante' : 'personal administrativo';
+      return {
+        found: false,
+        alreadyRegistered: false,
+        record: null,
+        message: `El documento ${cleanDoc} corresponde a otro tipo de usuario y no a ${roleName}.`,
+      };
+    }
+
+    // Check if account already exists
+    const existing = this.users.find(
+      (u) => u.documento && u.documento === cleanDoc
+    );
+
+    if (existing) {
+      return {
+        found: true,
+        alreadyRegistered: true,
+        record,
+        message: `Este documento ya tiene una cuenta activa asociada (${existing.email}). Puedes iniciar sesión directamente.`,
+      };
+    }
+
+    return {
+      found: true,
+      alreadyRegistered: false,
+      record,
+      message: '✓ Documento validado en la base de datos institucional.',
+    };
+  }
+
+  /**
+   * Registra una nueva cuenta a partir de un documento validado en el censo.
+   * Permite cualquier tipo de correo electrónico.
+   */
+  public async registerWithCensus(params: {
+    documento: string;
+    email: string;
+    password: string;
+    lang?: 'es' | 'en';
+  }): Promise<AuthResponse<{ user: User; session: SessionMetadata }>> {
+    const { documento, email, password, lang = 'es' } = params;
+    const cleanDoc = documento.trim().replace(/\D/g, '');
+
+    // 1. Verify document in census
+    const censusCheck = this.verifyCensusDocument(cleanDoc);
+    if (!censusCheck.found || !censusCheck.record) {
+      return {
+        success: false,
+        message: censusCheck.message,
+        errorCode: 'NOT_IN_CENSUS',
+      };
+    }
+
+    if (censusCheck.alreadyRegistered) {
+      return {
+        success: false,
+        message: censusCheck.message,
+        errorCode: 'ALREADY_REGISTERED',
+      };
+    }
+
+    // 2. Validate email (accepts ANY valid domain)
+    const emailValidation = validateAnyEmail(email, lang);
+    if (!emailValidation.isValid) {
+      return {
+        success: false,
+        message: emailValidation.error || 'Correo electrónico inválido.',
+        errorCode: emailValidation.errorCode,
+      };
+    }
+    const normalizedEmail = emailValidation.normalizedEmail;
+
+    // 3. Check duplicate email
+    const duplicateEmail = this.users.find((u) => u.email === normalizedEmail);
+    if (duplicateEmail) {
       return {
         success: false,
         message:
-          lang === 'es' ? 'El nombre completo es obligatorio.' : 'Full name is required.',
-        errorCode: 'INVALID_FORMAT',
+          lang === 'es'
+            ? `El correo ${normalizedEmail} ya está registrado con otra cuenta.`
+            : `Email ${normalizedEmail} is already registered with another account.`,
+        errorCode: 'DUPLICATE_EMAIL',
       };
     }
 
+    // 4. Validate password
     if (!password || password.length < 6) {
       return {
         success: false,
         message:
           lang === 'es'
-            ? 'La contraseña debe tener al menos 6 caracteres.'
+            ? 'La contraseña debe tener mínimo 6 caracteres.'
             : 'Password must be at least 6 characters.',
-        errorCode: 'INVALID_FORMAT',
+        errorCode: 'WEAK_PASSWORD',
       };
     }
 
-    // Check duplicate
-    const existing = this.users.find((u) => u.email === normalized);
-    if (existing) {
-      return {
-        success: false,
-        message:
-          lang === 'es'
-            ? `El correo ${normalized} ya se encuentra registrado en el sistema institucional.`
-            : `The email ${normalized} is already registered in the institutional system.`,
-        errorCode: 'ALREADY_REGISTERED',
-      };
-    }
+    // 5. Create user based on Census Record
+    const rec = censusCheck.record;
+    const isStudent = rec.rol === 'estudiante';
+    const studentRec = isStudent ? (rec as StudentCensusRecord) : null;
+    const adminRec = !isStudent ? (rec as AdministrativeCensusRecord) : null;
 
-    // Generate secure 6-digit verification code with 15-minute expiration
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const verificationCodeExpiresAt = Date.now() + 15 * 60 * 1000;
+    let role: User['role'] = 'estudiante';
+    let perfil: User['perfil'] = 'Estudiante';
+
+    if (!isStudent && adminRec) {
+      if (adminRec.perfil === 'Psicología') {
+        role = 'psicologo';
+        perfil = 'Psicología';
+      } else {
+        role = 'orientador';
+        perfil = 'Orientación Escolar';
+      }
+    }
 
     const newUser: User = {
       id: `usr_${Date.now()}`,
-      name: name.trim(),
-      email: normalized,
-      role: 'estudiante',
-      grade: grade.trim() || 'Grado 10° - Secundaria',
+      documento: cleanDoc,
+      name: rec.nombreCompleto,
+      email: normalizedEmail,
+      role,
+      perfil,
+      grade: isStudent && studentRec ? studentRec.grado : adminRec ? adminRec.cargo : 'Comunidad',
+      sede: rec.sede,
       password,
-      isVerified: false,
-      verificationCode,
-      verificationCodeExpiresAt,
+      isVerified: true,
       createdAt: new Date().toISOString(),
     };
 
     this.users.push(newUser);
     this.persistUsers();
 
+    // 6. Automatically generate session
+    const session: SessionMetadata = {
+      sessionToken: `tok_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      userId: newUser.id,
+      userEmail: newUser.email,
+      userName: newUser.name,
+      documento: newUser.documento,
+      role: newUser.role,
+      perfil: newUser.perfil,
+      grade: newUser.grade,
+      sede: newUser.sede,
+      isVerified: true,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+
+    this.persistSession(session);
+
     return {
       success: true,
       message:
         lang === 'es'
-          ? `¡Cuenta institucional creada con éxito! Hemos enviado un código de verificación a ${normalized}.`
-          : `Institutional account created! We sent a verification code to ${normalized}.`,
+          ? `¡Cuenta creada exitosamente! Bienvenido, ${newUser.name}.`
+          : `Account successfully created! Welcome, ${newUser.name}.`,
       data: {
         user: { ...newUser, password: '[PROTECTED]' },
-        verificationCode,
+        session,
       },
     };
   }
 
   /**
-   * Verifies the 6-digit code sent to the institutional email.
-   */
-  public async verifyEmail(
-    rawEmail: string,
-    code: string,
-    lang: 'es' | 'en' = 'es'
-  ): Promise<AuthResponse<{ user: User; session: SessionMetadata }>> {
-    const normalized = normalizeEmail(rawEmail);
-
-    // Try backend first
-    try {
-      const response = await fetch('/api/auth/verify-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: normalized, code }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        const u = this.users.find((x) => x.email === normalized);
-        if (u) {
-          u.isVerified = true;
-          this.persistUsers();
-        }
-        this.persistSession(data.data.session);
-        return data;
-      } else if (!response.ok) {
-        return {
-          success: false,
-          message: data.error || data.message,
-          errorCode: data.errorCode,
-        };
-      }
-    } catch {
-      // Fallback
-    }
-
-    const user = this.users.find((u) => u.email === normalized);
-    if (!user) {
-      return {
-        success: false,
-        message:
-          lang === 'es'
-            ? 'Usuario no encontrado en el sistema.'
-            : 'User not found in the system.',
-        errorCode: 'UNREGISTERED',
-      };
-    }
-
-    if (user.isVerified) {
-      const session = this.createSession(user);
-      return {
-        success: true,
-        message:
-          lang === 'es'
-            ? 'Tu correo ya ha sido verificado previamente.'
-            : 'Your email has already been verified.',
-        data: { user: { ...user, password: '[PROTECTED]' }, session },
-      };
-    }
-
-    const cleanCode = code.trim();
-    if (!cleanCode) {
-      return {
-        success: false,
-        message:
-          lang === 'es'
-            ? 'Ingresa el código de 6 dígitos.'
-            : 'Please enter the 6-digit code.',
-        errorCode: 'EMPTY_CODE',
-      };
-    }
-
-    if (user.verificationCodeExpiresAt && Date.now() > user.verificationCodeExpiresAt) {
-      return {
-        success: false,
-        message:
-          lang === 'es'
-            ? 'El código de verificación ha expirado (validez: 15 minutos). Solicita uno nuevo.'
-            : 'The verification code has expired (15-min validity). Please request a new one.',
-        errorCode: 'EXPIRED_CODE',
-      };
-    }
-
-    if (user.verificationCode !== cleanCode && cleanCode !== '482910') {
-      return {
-        success: false,
-        message:
-          lang === 'es'
-            ? 'Código de verificación incorrecto. Revisa el código enviado a tu correo institucional.'
-            : 'Incorrect verification code. Please check the code sent to your institutional email.',
-        errorCode: 'INVALID_CODE',
-      };
-    }
-
-    user.isVerified = true;
-    user.verificationCode = undefined;
-    user.verificationCodeExpiresAt = undefined;
-    this.persistUsers();
-
-    const session = this.createSession(user);
-    this.persistSession(session);
-
-    return {
-      success: true,
-      message:
-        lang === 'es'
-          ? '¡Correo institucional verificado con éxito! Bienvenido a tu espacio seguro.'
-          : 'Institutional email verified successfully! Welcome to your safe space.',
-      data: { user: { ...user, password: '[PROTECTED]' }, session },
-    };
-  }
-
-  /**
-   * Resends a fresh 6-digit code with updated 15-min expiration.
-   */
-  public async resendVerificationCode(
-    rawEmail: string,
-    lang: 'es' | 'en' = 'es'
-  ): Promise<AuthResponse<{ verificationCode: string }>> {
-    const normalized = normalizeEmail(rawEmail);
-    const user = this.users.find((u) => u.email === normalized);
-
-    if (!user) {
-      return {
-        success: false,
-        message:
-          lang === 'es'
-            ? 'No existe una cuenta registrada con este correo.'
-            : 'No account registered with this email.',
-        errorCode: 'UNREGISTERED',
-      };
-    }
-
-    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-    user.verificationCode = newCode;
-    user.verificationCodeExpiresAt = Date.now() + 15 * 60 * 1000;
-    this.persistUsers();
-
-    return {
-      success: true,
-      message:
-        lang === 'es'
-          ? `Nuevo código enviado a ${normalized}. Válido por 15 minutos.`
-          : `New code sent to ${normalized}. Valid for 15 minutes.`,
-      data: { verificationCode: newCode },
-    };
-  }
-
-  /**
-   * Authenticates user against registered accounts and passwords.
+   * Inicio de sesión por correo o por documento de identidad.
    */
   public async login(
-    rawIdentifier: string,
+    identifier: string,
     password: string,
-    accountDeletedFlag = false,
+    accountDeleted: boolean = false,
     lang: 'es' | 'en' = 'es'
   ): Promise<AuthResponse<{ user: User; session: SessionMetadata }>> {
-    const cleanUser = normalizeEmail(rawIdentifier);
+    if (accountDeleted) {
+      return {
+        success: false,
+        message:
+          lang === 'es'
+            ? 'Esta cuenta fue dada de baja definitivamente.'
+            : 'This account was deleted.',
+        errorCode: 'ACCOUNT_DELETED',
+      };
+    }
 
-    const user = this.users.find((u) => u.email === cleanUser);
+    const trimmed = identifier.trim();
+    if (!trimmed) {
+      return {
+        success: false,
+        message:
+          lang === 'es'
+            ? 'Ingresa tu correo o número de documento.'
+            : 'Enter your email or ID number.',
+        errorCode: 'EMPTY_IDENTIFIER',
+      };
+    }
+
+    if (!password) {
+      return {
+        success: false,
+        message:
+          lang === 'es'
+            ? 'Ingresa tu contraseña.'
+            : 'Please enter your password.',
+        errorCode: 'EMPTY_PASSWORD',
+      };
+    }
+
+    const cleanDoc = trimmed.replace(/\D/g, '');
+    const cleanEmail = trimmed.toLowerCase();
+
+    // Find user by email or by document
+    const user = this.users.find(
+      (u) =>
+        u.email.toLowerCase() === cleanEmail ||
+        (cleanDoc && u.documento === cleanDoc)
+    );
 
     if (!user) {
       return {
         success: false,
         message:
           lang === 'es'
-            ? 'Esta cuenta no está registrada en el directorio institucional de Expresa Te.'
-            : 'This account is not registered in the Expresa Te institutional directory.',
-        errorCode: 'UNREGISTERED',
+            ? 'No existe una cuenta registrada con este correo o documento.'
+            : 'No registered account found with this email or document.',
+        errorCode: 'UNREGISTERED_USER',
       };
     }
 
-    if (
-      user.password &&
-      user.password !== password &&
-      password !== 'Bienestar2026' &&
-      password !== '12345678'
-    ) {
+    if (user.password && user.password !== password) {
       return {
         success: false,
         message:
           lang === 'es'
-            ? 'Contraseña incorrecta. Verifica tu clave e intenta nuevamente.'
-            : 'Incorrect password. Please check your password and try again.',
+            ? 'Contraseña incorrecta. Por favor verifica tus datos.'
+            : 'Incorrect password. Please verify your credentials.',
         errorCode: 'WRONG_PASSWORD',
       };
     }
 
-    const session = this.createSession(user);
+    const session: SessionMetadata = {
+      sessionToken: `tok_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      userId: user.id,
+      userEmail: user.email,
+      userName: user.name,
+      documento: user.documento,
+      role: user.role,
+      perfil: user.perfil,
+      grade: user.grade,
+      sede: user.sede,
+      isVerified: Boolean(user.isVerified),
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+
     this.persistSession(session);
 
     return {
       success: true,
       message:
         lang === 'es'
-          ? `¡Bienvenido de vuelta, ${user.name}!`
-          : `Welcome back, ${user.name}!`,
+          ? `Sesión iniciada correctamente. ¡Hola, ${user.name}!`
+          : `Signed in successfully. Hello, ${user.name}!`,
       data: {
         user: { ...user, password: '[PROTECTED]' },
         session,
@@ -442,62 +382,6 @@ class AuthService {
   }
 
   public logout(): void {
-    this.persistSession(null);
-  }
-
-  public requestPasswordReset(
-    rawEmail: string,
-    lang: 'es' | 'en' = 'es'
-  ): AuthResponse<{ resetCode: string }> {
-    const validation = validateInstitutionalEmail(rawEmail, lang);
-    if (!validation.isValid) {
-      return {
-        success: false,
-        message: validation.error || 'Correo no permitido.',
-        errorCode: validation.errorCode,
-      };
-    }
-
-    const normalized = validation.normalizedEmail;
-    const user = this.users.find((u) => u.email === normalized);
-    if (!user) {
-      return {
-        success: false,
-        message:
-          lang === 'es'
-            ? 'No se encontró ninguna cuenta registrada con este correo institucional.'
-            : 'No account found with this institutional email.',
-        errorCode: 'UNREGISTERED',
-      };
-    }
-
-    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-    return {
-      success: true,
-      message:
-        lang === 'es'
-          ? `Enlace de restablecimiento enviado a ${normalized}.`
-          : `Password reset link sent to ${normalized}.`,
-      data: { resetCode },
-    };
-  }
-
-  private createSession(user: User): SessionMetadata {
-    return {
-      sessionToken: `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-      userId: user.id,
-      userEmail: user.email,
-      userName: user.name,
-      role: user.role,
-      isVerified: user.isVerified,
-      createdAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    };
-  }
-
-  public resetToDefaults(): void {
-    this.users = [...DEFAULT_USERS];
-    this.persistUsers();
     this.persistSession(null);
   }
 }

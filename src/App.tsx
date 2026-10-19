@@ -45,16 +45,17 @@ export default function App() {
   // Restore active authorized session on mount if one exists
   useEffect(() => {
     const session = authService.getSession();
-    if (
-      session &&
-      session.userEmail &&
-      session.userEmail !== 'c.rodriguez@colegio.edu.co' &&
-      session.userName !== 'Camila R.'
-    ) {
+    if (session && session.userEmail) {
       setIsLoggedIn(true);
       setUserEmail(session.userEmail);
       setUserName(session.userName || session.userEmail.split('@')[0]);
-      setUserGrade(session.role === 'orientador' ? 'Equipo de Orientación' : 'Estudiante');
+      setUserGrade(
+        session.role === 'psicologo'
+          ? 'Departamento de Psicología'
+          : session.role === 'orientador'
+          ? 'Equipo de Orientación'
+          : session.grade || 'Estudiante'
+      );
       setIsVerified(Boolean(session.isVerified));
       setActiveScreen('inicio');
     } else {
@@ -212,9 +213,9 @@ export default function App() {
             /* Badge shown before user logs in (no internal platform content is exposed) */
             <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-low text-primary font-label-sm font-semibold border border-outline-variant/30 shadow-xs">
               <span className="material-symbols-outlined text-[16px] text-tertiary">
-                lock
+                shield_lock
               </span>
-              <span>{lang === 'es' ? 'Acceso Institucional Seguro (@colegio.edu.co)' : 'Secure Institutional Access'}</span>
+              <span>{lang === 'es' ? 'Portal de Acceso Institucional' : 'Institutional Access Portal'}</span>
             </div>
           )}
 
