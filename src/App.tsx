@@ -31,7 +31,8 @@ export type ActiveScreen =
 export default function App() {
   const [lang, setLang] = useState<Language>('es');
   const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [activeScreen, setActiveScreen] = useState<ActiveScreen>('inicio');
+  // Default first interface is strictly 'login' until authenticated
+  const [activeScreen, setActiveScreen] = useState<ActiveScreen>('login');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [accountDeleted, setAccountDeleted] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>('');
@@ -55,12 +56,14 @@ export default function App() {
       setUserName(session.userName || session.userEmail.split('@')[0]);
       setUserGrade(session.role === 'orientador' ? 'Equipo de Orientación' : 'Estudiante');
       setIsVerified(Boolean(session.isVerified));
+      setActiveScreen('inicio');
     } else {
       setIsLoggedIn(false);
       setUserEmail('');
       setUserName('');
       setUserGrade('');
       setIsVerified(false);
+      setActiveScreen('login');
     }
   }, []);
 
@@ -81,6 +84,19 @@ export default function App() {
   };
 
   const handleNavigate = (screen: string) => {
+    // If not logged in, enforce that no platform content can be accessed
+    if (!isLoggedIn && screen !== 'login' && screen !== 'comprobante-eliminar') {
+      setActiveScreen('login');
+      setMenuOpen(false);
+      showToast(
+        lang === 'es'
+          ? 'Debes iniciar sesión para acceder al contenido de la plataforma'
+          : 'Please sign in to access platform content'
+      );
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     setActiveScreen(screen as ActiveScreen);
     setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -116,7 +132,6 @@ export default function App() {
     if (key === 'perfil') {
       return (
         activeScreen === 'perfil' ||
-        activeScreen === 'login' ||
         activeScreen === 'comprobante-eliminar'
       );
     }
@@ -134,13 +149,13 @@ export default function App() {
 
   return (
     <div className="bg-surface text-on-surface font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
-      {/* Top Professional Web Navigation Header */}
+      {/* Top Web Navigation Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_4px_24px_-4px_rgba(20,184,166,0.08)] border-b border-outline-variant/20 transition-colors">
         <div className="max-w-7xl mx-auto h-20 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Brand Zone: Official Emblem + Logo + Institutional Badge */}
           <button
             type="button"
-            onClick={() => handleNavigate('inicio')}
+            onClick={() => handleNavigate(isLoggedIn ? 'inicio' : 'login')}
             className="flex items-center gap-3 text-left cursor-pointer shrink-0 group"
           >
             <div className="w-11 h-11 rounded-2xl bg-white shadow-xs p-1 flex items-center justify-center border border-outline-variant/30 group-hover:scale-105 transition-transform">
@@ -168,36 +183,53 @@ export default function App() {
             </div>
           </button>
 
-          {/* Desktop Web Navigation Links (Hidden on mobile, visible on desktop/laptop) */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-1.5" aria-label="Navegación principal">
-            {navItems.map((item) => {
-              const active = isNavActive(item.id);
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => handleNavigate(item.id)}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-label-md font-semibold transition-all cursor-pointer ${
-                    active
-                      ? 'bg-primary-fixed/40 text-primary shadow-xs font-bold'
-                      : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    {item.icon}
-                  </span>
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
-          </nav>
+          {/* Center Navigation Zone */}
+          {isLoggedIn ? (
+            /* Desktop Web Navigation Links (Rendered ONLY after user logs in) */
+            <nav className="hidden md:flex items-center gap-1 lg:gap-1.5" aria-label="Navegación principal">
+              {navItems.map((item) => {
+                const active = isNavActive(item.id);
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleNavigate(item.id)}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-label-md font-semibold transition-all cursor-pointer ${
+                      active
+                        ? 'bg-primary-fixed/40 text-primary shadow-xs font-bold'
+                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      {item.icon}
+                    </span>
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          ) : (
+            /* Badge shown before user logs in (no internal platform content is exposed) */
+            <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-low text-primary font-label-sm font-semibold border border-outline-variant/30 shadow-xs">
+              <span className="material-symbols-outlined text-[16px] text-tertiary">
+                lock
+              </span>
+              <span>{lang === 'es' ? 'Acceso Institucional Seguro (@colegio.edu.co)' : 'Secure Institutional Access'}</span>
+            </div>
+          )}
 
           {/* Controls Zone: Emergency / Crisis Hotline + Dark/Light Mode + ES/EN Language + Account */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* Quick Emergency / Crisis Button */}
+            {/* Quick Emergency / Crisis Button (Publicly accessible support) */}
             <button
               type="button"
-              onClick={() => handleNavigate('orientacion')}
+              onClick={() => {
+                showToast(
+                  lang === 'es'
+                    ? 'Línea 106 de atención emocional 24/7 disponible gratuitamente'
+                    : 'Line 106 24/7 emotional support available toll-free'
+                );
+              }}
               title={lang === 'es' ? 'Línea de Crisis y Ayuda Inmediata' : 'Crisis & Immediate Help Line'}
               className="hidden sm:flex items-center gap-1.5 h-9 px-3 rounded-full bg-error-container/40 text-error hover:bg-error-container/70 border border-error/30 font-label-sm font-bold transition-all active:scale-95 cursor-pointer"
             >
@@ -251,7 +283,7 @@ export default function App() {
               </button>
             </div>
 
-            {/* User Profile / Iniciar Sesión Button */}
+            {/* User Profile Button (Visible only after logging in) or Login Indicator */}
             {isLoggedIn ? (
               <button
                 type="button"
@@ -266,16 +298,12 @@ export default function App() {
                 <span className="max-w-[120px] truncate">{userName || 'Mi Perfil'}</span>
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={() => handleNavigate('login')}
-                className="hidden sm:flex items-center gap-1.5 h-9 px-3.5 bg-secondary text-on-secondary rounded-full font-label-sm font-bold shadow-xs hover:bg-secondary/90 active:scale-95 transition-all cursor-pointer"
-              >
+              <div className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3.5 bg-surface-container-low text-secondary rounded-full font-label-sm font-bold border border-outline-variant/30">
                 <span className="material-symbols-outlined text-[17px]">
                   login
                 </span>
                 <span>{translations[lang].welcome.loginBtn}</span>
-              </button>
+              </div>
             )}
 
             {/* Hamburger button for mobile / tablet drawer */}
@@ -333,63 +361,65 @@ export default function App() {
 
               {/* Status Info in Drawer */}
               {isLoggedIn ? (
-                <div className="bg-primary-fixed/20 p-3 rounded-xl border border-primary/20 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold">
-                    {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                <>
+                  <div className="bg-primary-fixed/20 p-3 rounded-xl border border-primary/20 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold">
+                      {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-label-md font-bold text-on-surface truncate">
+                        {userName}
+                      </span>
+                      <span className="font-label-sm text-primary">
+                        {userGrade || 'Estudiante'} • Verificado
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="font-label-md font-bold text-on-surface truncate">
-                      {userName}
-                    </span>
-                    <span className="font-label-sm text-primary">
-                      {userGrade || 'Estudiante'} • Verificado
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('login')}
-                  className="w-full py-2.5 rounded-xl bg-secondary text-on-secondary font-label-md font-bold flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    login
-                  </span>
-                  <span>{translations[lang].welcome.loginBtn}</span>
-                </button>
-              )}
 
-              {/* Navigation list */}
-              <div className="flex flex-col gap-1 pt-2">
-                <span className="font-label-sm font-bold text-on-surface-variant uppercase tracking-wider px-3 mb-1">
-                  Navegación
-                </span>
-                {[
-                  { id: 'inicio', label: tSwitch.welcome, icon: 'home' },
-                  { id: 'panel-estudiante', label: tSwitch.studentDashboard, icon: 'dashboard' },
-                  { id: 'recursos', label: tSwitch.resources, icon: 'local_library' },
-                  { id: 'autocuidado', label: tSwitch.selfcare, icon: 'spa' },
-                  { id: 'orientacion', label: tSwitch.requestForm, icon: 'chat_bubble' },
-                  { id: 'panel-orientador', label: tSwitch.counselorPanel, icon: 'psychology' },
-                  { id: 'perfil', label: tSwitch.profile, icon: 'person' },
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleNavigate(item.id)}
-                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-label-md text-left transition-colors cursor-pointer ${
-                      activeScreen === item.id
-                        ? 'bg-primary text-on-primary font-bold shadow-xs'
-                        : 'text-on-surface hover:bg-surface-container-low'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-[20px]">
-                      {item.icon}
+                  {/* Navigation list (Available ONLY after login) */}
+                  <div className="flex flex-col gap-1 pt-2">
+                    <span className="font-label-sm font-bold text-on-surface-variant uppercase tracking-wider px-3 mb-1">
+                      Navegación
                     </span>
-                    <span>{item.label}</span>
-                  </button>
-                ))}
-              </div>
+                    {[
+                      { id: 'inicio', label: tSwitch.welcome, icon: 'home' },
+                      { id: 'panel-estudiante', label: tSwitch.studentDashboard, icon: 'dashboard' },
+                      { id: 'recursos', label: tSwitch.resources, icon: 'local_library' },
+                      { id: 'autocuidado', label: tSwitch.selfcare, icon: 'spa' },
+                      { id: 'orientacion', label: tSwitch.requestForm, icon: 'chat_bubble' },
+                      { id: 'panel-orientador', label: tSwitch.counselorPanel, icon: 'psychology' },
+                      { id: 'perfil', label: tSwitch.profile, icon: 'person' },
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleNavigate(item.id)}
+                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-label-md text-left transition-colors cursor-pointer ${
+                          activeScreen === item.id
+                            ? 'bg-primary text-on-primary font-bold shadow-xs'
+                            : 'text-on-surface hover:bg-surface-container-low'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[20px]">
+                          {item.icon}
+                        </span>
+                        <span>{item.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/30 space-y-2">
+                  <span className="font-label-sm font-bold text-primary uppercase tracking-wider block">
+                    Acceso Requerido
+                  </span>
+                  <p className="font-body-sm text-on-surface-variant">
+                    {lang === 'es'
+                      ? 'Inicia sesión con tu correo escolar para acceder a todos los contenidos, biblioteca de recursos y acompañamiento.'
+                      : 'Please sign in with your school email to access all platform content and guidance.'}
+                  </p>
+                </div>
+              )}
 
               {/* Emergency Hotline in Drawer */}
               <div className="bg-error-container/30 border border-error/20 p-3 rounded-xl flex items-center justify-between gap-2 mt-2">
@@ -405,7 +435,6 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => {
-                    handleNavigate('orientacion');
                     showToast('Línea 106 disponible las 24 horas');
                   }}
                   className="px-2.5 py-1 bg-error text-on-error rounded-lg font-label-sm font-semibold cursor-pointer"
@@ -438,150 +467,177 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Full-Width Web Layout Container */}
+      {/* Main Container: Gated so ALL platform content renders ONLY after login */}
       <main className="flex-1 w-full max-w-7xl mx-auto pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col">
-        {activeScreen === 'inicio' && (
-          <WelcomeScreen
-            lang={lang}
-            onNavigate={handleNavigate}
-            isLoggedIn={isLoggedIn}
-            userName={userName}
-            onShowToast={showToast}
-          />
-        )}
+        {!isLoggedIn ? (
+          /* FIRST INTERFACE BEFORE LOGIN: Only LoginScreen or Deletion Receipt */
+          activeScreen === 'comprobante-eliminar' ? (
+            <AccountDeletionReceiptScreen
+              lang={lang}
+              deletedEmail={userEmail || 'usuario@colegio.edu.co'}
+              deletedName={userName || 'Estudiante'}
+              onNavigate={handleNavigate}
+              onRestoreDemoAccount={() => {
+                setAccountDeleted(false);
+                setUserEmail('');
+                setUserName('');
+                setUserGrade('');
+                setActiveScreen('login');
+              }}
+              onShowToast={showToast}
+            />
+          ) : (
+            <LoginScreen
+              lang={lang}
+              accountDeleted={accountDeleted}
+              onLoginSuccess={(email, verified = true, name, grade) => {
+                setIsLoggedIn(true);
+                setUserEmail(email);
+                setUserName(name || email.split('@')[0]);
+                setUserGrade(grade || 'Estudiante');
+                setIsVerified(verified);
+                // Immediately transition user to the platform content upon logging in
+                setActiveScreen('inicio');
+                showToast(
+                  lang === 'es'
+                    ? `¡Bienvenido a Expresa Te, ${name || email.split('@')[0]}!`
+                    : `Welcome to Expresa Te, ${name || email.split('@')[0]}!`
+                );
+              }}
+              onNavigate={handleNavigate}
+              onShowToast={showToast}
+            />
+          )
+        ) : (
+          /* ALL PLATFORM CONTENT: Renders ONLY after user has authenticated */
+          <>
+            {activeScreen === 'inicio' && (
+              <WelcomeScreen
+                lang={lang}
+                onNavigate={handleNavigate}
+                isLoggedIn={isLoggedIn}
+                userName={userName}
+                onShowToast={showToast}
+              />
+            )}
 
-        {activeScreen === 'panel-estudiante' && (
-          <StudentDashboardScreen
-            lang={lang}
-            onNavigate={handleNavigate}
-            isLoggedIn={isLoggedIn}
-            userName={userName}
-            onShowToast={showToast}
-          />
-        )}
+            {activeScreen === 'panel-estudiante' && (
+              <StudentDashboardScreen
+                lang={lang}
+                onNavigate={handleNavigate}
+                isLoggedIn={isLoggedIn}
+                userName={userName}
+                onShowToast={showToast}
+              />
+            )}
 
-        {activeScreen === 'recursos' && (
-          <ResourcesScreen
-            lang={lang}
-            onNavigate={handleNavigate}
-            onShowToast={showToast}
-          />
-        )}
+            {activeScreen === 'recursos' && (
+              <ResourcesScreen
+                lang={lang}
+                onNavigate={handleNavigate}
+                onShowToast={showToast}
+              />
+            )}
 
-        {activeScreen === 'autocuidado' && (
-          <SelfCareScreen
-            lang={lang}
-            onNavigate={handleNavigate}
-            onShowToast={showToast}
-          />
-        )}
+            {activeScreen === 'autocuidado' && (
+              <SelfCareScreen
+                lang={lang}
+                onNavigate={handleNavigate}
+                onShowToast={showToast}
+              />
+            )}
 
-        {(activeScreen === 'orientacion' ||
-          activeScreen === 'solicitud-enviada' ||
-          activeScreen === 'panel-orientador') && (
-          <OrientationScreens
-            lang={lang}
-            subScreen={
-              activeScreen === 'solicitud-enviada'
-                ? 'sent'
-                : activeScreen === 'panel-orientador'
-                ? 'counselor'
-                : 'form'
-            }
-            onChangeSubScreen={(sub) => {
-              if (sub === 'form') setActiveScreen('orientacion');
-              if (sub === 'sent') setActiveScreen('solicitud-enviada');
-              if (sub === 'counselor') setActiveScreen('panel-orientador');
-            }}
-            onNavigate={handleNavigate}
-            onShowToast={showToast}
-          />
-        )}
+            {(activeScreen === 'orientacion' ||
+              activeScreen === 'solicitud-enviada' ||
+              activeScreen === 'panel-orientador') && (
+              <OrientationScreens
+                lang={lang}
+                subScreen={
+                  activeScreen === 'solicitud-enviada'
+                    ? 'sent'
+                    : activeScreen === 'panel-orientador'
+                    ? 'counselor'
+                    : 'form'
+                }
+                onChangeSubScreen={(sub) => {
+                  if (sub === 'form') setActiveScreen('orientacion');
+                  if (sub === 'sent') setActiveScreen('solicitud-enviada');
+                  if (sub === 'counselor') setActiveScreen('panel-orientador');
+                }}
+                onNavigate={handleNavigate}
+                onShowToast={showToast}
+              />
+            )}
 
-        {activeScreen === 'login' && (
-          <LoginScreen
-            lang={lang}
-            accountDeleted={accountDeleted}
-            onLoginSuccess={(email, verified = true, name, grade) => {
-              setIsLoggedIn(true);
-              setUserEmail(email);
-              setUserName(name || email.split('@')[0]);
-              setUserGrade(grade || 'Estudiante');
-              setIsVerified(verified);
-              setActiveScreen('perfil');
-            }}
-            onNavigate={handleNavigate}
-            onShowToast={showToast}
-          />
-        )}
+            {activeScreen === 'perfil' && (
+              <ProfileScreen
+                lang={lang}
+                darkMode={darkMode}
+                onToggleDarkMode={() => setDarkMode(!darkMode)}
+                isLoggedIn={isLoggedIn}
+                userName={userName}
+                userEmail={userEmail}
+                userGrade={userGrade}
+                isVerified={isVerified}
+                onNavigate={handleNavigate}
+                onUpdateProfile={(name, grade) => {
+                  setUserName(name);
+                  setUserGrade(grade);
+                }}
+                onLogout={() => {
+                  authService.logout();
+                  setIsLoggedIn(false);
+                  setUserName('');
+                  setUserEmail('');
+                  setUserGrade('');
+                  setIsVerified(false);
+                  showToast(
+                    lang === 'es'
+                      ? 'Sesión cerrada correctamente'
+                      : 'Logged out successfully'
+                  );
+                  setActiveScreen('login');
+                }}
+                onDeleteAccount={() => {
+                  authService.logout();
+                  setIsLoggedIn(false);
+                  setAccountDeleted(true);
+                  setUserName('');
+                  setUserEmail('');
+                  setUserGrade('');
+                  setIsVerified(false);
+                  showToast(
+                    lang === 'es'
+                      ? 'Cuenta eliminada. Comprobante generado.'
+                      : 'Account deleted. Receipt generated.'
+                  );
+                  setActiveScreen('comprobante-eliminar');
+                }}
+                onShowToast={showToast}
+              />
+            )}
 
-        {activeScreen === 'perfil' && (
-          <ProfileScreen
-            lang={lang}
-            darkMode={darkMode}
-            onToggleDarkMode={() => setDarkMode(!darkMode)}
-            isLoggedIn={isLoggedIn}
-            userName={userName}
-            userEmail={userEmail}
-            userGrade={userGrade}
-            isVerified={isVerified}
-            onNavigate={handleNavigate}
-            onUpdateProfile={(name, grade) => {
-              setUserName(name);
-              setUserGrade(grade);
-            }}
-            onLogout={() => {
-              authService.logout();
-              setIsLoggedIn(false);
-              setUserName('');
-              setUserEmail('');
-              setUserGrade('');
-              setIsVerified(false);
-              showToast(
-                lang === 'es'
-                  ? 'Sesión cerrada correctamente'
-                  : 'Logged out successfully'
-              );
-              setActiveScreen('login');
-            }}
-            onDeleteAccount={() => {
-              authService.logout();
-              setIsLoggedIn(false);
-              setAccountDeleted(true);
-              setUserName('');
-              setUserEmail('');
-              setUserGrade('');
-              setIsVerified(false);
-              showToast(
-                lang === 'es'
-                  ? 'Cuenta eliminada. Comprobante generado.'
-                  : 'Account deleted. Receipt generated.'
-              );
-              setActiveScreen('comprobante-eliminar');
-            }}
-            onShowToast={showToast}
-          />
-        )}
-
-        {activeScreen === 'comprobante-eliminar' && (
-          <AccountDeletionReceiptScreen
-            lang={lang}
-            deletedEmail={userEmail || 'usuario@colegio.edu.co'}
-            deletedName={userName || 'Estudiante'}
-            onNavigate={handleNavigate}
-            onRestoreDemoAccount={() => {
-              setAccountDeleted(false);
-              setUserEmail('');
-              setUserName('');
-              setUserGrade('');
-              setActiveScreen('login');
-            }}
-            onShowToast={showToast}
-          />
+            {activeScreen === 'comprobante-eliminar' && (
+              <AccountDeletionReceiptScreen
+                lang={lang}
+                deletedEmail={userEmail || 'usuario@colegio.edu.co'}
+                deletedName={userName || 'Estudiante'}
+                onNavigate={handleNavigate}
+                onRestoreDemoAccount={() => {
+                  setAccountDeleted(false);
+                  setUserEmail('');
+                  setUserName('');
+                  setUserGrade('');
+                  setActiveScreen('login');
+                }}
+                onShowToast={showToast}
+              />
+            )}
+          </>
         )}
       </main>
 
-      {/* Comprehensive Professional Web Footer */}
+      {/* Web Footer */}
       <footer className="w-full bg-surface-container-lowest/90 border-t border-outline-variant/30 pt-14 pb-12 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-outline-variant/20">
@@ -617,58 +673,76 @@ export default function App() {
               </div>
             </div>
 
-            {/* Col 2: Navigation Links (2.5 cols) */}
+            {/* Col 2: Navigation Links or Access info depending on auth status */}
             <div className="lg:col-span-3 flex flex-col gap-3">
               <span className="font-title-md font-bold text-on-surface">
                 {tFooter.colExploreTitle}
               </span>
-              <ul className="flex flex-col gap-2 font-body-sm text-on-surface-variant">
-                <li>
+              {isLoggedIn ? (
+                <ul className="flex flex-col gap-2 font-body-sm text-on-surface-variant">
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('inicio')}
+                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                    >
+                      {tFooter.linkHome}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('panel-estudiante')}
+                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                    >
+                      {tFooter.linkDashboard}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('recursos')}
+                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                    >
+                      {tFooter.linkResources}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('autocuidado')}
+                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                    >
+                      {tFooter.linkSelfcare}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('perfil')}
+                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                    >
+                      {tFooter.linkProfile}
+                    </button>
+                  </li>
+                </ul>
+              ) : (
+                <div className="space-y-2.5">
+                  <p className="font-body-sm text-on-surface-variant leading-relaxed">
+                    {lang === 'es'
+                      ? 'Inicia sesión con tu correo escolar para acceder a los recursos, panel y herramientas.'
+                      : 'Sign in with your school email to access resources, dashboard, and tools.'}
+                  </p>
                   <button
                     type="button"
-                    onClick={() => handleNavigate('inicio')}
-                    className="hover:text-primary transition-colors cursor-pointer text-left"
+                    onClick={() => handleNavigate('login')}
+                    className="inline-flex items-center gap-1.5 font-label-sm font-bold text-primary hover:underline cursor-pointer"
                   >
-                    {tFooter.linkHome}
+                    <span>{lang === 'es' ? 'Ir al inicio de sesión' : 'Go to sign in'}</span>
+                    <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
                   </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('panel-estudiante')}
-                    className="hover:text-primary transition-colors cursor-pointer text-left"
-                  >
-                    {tFooter.linkDashboard}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('recursos')}
-                    className="hover:text-primary transition-colors cursor-pointer text-left"
-                  >
-                    {tFooter.linkResources}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('autocuidado')}
-                    className="hover:text-primary transition-colors cursor-pointer text-left"
-                  >
-                    {tFooter.linkSelfcare}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('perfil')}
-                    className="hover:text-primary transition-colors cursor-pointer text-left"
-                  >
-                    {tFooter.linkProfile}
-                  </button>
-                </li>
-              </ul>
+                </div>
+              )}
             </div>
 
             {/* Col 3: Crisis & 24/7 Hotlines (3 cols) */}
@@ -708,22 +782,10 @@ export default function App() {
                 {tFooter.legalDesc}
               </p>
               <div className="flex flex-col gap-1.5 pt-1">
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('orientacion')}
-                  className="inline-flex items-center gap-1 text-primary hover:underline font-label-md cursor-pointer"
-                >
-                  <span>{tFooter.linkOrientation}</span>
-                  <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('panel-orientador')}
-                  className="inline-flex items-center gap-1 text-secondary hover:underline font-label-md cursor-pointer"
-                >
-                  <span>{tFooter.linkCounselor}</span>
-                  <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
-                </button>
+                <span className="inline-flex items-center gap-1 text-tertiary font-label-sm">
+                  <span className="material-symbols-outlined text-[15px]">verified_user</span>
+                  <span>{lang === 'es' ? 'Ley 1581 y 1098' : 'Data Protection'}</span>
+                </span>
               </div>
             </div>
           </div>
@@ -732,29 +794,13 @@ export default function App() {
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-on-surface-variant font-body-sm">
             <p>© {new Date().getFullYear()} {tFooter.rights}</p>
             <div className="flex items-center gap-4 text-on-surface-variant font-label-sm">
-              <button
-                type="button"
-                onClick={() => handleNavigate('inicio')}
-                className="hover:text-primary transition-colors cursor-pointer"
-              >
-                {tNav.inicio}
-              </button>
+              <span className="text-primary font-semibold">
+                {lang === 'es' ? 'Bienestar y Convivencia Escolar' : 'School Guidance & Wellbeing'}
+              </span>
               <span>•</span>
-              <button
-                type="button"
-                onClick={() => handleNavigate('perfil')}
-                className="hover:text-primary transition-colors cursor-pointer"
-              >
-                {tNav.perfil}
-              </button>
-              <span>•</span>
-              <button
-                type="button"
-                onClick={() => handleNavigate('orientacion')}
-                className="hover:text-primary transition-colors cursor-pointer"
-              >
-                {tNav.orientacion}
-              </button>
+              <span className="text-tertiary font-medium">
+                {lang === 'es' ? 'Entorno Protegido' : 'Protected Space'}
+              </span>
             </div>
           </div>
         </div>
@@ -770,42 +816,44 @@ export default function App() {
         </div>
       )}
 
-      {/* Mobile-Only Bottom Navigation Bar (Hidden on desktop/tablet where the top web navbar is active) */}
-      <nav
-        aria-label="Navegación móvil"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/90 backdrop-blur-xl shadow-[0_-8px_24px_rgba(0,0,0,0.06)] border-t border-outline-variant/20"
-      >
-        <div className="flex items-center justify-around h-16 px-2">
-          {[
-            { id: 'inicio', icon: 'home', label: tNav.inicio },
-            { id: 'recursos', icon: 'local_library', label: tNav.recursos },
-            { id: 'autocuidado', icon: 'spa', label: tNav.autocuidado },
-            { id: 'orientacion', icon: 'forum', label: tNav.orientacion },
-            { id: 'perfil', icon: 'person_outline', label: tNav.perfil },
-          ].map((tab) => {
-            const active = isNavActive(tab.id);
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => handleNavigate(tab.id)}
-                className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 transition-colors cursor-pointer ${
-                  active
-                    ? 'text-primary font-bold'
-                    : 'text-on-surface-variant hover:text-on-surface'
-                }`}
-              >
-                <span className="material-symbols-outlined text-[22px] mb-0.5">
-                  {tab.icon}
-                </span>
-                <span className="font-label-sm tracking-tight text-[11px]">
-                  {tab.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </nav>
+      {/* Mobile-Only Bottom Navigation Bar (Rendered ONLY after logging in) */}
+      {isLoggedIn && (
+        <nav
+          aria-label="Navegación móvil"
+          className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/90 backdrop-blur-xl shadow-[0_-8px_24px_rgba(0,0,0,0.06)] border-t border-outline-variant/20"
+        >
+          <div className="flex items-center justify-around h-16 px-2">
+            {[
+              { id: 'inicio', icon: 'home', label: tNav.inicio },
+              { id: 'recursos', icon: 'local_library', label: tNav.recursos },
+              { id: 'autocuidado', icon: 'spa', label: tNav.autocuidado },
+              { id: 'orientacion', icon: 'forum', label: tNav.orientacion },
+              { id: 'perfil', icon: 'person_outline', label: tNav.perfil },
+            ].map((tab) => {
+              const active = isNavActive(tab.id);
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => handleNavigate(tab.id)}
+                  className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 transition-colors cursor-pointer ${
+                    active
+                      ? 'text-primary font-bold'
+                      : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[22px] mb-0.5">
+                    {tab.icon}
+                  </span>
+                  <span className="font-label-sm tracking-tight text-[11px]">
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </div>
   );
 }

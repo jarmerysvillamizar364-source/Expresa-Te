@@ -923,38 +923,59 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div>
         )}
 
-        {/* Return Navigation Link */}
-        <div className="mt-space-lg text-center">
-          <button
-            type="button"
-            onClick={() => onNavigate('inicio')}
-            className="inline-flex items-center gap-1.5 font-label-lg text-on-surface-variant hover:text-primary transition-colors py-1 px-3 rounded-full hover:bg-surface-container-low cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-[18px]">
-              arrow_back
-            </span>
-            <span>{t.backHome}</span>
-          </button>
-        </div>
+        {/* Return to Login if in secondary authMode */}
+        {authMode !== 'login' && (
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                setAuthMode('login');
+                setAuthError('none');
+                setRegError(null);
+              }}
+              className="inline-flex items-center gap-1.5 font-label-md font-semibold text-primary hover:underline cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px]">
+                arrow_back
+              </span>
+              <span>
+                {lang === 'es'
+                  ? 'Volver al formulario de inicio de sesión'
+                  : 'Back to sign in form'}
+              </span>
+            </button>
+          </div>
+        )}
 
         {/* Soft Ambient Supportive Help Line */}
         <div
-          onClick={() => onNavigate('orientacion')}
-          className="mt-space-xl w-full bg-surface-container-low rounded-xl p-space-md flex items-center gap-3.5 shadow-sm cursor-pointer hover:bg-surface-container transition-colors"
+          onClick={() =>
+            onShowToast(
+              lang === 'es'
+                ? 'Línea 106 de atención y contención emocional disponible 24/7'
+                : 'Line 106 emotional support available 24/7'
+            )
+          }
+          className="mt-6 w-full bg-surface-container-low rounded-2xl p-4 flex items-center justify-between gap-3 shadow-xs cursor-pointer hover:bg-surface-container transition-colors border border-outline-variant/30"
         >
-          <div className="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center shrink-0 text-secondary">
-            <span className="material-symbols-outlined text-[20px]">
-              support_agent
-            </span>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-secondary-fixed flex items-center justify-center shrink-0 text-secondary">
+              <span className="material-symbols-outlined text-[20px]">
+                support_agent
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-label-md text-on-surface font-semibold truncate">
+                {t.helpTitle}
+              </p>
+              <p className="font-body-sm text-on-surface-variant truncate">
+                {t.helpSub}
+              </p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-label-md text-on-surface font-semibold truncate">
-              {t.helpTitle}
-            </p>
-            <p className="font-body-sm text-on-surface-variant truncate">
-              {t.helpSub}
-            </p>
-          </div>
+          <span className="font-label-sm font-bold text-secondary bg-secondary-fixed/50 px-2.5 py-1 rounded-full shrink-0">
+            106 (24/7)
+          </span>
         </div>
       </div>
     </div>
