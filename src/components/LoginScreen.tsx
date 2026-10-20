@@ -13,7 +13,14 @@ import {
 export interface LoginScreenProps {
   lang: Language;
   accountDeleted: boolean;
-  onLoginSuccess: (email: string, isVerified?: boolean, name?: string, grade?: string) => void;
+  onLoginSuccess: (
+    email: string,
+    isVerified?: boolean,
+    name?: string,
+    grade?: string,
+    role?: string,
+    perfil?: string
+  ) => void;
   onNavigate: (screen: string) => void;
   onShowToast: (msg: string) => void;
 }
@@ -136,7 +143,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           res.data.user.email,
           res.data.user.isVerified,
           res.data.user.name,
-          res.data.user.grade
+          res.data.user.grade,
+          res.data.user.role,
+          res.data.user.perfil
         );
       } else {
         setLoginError(res.message || t.errorUnregistered);
@@ -200,7 +209,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           res.data.user.email,
           res.data.user.isVerified,
           res.data.user.name,
-          res.data.user.grade
+          res.data.user.grade,
+          res.data.user.role,
+          res.data.user.perfil
         );
       } else {
         setRegError(res.message || 'Error al completar el registro.');
