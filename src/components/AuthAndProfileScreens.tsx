@@ -19,6 +19,7 @@ interface ProfileScreenProps {
   userDocumento?: string;
   userSede?: string;
   isVerified?: boolean;
+  onToggleLanguage?: () => void;
   onNavigate: (screen: string) => void;
   onUpdateProfile: (name: string, grade: string) => void;
   onLogout: () => void;
@@ -30,6 +31,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   lang,
   darkMode,
   onToggleDarkMode,
+  onToggleLanguage,
   isLoggedIn,
   userName,
   userEmail,
@@ -477,6 +479,41 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 : translations[lang].header.lightMode}
             </span>
           </div>
+
+          {/* Language Toggle Row */}
+          {onToggleLanguage && (
+            <div
+              onClick={onToggleLanguage}
+              className="flex items-center justify-between p-space-sm rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-space-sm">
+                <div className="w-9 h-9 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[20px]">
+                    translate
+                  </span>
+                </div>
+                <div>
+                  <p className="font-label-lg text-on-surface">
+                    {lang === 'es' ? 'Idioma de la plataforma' : 'Platform Language'}
+                  </p>
+                  <p className="font-body-sm text-on-surface-variant">
+                    {lang === 'es' ? 'Español (Clic para cambiar a Inglés)' : 'English (Click to switch to Spanish)'}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleLanguage();
+                }}
+                className="h-8 px-3 rounded-xl bg-primary text-on-primary text-xs font-bold shadow-2xs hover:brightness-105 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[16px]">translate</span>
+                <span>{lang.toUpperCase()} ⇄ {lang === 'es' ? 'EN' : 'ES'}</span>
+              </button>
+            </div>
+          )}
 
           {/* PWA App Install Control */}
           <div className="pt-1">
