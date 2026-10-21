@@ -109,6 +109,16 @@ export default function App() {
     }, 2800);
   };
 
+  const handleToggleLanguage = () => {
+    const nextLang: Language = lang === 'es' ? 'en' : 'es';
+    setLang(nextLang);
+    showToast(
+      nextLang === 'es'
+        ? 'Idioma cambiado a Español'
+        : 'Language switched to English'
+    );
+  };
+
   const handleNavigate = (screen: string) => {
     // If not logged in, enforce that no platform content can be accessed
     if (!isLoggedIn && screen !== 'login' && screen !== 'comprobante-eliminar') {
@@ -213,14 +223,14 @@ export default function App() {
     <div className="bg-surface text-on-surface font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
       {/* Top Web Navigation Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_4px_24px_-4px_rgba(20,184,166,0.08)] border-b border-outline-variant/20 transition-colors">
-        <div className="max-w-7xl mx-auto h-16 sm:h-20 px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="max-w-7xl mx-auto h-16 sm:h-18 px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 lg:gap-3">
           {/* Brand Zone: Official Emblem + Logo + Institutional Badge */}
           <button
             type="button"
             onClick={() => handleNavigate(isLoggedIn ? 'inicio' : 'login')}
-            className="flex items-center gap-2 sm:gap-3 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-w-0"
+            className="flex items-center gap-2 sm:gap-2.5 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-w-0"
           >
-            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white shadow-xs p-1 flex items-center justify-center border border-outline-variant/30 group-hover:scale-105 transition-transform shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white shadow-xs p-1 flex items-center justify-center border border-outline-variant/30 group-hover:scale-105 transition-transform shrink-0">
               <img
                 alt="Expresa Te Logo"
                 className="w-full h-full object-contain"
@@ -228,27 +238,27 @@ export default function App() {
               />
             </div>
             <div className="flex flex-col min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-base sm:text-xl font-bold text-primary tracking-tight leading-none truncate">
+              <div className="flex items-center gap-1.5">
+                <span className="text-base sm:text-lg lg:text-xl font-bold text-primary tracking-tight leading-none truncate">
                   Expresa Te
                 </span>
-                <span className="hidden lg:inline-flex items-center gap-1 text-tertiary font-label-sm font-semibold">
-                  <span className="material-symbols-outlined text-[15px]">
+                <span className="hidden 2xl:inline-flex items-center gap-1 text-tertiary font-label-sm font-semibold">
+                  <span className="material-symbols-outlined text-[14px]">
                     shield_lock
                   </span>
                   <span>100% Seguro</span>
                 </span>
               </div>
-              <span className="font-label-sm text-on-surface-variant hidden md:inline mt-0.5 truncate">
+              <span className="font-label-sm text-on-surface-variant hidden 2xl:inline mt-0.5 truncate max-w-[200px]">
                 {tHeader.subtitle}
               </span>
             </div>
           </button>
 
-          {/* Center Navigation Zone */}
+          {/* Center Navigation Zone: Shown on lg+ to guarantee no overflow or profile occlusion */}
           {isLoggedIn ? (
             /* Desktop Web Navigation Links (Rendered ONLY after user logs in) */
-            <nav className="hidden md:flex items-center gap-1.5" aria-label="Navegación principal">
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5" aria-label="Navegación principal">
               {navItems.map((item) => {
                 const active = isNavActive(item.id);
                 return (
@@ -256,13 +266,13 @@ export default function App() {
                     key={item.id}
                     type="button"
                     onClick={() => handleNavigate(item.id)}
-                    className={`flex items-center gap-2 h-10 px-4 rounded-xl font-label-md transition-all cursor-pointer whitespace-nowrap active:scale-[0.98] ${
+                    className={`flex items-center gap-1.5 h-9 xl:h-10 px-2.5 xl:px-3.5 rounded-xl text-xs xl:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-[0.98] ${
                       active
                         ? 'bg-primary-fixed/40 text-primary shadow-2xs font-bold'
-                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-semibold'
+                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
                     }`}
                   >
-                    <span className="material-symbols-outlined text-[19px]">
+                    <span className="material-symbols-outlined text-[18px]">
                       {item.icon}
                     </span>
                     <span>{item.label}</span>
@@ -272,17 +282,17 @@ export default function App() {
             </nav>
           ) : (
             /* Badge shown before user logs in (no internal platform content is exposed) */
-            <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-low text-primary font-label-md font-semibold border border-outline-variant/30 shadow-2xs">
-              <span className="material-symbols-outlined text-[18px] text-tertiary">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-low text-primary text-xs font-semibold border border-outline-variant/30 shadow-2xs">
+              <span className="material-symbols-outlined text-[16px] text-tertiary">
                 shield_lock
               </span>
               <span>{lang === 'es' ? 'Portal de Acceso Institucional' : 'Institutional Access Portal'}</span>
             </div>
           )}
 
-          {/* Controls Zone: Crisis Hotline (>=sm) + PWA (>=sm) + Theme + Lang + Account + Hamburger */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            {/* Quick Emergency / Crisis Button (Publicly accessible support, hidden on mobile for width) */}
+          {/* Controls Zone: Crisis Hotline + PWA (xl) + Theme + Single Lang Toggle + Profile (always prominent) + Hamburger */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Quick Emergency / Crisis Button (Publicly accessible support) */}
             <button
               type="button"
               onClick={() => {
@@ -293,16 +303,17 @@ export default function App() {
                 );
               }}
               title={lang === 'es' ? 'Línea de Crisis y Ayuda Inmediata' : 'Crisis & Immediate Help Line'}
-              className="hidden sm:inline-flex items-center gap-1.5 h-9 sm:h-10 px-3 sm:px-4 rounded-xl bg-error-container/40 text-error hover:bg-error-container/70 border border-error/30 font-label-sm font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap"
+              className="hidden sm:inline-flex items-center gap-1 h-8 sm:h-9 md:h-10 px-2 sm:px-2.5 xl:px-3 rounded-xl bg-error-container/40 text-error hover:bg-error-container/70 border border-error/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap"
             >
-              <span className="material-symbols-outlined text-[17px] text-error">
+              <span className="material-symbols-outlined text-[16px] sm:text-[17px] text-error">
                 emergency
               </span>
-              <span>{lang === 'es' ? 'Línea 106' : 'Help 106'}</span>
+              <span className="hidden xl:inline">{lang === 'es' ? 'Línea 106' : 'Help 106'}</span>
+              <span className="xl:hidden">106</span>
             </button>
 
-            {/* In-App PWA Install Trigger (Header variant hidden on mobile, shown in drawer and banner) */}
-            <div className="hidden sm:inline-flex">
+            {/* In-App PWA Install Trigger (Header variant shown on xl+ screens) */}
+            <div className="hidden xl:inline-flex">
               <PWAInstallButton lang={lang} variant="header" />
             </div>
 
@@ -312,73 +323,67 @@ export default function App() {
               onClick={() => setDarkMode(!darkMode)}
               title={tHeader.themeTooltip}
               aria-label={tHeader.themeTooltip}
-              className="w-8 h-8 sm:w-auto sm:h-10 sm:px-3 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md font-semibold transition-all active:scale-[0.98] cursor-pointer border border-outline-variant/30 flex items-center justify-center shrink-0"
+              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-semibold transition-all active:scale-[0.98] cursor-pointer border border-outline-variant/30 flex items-center justify-center shrink-0"
             >
               <span className="material-symbols-outlined text-[18px] text-primary">
                 {darkMode ? 'light_mode' : 'dark_mode'}
               </span>
-              <span className="hidden xl:inline ml-1.5 text-xs">{darkMode ? tHeader.lightMode : tHeader.darkMode}</span>
             </button>
 
-            {/* Language Selector: ES / EN */}
-            <div
-              role="group"
-              aria-label="Selector de idioma"
-              className="flex items-center bg-surface-container-low p-0.5 rounded-xl border border-outline-variant/30 h-8 sm:h-10 shrink-0"
+            {/* Single Language Toggle Button: One click swaps ES <-> EN */}
+            <button
+              type="button"
+              onClick={handleToggleLanguage}
+              title={lang === 'es' ? 'Cambiar a inglés (Switch to English)' : 'Cambiar a español (Switch to Spanish)'}
+              aria-label={lang === 'es' ? 'Cambiar idioma a inglés' : 'Switch language to Spanish'}
+              className="h-8 sm:h-9 md:h-10 px-2 sm:px-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface transition-all active:scale-[0.98] cursor-pointer border border-outline-variant/30 flex items-center gap-1 shrink-0 font-bold shadow-2xs group"
             >
-              <button
-                type="button"
-                onClick={() => setLang('es')}
-                className={`h-7 sm:h-8 px-2 sm:px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                  lang === 'es'
-                    ? 'bg-primary text-on-primary shadow-xs'
-                    : 'text-on-surface-variant hover:text-on-surface'
-                }`}
-              >
-                ES
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang('en')}
-                className={`h-7 sm:h-8 px-2 sm:px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                  lang === 'en'
-                    ? 'bg-primary text-on-primary shadow-xs'
-                    : 'text-on-surface-variant hover:text-on-surface'
-                }`}
-              >
-                EN
-              </button>
-            </div>
+              <span className="material-symbols-outlined text-[17px] text-primary group-hover:rotate-12 transition-transform">
+                translate
+              </span>
+              <span className="text-xs uppercase font-extrabold text-primary">
+                {lang.toUpperCase()}
+              </span>
+            </button>
 
-            {/* User Profile Button: Icon only on small mobile (<640px), full on desktop */}
+            {/* User Profile Button: Always prominently visible at 100% zoom and all screen sizes */}
             {isLoggedIn ? (
               <button
                 type="button"
                 onClick={() => handleNavigate('perfil')}
-                className="w-8 h-8 sm:w-auto sm:h-10 sm:pl-2.5 sm:pr-3.5 bg-primary-container text-on-primary rounded-xl font-label-sm font-bold shadow-xs hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+                title={lang === 'es' ? `Ver perfil (${userName || 'Usuario'})` : `View profile (${userName || 'User'})`}
+                className="h-8 sm:h-9 md:h-10 pl-1.5 pr-2.5 sm:pl-2 sm:pr-3 bg-gradient-to-r from-primary to-primary-container text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-sm hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ring-1 ring-primary/20"
               >
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-white/20 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[15px]">
-                    person
-                  </span>
+                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-white/25 flex items-center justify-center text-[11px] font-extrabold text-white shrink-0">
+                  {userName ? (
+                    userName.charAt(0).toUpperCase()
+                  ) : (
+                    <span className="material-symbols-outlined text-[14px]">person</span>
+                  )}
                 </div>
-                <span className="hidden sm:inline max-w-[100px] truncate">{userName || 'Perfil'}</span>
+                <span className="max-w-[75px] sm:max-w-[100px] md:max-w-[125px] truncate leading-tight">
+                  {userName || (lang === 'es' ? 'Perfil' : 'Profile')}
+                </span>
               </button>
             ) : (
-              <div className="hidden sm:inline-flex items-center gap-1.5 h-10 px-3 bg-surface-container-low text-secondary rounded-xl font-label-sm font-bold border border-outline-variant/30 whitespace-nowrap">
-                <span className="material-symbols-outlined text-[17px]">
+              <button
+                type="button"
+                onClick={() => handleNavigate('login')}
+                className="h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 bg-primary text-on-primary rounded-xl text-xs font-bold hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs"
+              >
+                <span className="material-symbols-outlined text-[16px]">
                   login
                 </span>
                 <span>{translations[lang].welcome.loginBtn}</span>
-              </div>
+              </button>
             )}
 
-            {/* Hamburger button for mobile / tablet drawer */}
+            {/* Hamburger button for mobile and screens < lg */}
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Abrir menú de navegación"
-              className="md:hidden w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors active:scale-95 cursor-pointer shrink-0"
+              className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors active:scale-95 cursor-pointer shrink-0"
             >
               <span className="material-symbols-outlined text-[20px]">
                 {menuOpen ? 'close' : 'menu'}
@@ -555,8 +560,15 @@ export default function App() {
                 </button>
               </div>
               <div className="flex items-center justify-between text-on-surface-variant font-label-sm">
-                <span>Idioma:</span>
-                <span className="font-bold text-primary">{lang.toUpperCase()}</span>
+                <span>{lang === 'es' ? 'Idioma:' : 'Language:'}</span>
+                <button
+                  type="button"
+                  onClick={handleToggleLanguage}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary font-bold cursor-pointer border border-outline-variant/30 text-xs transition-colors shadow-2xs"
+                >
+                  <span className="material-symbols-outlined text-[16px]">translate</span>
+                  <span>{lang === 'es' ? 'ES (Cambiar a EN)' : 'EN (Switch to ES)'}</span>
+                </button>
               </div>
             </div>
           </div>
