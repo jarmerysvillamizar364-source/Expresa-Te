@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="et-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0060a9"/>
+      <stop offset="100%" stop-color="#003e6e"/>
+    </linearGradient>
+    <linearGradient id="accent-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#2dd4bf"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#001d36" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="512" height="512" rx="112" fill="url(#et-grad)"/>
+
+  <!-- Subtle glow inner contour -->
+  <rect x="12" y="12" width="488" height="488" rx="100" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="3"/>
+
+  <!-- Main Symbol Group: Protective Heart + Dialogue + Leaf of Hope -->
+  <g filter="url(#shadow)" transform="translate(256, 256)">
+    <!-- Protective Shield / Open Heart Contour -->
+    <path d="M 0,-140 C 65,-210 170,-170 170,-65 C 170,45 60,135 0,185 C -60,135 -170,45 -170,-65 C -170,-170 -65,-210 0,-140 Z"
+          fill="#ffffff"
+          opacity="0.98"/>
+
+    <!-- Inner Core: Dialogue & Well-being Embrace -->
+    <path d="M 0,-105 C 45,-155 125,-125 125,-50 C 125,35 45,105 0,145 C -45,105 -125,35 -125,-50 C -125,-125 -45,-155 0,-105 Z"
+          fill="url(#et-grad)"/>
+
+    <!-- Center Flourish: Sprout / Leaf of Growth & Safe Expression -->
+    <path d="M -30,-40 C -30,-90 10,-120 40,-120 C 40,-70 0,-40 -30,-40 Z"
+          fill="url(#accent-grad)"/>
+    <path d="M 15,-35 C 15,-70 45,-90 65,-90 C 65,-55 35,-35 15,-35 Z"
+          fill="#ffffff"
+          opacity="0.85"/>
+
+    <!-- Small Sparkle / Star of Guidance -->
+    <path d="M 0,20 Q 0,-5 25,-5 Q 0,-5 0,-30 Q 0,-5 -25,-5 Q 0,-5 0,20 Z"
+          fill="#38bdf8"
+          transform="translate(15, 0) scale(0.9)"/>
+  </g>
+
+  <!-- Text Badge or Wordmark Monogram subtle accents -->
+  <circle cx="256" cy="420" r="12" fill="#38bdf8"/>
+  <circle cx="216" cy="420" r="6" fill="rgba(255,255,255,0.6)"/>
+  <circle cx="296" cy="420" r="6" fill="rgba(255,255,255,0.6)"/>
+</svg>

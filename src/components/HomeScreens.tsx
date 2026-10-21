@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ASSETS, Language, translations } from '../data/translations';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface HomeProps {
   lang: Language;
@@ -292,6 +293,9 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
           </div>
         ))}
       </section>
+
+      {/* PWA Direct Installation Banner */}
+      <PWAInstallButton lang={lang} variant="banner" />
 
       {/* 3. RECURSOS PARA TU BIENESTAR: 3-column responsive web grid */}
       <section className="flex flex-col space-y-6">

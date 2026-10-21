@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ASSETS, Language, translations } from '../data/translations';
 import { authService } from '../services/authService';
+import { PWAInstallButton } from './PWAInstallButton';
 
 export { LoginScreen } from './LoginScreen';
 export type { LoginScreenProps } from './LoginScreen';
@@ -475,6 +476,11 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 ? translations[lang].header.darkMode
                 : translations[lang].header.lightMode}
             </span>
+          </div>
+
+          {/* PWA App Install Control */}
+          <div className="pt-1">
+            <PWAInstallButton lang={lang} variant="menu" />
           </div>
         </div>
       </section>

@@ -16,6 +16,8 @@ import {
 } from './components/ResourcesAndSelfCare';
 import { ASSETS, Language, translations } from './data/translations';
 import { authService } from './services/authService';
+import { PWAInstallButton } from './components/PWAInstallButton';
+import { OfflineIndicator } from './components/OfflineIndicator';
 
 export type ActiveScreen =
   | 'inicio'
@@ -299,6 +301,9 @@ export default function App() {
               <span>{lang === 'es' ? 'Línea 106' : 'Help 106'}</span>
             </button>
 
+            {/* In-App PWA Install Trigger */}
+            <PWAInstallButton lang={lang} variant="header" />
+
             {/* Dark / Light Mode Toggle Button */}
             <button
               type="button"
@@ -526,6 +531,10 @@ export default function App() {
                 >
                   Ayuda
                 </button>
+              </div>
+              {/* PWA Mobile Drawer Install Action */}
+              <div className="pt-2">
+                <PWAInstallButton lang={lang} variant="menu" />
               </div>
             </div>
 
@@ -967,6 +976,9 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Connectivity & Offline State Indicator */}
+      <OfflineIndicator lang={lang} />
 
       {/* Floating Toast Notification */}
       {toastMessage && (
