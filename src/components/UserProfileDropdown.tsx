@@ -380,7 +380,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
               </button>
             </div>
 
-            {/* Language Selection */}
+            {/* Language Selection: Single Toggle Button */}
             <div className="flex items-center justify-between py-1 text-xs">
               <div className="flex items-center gap-2 text-on-surface font-medium">
                 <span className="material-symbols-outlined text-[17px] text-secondary">
@@ -388,26 +388,25 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                 </span>
                 <span>{lang === 'es' ? 'Idioma' : 'Language'}</span>
               </div>
-              <div className="flex items-center gap-1 bg-surface-container p-0.5 rounded-lg border border-outline-variant/30">
-                <button
-                  type="button"
-                  onClick={() => onChangeLang('es')}
-                  className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
-                    lang === 'es' ? 'bg-primary text-on-primary shadow-2xs' : 'text-on-surface-variant hover:text-on-surface'
-                  }`}
-                >
-                  ES
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onChangeLang('en')}
-                  className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
-                    lang === 'en' ? 'bg-primary text-on-primary shadow-2xs' : 'text-on-surface-variant hover:text-on-surface'
-                  }`}
-                >
-                  EN
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const nextLang = lang === 'es' ? 'en' : 'es';
+                  onChangeLang(nextLang);
+                  onShowToast(
+                    nextLang === 'es'
+                      ? 'Idioma cambiado a Español'
+                      : 'Language switched to English'
+                  );
+                }}
+                title={lang === 'es' ? 'Cambiar a Inglés' : 'Switch to Spanish'}
+                aria-label={lang === 'es' ? 'Cambiar idioma' : 'Switch language'}
+                className="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant/30 text-[11px] font-bold text-primary transition-all cursor-pointer flex items-center gap-1 shadow-2xs active:scale-95"
+              >
+                <span className="uppercase">{lang}</span>
+                <span className="text-on-surface-variant font-normal">⇄</span>
+                <span className="text-on-surface-variant font-semibold">{lang === 'es' ? 'EN' : 'ES'}</span>
+              </button>
             </div>
           </div>
 
