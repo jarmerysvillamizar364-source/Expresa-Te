@@ -420,6 +420,8 @@ app.get('/api/auth/users', (_req: Request, res: Response) => {
 // SERVER SETUP & VITE MIDDLEWARE (DEV & PROD)
 // ============================================================================
 async function startServer() {
+  app.use(express.static(path.resolve(__dirname, 'public')));
+
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({

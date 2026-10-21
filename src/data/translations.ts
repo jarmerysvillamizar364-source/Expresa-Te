@@ -18,6 +18,7 @@ export const ASSETS = {
   videoCoexistence: '/src/assets/images/video_peaceful_coexistence_1792612455559.jpg',
   infographicEmotional: '/src/assets/images/infographic_emotional_scale_1792612455887.jpg',
   bannerLogo: '/assets/aistudio/image_6440f15d.png',
+  appIcon: '/src/assets/images/expresa_te_icon_1792617939864.jpg',
 };
 
 export const translations = {
