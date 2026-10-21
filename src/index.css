@@ -164,8 +164,18 @@
 }
 
 @layer base {
-  html, body {
+  html {
     width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
     margin: 0;
     padding: 0;
     background-color: var(--c-surface);
@@ -173,6 +183,19 @@
     font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
     transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-primary);
+    outline-offset: 2px;
   }
 }
 

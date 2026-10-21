@@ -13,6 +13,10 @@ interface ProfileScreenProps {
   userName: string;
   userEmail: string;
   userGrade: string;
+  userRole?: string;
+  userPerfil?: string;
+  userDocumento?: string;
+  userSede?: string;
   isVerified?: boolean;
   onNavigate: (screen: string) => void;
   onUpdateProfile: (name: string, grade: string) => void;
@@ -29,6 +33,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   userName,
   userEmail,
   userGrade,
+  userRole = 'estudiante',
+  userPerfil,
+  userDocumento,
+  userSede,
   isVerified = true,
   onNavigate,
   onUpdateProfile,
@@ -37,6 +45,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onShowToast,
 }) => {
   const t = translations[lang].profile;
+  const isStaff = userRole === 'orientador' || userRole === 'psicologo' || userRole === 'administrativo';
   const [selfcareReminders, setSelfcareReminders] = useState(true);
   const [anonMode, setAnonMode] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -256,32 +265,39 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 className="w-full h-9 px-2.5 rounded-lg bg-surface-container-low text-on-surface font-title-md outline-none ring-2 ring-primary/50"
               />
             ) : (
-              <div className="flex items-center gap-space-xs">
-                <span className="font-title-md text-on-surface font-semibold truncate">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="font-title-md text-on-surface font-semibold truncate max-w-[200px] sm:max-w-none">
                   {userName || userEmail.split('@')[0]}
                 </span>
-                <span className="bg-primary-fixed/40 text-on-primary-fixed-variant font-label-sm px-2 py-0.5 rounded-full">
-                  {t.pseudonym}
+                <span className={`font-label-sm px-2 py-0.5 rounded-full font-bold ${
+                  isStaff
+                    ? userPerfil === 'Psicología'
+                      ? 'bg-purple-100 text-purple-900 border border-purple-200'
+                      : 'bg-teal-100 text-teal-900 border border-teal-200'
+                    : 'bg-primary-fixed/40 text-on-primary-fixed-variant'
+                }`}>
+                  {isStaff ? (userPerfil || 'Personal Institucional') : t.pseudonym}
                 </span>
               </div>
             )}
             <p className="font-body-sm text-on-surface-variant truncate mt-0.5">
-              {t.confidentialId}: #{confidentialIdNumber}-EST
+              {t.confidentialId}: #{confidentialIdNumber}-{isStaff ? (userPerfil === 'Psicología' ? 'PSI' : 'ADM') : 'EST'}
             </p>
           </div>
         </div>
 
         <div className="space-y-space-sm pt-space-xs">
-          <div className="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+          {/* Grade or Administrative Position */}
+          <div className="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low gap-2">
             <div className="flex items-center gap-space-sm min-w-0 flex-1">
               <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
                 <span className="material-symbols-outlined text-[18px]">
-                  school
+                  {isStaff ? 'badge' : 'school'}
                 </span>
               </div>
               <div className="flex flex-col min-w-0 flex-1">
                 <span className="font-label-sm text-on-surface-variant">
-                  {t.gradeLabel}
+                  {isStaff ? (lang === 'es' ? 'Cargo y Rol Asignado' : 'Official Role') : t.gradeLabel}
                 </span>
                 {isEditing ? (
                   <input
@@ -297,12 +313,37 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 )}
               </div>
             </div>
-            <span className="font-label-sm text-tertiary bg-surface-container-lowest px-2.5 py-1 rounded-full font-medium ml-2">
-              {t.activeBadge}
+            <span className="font-label-sm text-tertiary bg-surface-container-lowest px-2.5 py-1 rounded-full font-medium shrink-0">
+              {isStaff ? (lang === 'es' ? 'Activo en Censo' : 'Census Active') : t.activeBadge}
             </span>
           </div>
 
-          <div className="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+          {/* Institutional Document if available */}
+          {userDocumento && (
+            <div className="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low gap-2">
+              <div className="flex items-center gap-space-sm min-w-0">
+                <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
+                  <span className="material-symbols-outlined text-[18px]">
+                    id_card
+                  </span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-label-sm text-on-surface-variant">
+                    {lang === 'es' ? 'Documento Institucional Validado' : 'Verified ID Document'}
+                  </span>
+                  <span className="font-body-sm font-mono text-on-surface font-semibold truncate">
+                    {userDocumento} {userSede ? `• ${userSede}` : ''}
+                  </span>
+                </div>
+              </div>
+              <span className="material-symbols-outlined text-[18px] text-tertiary shrink-0">
+                verified
+              </span>
+            </div>
+          )}
+
+          {/* Email Address */}
+          <div className="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low gap-2">
             <div className="flex items-center gap-space-sm min-w-0">
               <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
                 <span className="material-symbols-outlined text-[18px]">

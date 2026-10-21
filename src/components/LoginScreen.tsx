@@ -879,7 +879,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                   {STUDENTS_CENSUS.map((st, idx) => (
                     <div
                       key={st.documento}
-                      className="p-3 rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 flex items-center justify-between gap-3 text-left transition-colors"
+                      className="p-3 rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-left transition-colors"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
@@ -897,7 +897,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                       <button
                         type="button"
                         onClick={() => handleSelectFromCensus(st)}
-                        className="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-label-sm font-semibold hover:bg-primary/90 transition-all cursor-pointer shrink-0 shadow-2xs"
+                        className="w-full sm:w-auto px-3 py-2 sm:py-1.5 rounded-lg bg-primary text-on-primary font-label-sm font-semibold hover:bg-primary/90 transition-all cursor-pointer shrink-0 shadow-2xs text-center"
                       >
                         Usar documento
                       </button>
@@ -912,7 +912,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                   {ADMINISTRATIVE_CENSUS.map((adm, idx) => (
                     <div
                       key={adm.documento}
-                      className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 flex items-center justify-between gap-3 text-left transition-colors"
+                      className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-left transition-colors"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="w-6 h-6 rounded-full bg-secondary/10 text-secondary text-xs font-bold flex items-center justify-center shrink-0">
@@ -939,7 +939,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                       <button
                         type="button"
                         onClick={() => handleSelectFromCensus(adm)}
-                        className="px-3 py-1.5 rounded-lg bg-secondary text-on-secondary font-label-sm font-semibold hover:bg-secondary/90 transition-all cursor-pointer shrink-0 shadow-2xs"
+                        className="w-full sm:w-auto px-3 py-2 sm:py-1.5 rounded-lg bg-secondary text-on-secondary font-label-sm font-semibold hover:bg-secondary/90 transition-all cursor-pointer shrink-0 shadow-2xs text-center"
                       >
                         Usar documento
                       </button>

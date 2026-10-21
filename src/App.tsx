@@ -8,7 +8,8 @@ import {
   StudentDashboardScreen,
   WelcomeScreen,
 } from './components/HomeScreens';
-import { OrientationScreens } from './components/OrientationScreens';
+import { StudentOrientationView } from './components/StudentOrientationView';
+import { AdminDashboardView } from './components/AdminDashboardView';
 import {
   ResourcesScreen,
   SelfCareScreen,
@@ -37,10 +38,16 @@ export default function App() {
   const [accountDeleted, setAccountDeleted] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>('');
   const [userEmail, setUserEmail] = useState<string>('');
+  const [userRole, setUserRole] = useState<'estudiante' | 'orientador' | 'psicologo' | 'administrativo'>('estudiante');
+  const [userPerfil, setUserPerfil] = useState<string>('Estudiante');
+  const [userDocumento, setUserDocumento] = useState<string>('');
+  const [userSede, setUserSede] = useState<string>('Sede Principal');
   const [userGrade, setUserGrade] = useState<string>('');
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const isStaff = userRole === 'orientador' || userRole === 'psicologo' || userRole === 'administrativo';
 
   // Restore active authorized session on mount if one exists
   useEffect(() => {
@@ -49,19 +56,35 @@ export default function App() {
       setIsLoggedIn(true);
       setUserEmail(session.userEmail);
       setUserName(session.userName || session.userEmail.split('@')[0]);
+      const role = (session.role as any) || 'estudiante';
+      setUserRole(role);
+      setUserPerfil(
+        session.perfil ||
+          (role === 'psicologo'
+            ? 'Psicología'
+            : role === 'orientador'
+            ? 'Orientación Escolar'
+            : 'Estudiante')
+      );
+      setUserDocumento(session.documento || '');
+      setUserSede(session.sede || 'Sede Principal');
       setUserGrade(
-        session.role === 'psicologo'
+        role === 'psicologo'
           ? 'Departamento de Psicología'
-          : session.role === 'orientador'
+          : role === 'orientador'
           ? 'Equipo de Orientación'
           : session.grade || 'Estudiante'
       );
       setIsVerified(Boolean(session.isVerified));
-      setActiveScreen('inicio');
+      setActiveScreen(role === 'estudiante' ? 'inicio' : 'panel-orientador');
     } else {
       setIsLoggedIn(false);
       setUserEmail('');
       setUserName('');
+      setUserRole('estudiante');
+      setUserPerfil('Estudiante');
+      setUserDocumento('');
+      setUserSede('Sede Principal');
       setUserGrade('');
       setIsVerified(false);
       setActiveScreen('login');
@@ -93,6 +116,33 @@ export default function App() {
         lang === 'es'
           ? 'Debes iniciar sesión para acceder al contenido de la plataforma'
           : 'Please sign in to access platform content'
+      );
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Role-based interface boundary guards:
+    // 1. General User (Student) cannot access counselor / psychology management panel
+    if (!isStaff && screen === 'panel-orientador') {
+      showToast(
+        lang === 'es'
+          ? 'Acceso denegado: Esta área está reservada exclusivamente para orientación y psicología.'
+          : 'Restricted area: Access is exclusive to school counselors and psychologists.'
+      );
+      setActiveScreen('inicio');
+      setMenuOpen(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // 2. Staff user redirected from student-only forms to staff triage workspace
+    if (isStaff && (screen === 'orientacion' || screen === 'panel-estudiante')) {
+      setActiveScreen('panel-orientador');
+      setMenuOpen(false);
+      showToast(
+        lang === 'es'
+          ? 'Como directivo/orientador, tu espacio de trabajo es el panel de Gestión de Casos.'
+          : 'As staff, your workspace is Case Management.'
       );
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -139,14 +189,23 @@ export default function App() {
     return activeScreen === key;
   };
 
-  const navItems = [
-    { id: 'inicio', label: tNav.inicio, icon: 'home' },
-    { id: 'recursos', label: tNav.recursos, icon: 'local_library' },
-    { id: 'autocuidado', label: tNav.autocuidado, icon: 'spa' },
-    { id: 'orientacion', label: tNav.orientacion, icon: 'forum' },
-    { id: 'panel-estudiante', label: tSwitch.studentDashboard, icon: 'dashboard' },
-    { id: 'panel-orientador', label: tSwitch.counselorPanel, icon: 'psychology' },
-  ];
+  const navItems = isStaff
+    ? [
+        {
+          id: 'panel-orientador',
+          label: lang === 'es' ? 'Gestión de Casos' : 'Case Management',
+          icon: 'dashboard_customize',
+        },
+        { id: 'recursos', label: tNav.recursos, icon: 'local_library' },
+        { id: 'autocuidado', label: lang === 'es' ? 'Pausa Profesional' : 'Staff Self-Care', icon: 'spa' },
+      ]
+    : [
+        { id: 'inicio', label: tNav.inicio, icon: 'home' },
+        { id: 'panel-estudiante', label: tSwitch.studentDashboard, icon: 'dashboard' },
+        { id: 'recursos', label: tNav.recursos, icon: 'local_library' },
+        { id: 'autocuidado', label: tNav.autocuidado, icon: 'spa' },
+        { id: 'orientacion', label: tNav.orientacion, icon: 'forum' },
+      ];
 
   return (
     <div className="bg-surface text-on-surface font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
@@ -371,26 +430,51 @@ export default function App() {
                       <span className="font-label-md font-bold text-on-surface truncate">
                         {userName}
                       </span>
-                      <span className="font-label-sm text-primary">
-                        {userGrade || 'Estudiante'} • Verificado
+                      <span className="font-label-sm text-primary font-semibold truncate">
+                        {isStaff
+                          ? `${userPerfil || 'Personal Oficial'} • Sede Principal`
+                          : `${userGrade || 'Estudiante'} • Verificado`}
                       </span>
                     </div>
                   </div>
 
-                  {/* Navigation list (Available ONLY after login) */}
+                  {/* Navigation list (Strictly role-separated) */}
                   <div className="flex flex-col gap-1 pt-2">
                     <span className="font-label-sm font-bold text-on-surface-variant uppercase tracking-wider px-3 mb-1">
-                      Navegación
+                      {isStaff ? 'Panel Administrativo' : 'Navegación Estudiante'}
                     </span>
-                    {[
-                      { id: 'inicio', label: tSwitch.welcome, icon: 'home' },
-                      { id: 'panel-estudiante', label: tSwitch.studentDashboard, icon: 'dashboard' },
-                      { id: 'recursos', label: tSwitch.resources, icon: 'local_library' },
-                      { id: 'autocuidado', label: tSwitch.selfcare, icon: 'spa' },
-                      { id: 'orientacion', label: tSwitch.requestForm, icon: 'chat_bubble' },
-                      { id: 'panel-orientador', label: tSwitch.counselorPanel, icon: 'psychology' },
-                      { id: 'perfil', label: tSwitch.profile, icon: 'person' },
-                    ].map((item) => (
+                    {(isStaff
+                      ? [
+                          {
+                            id: 'panel-orientador',
+                            label: lang === 'es' ? 'Gestión de Casos & Censo' : 'Case Management & Census',
+                            icon: 'dashboard_customize',
+                          },
+                          {
+                            id: 'recursos',
+                            label: lang === 'es' ? 'Recursos Institucionales' : 'School Resources',
+                            icon: 'local_library',
+                          },
+                          {
+                            id: 'autocuidado',
+                            label: lang === 'es' ? 'Pausa Profesional' : 'Staff Self-Care',
+                            icon: 'spa',
+                          },
+                          {
+                            id: 'perfil',
+                            label: lang === 'es' ? 'Mi Perfil Oficial' : 'Official Profile',
+                            icon: 'badge',
+                          },
+                        ]
+                      : [
+                          { id: 'inicio', label: tSwitch.welcome, icon: 'home' },
+                          { id: 'panel-estudiante', label: tSwitch.studentDashboard, icon: 'dashboard' },
+                          { id: 'recursos', label: tSwitch.resources, icon: 'local_library' },
+                          { id: 'autocuidado', label: tSwitch.selfcare, icon: 'spa' },
+                          { id: 'orientacion', label: tSwitch.requestForm, icon: 'chat_bubble' },
+                          { id: 'perfil', label: tSwitch.profile, icon: 'person' },
+                        ]
+                    ).map((item) => (
                       <button
                         key={item.id}
                         type="button"
@@ -416,8 +500,8 @@ export default function App() {
                   </span>
                   <p className="font-body-sm text-on-surface-variant">
                     {lang === 'es'
-                      ? 'Inicia sesión con tu correo escolar para acceder a todos los contenidos, biblioteca de recursos y acompañamiento.'
-                      : 'Please sign in with your school email to access all platform content and guidance.'}
+                      ? 'Inicia sesión con tu cuenta institucional para acceder a todos los contenidos, biblioteca de recursos y acompañamiento.'
+                      : 'Please sign in with your institutional account to access platform content and guidance.'}
                   </p>
                 </div>
               )}
@@ -469,7 +553,7 @@ export default function App() {
       )}
 
       {/* Main Container: Gated so ALL platform content renders ONLY after login */}
-      <main className="flex-1 w-full max-w-7xl mx-auto pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col">
+      <main className="flex-1 w-full max-w-7xl mx-auto pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col min-w-0">
         {!isLoggedIn ? (
           /* FIRST INTERFACE BEFORE LOGIN: Only LoginScreen or Deletion Receipt */
           activeScreen === 'comprobante-eliminar' ? (
@@ -482,6 +566,10 @@ export default function App() {
                 setAccountDeleted(false);
                 setUserEmail('');
                 setUserName('');
+                setUserRole('estudiante');
+                setUserPerfil('Estudiante');
+                setUserDocumento('');
+                setUserSede('Sede Principal');
                 setUserGrade('');
                 setActiveScreen('login');
               }}
@@ -491,14 +579,39 @@ export default function App() {
             <LoginScreen
               lang={lang}
               accountDeleted={accountDeleted}
-              onLoginSuccess={(email, verified = true, name, grade) => {
+              onLoginSuccess={(email, verified = true, name, grade, role, perfil) => {
                 setIsLoggedIn(true);
                 setUserEmail(email);
                 setUserName(name || email.split('@')[0]);
-                setUserGrade(grade || 'Estudiante');
+                const userR = (role as any) || 'estudiante';
+                setUserRole(userR);
+                setUserPerfil(
+                  perfil ||
+                    (userR === 'psicologo'
+                      ? 'Psicología'
+                      : userR === 'orientador'
+                      ? 'Orientación Escolar'
+                      : 'Estudiante')
+                );
+                setUserGrade(
+                  grade ||
+                    (userR === 'psicologo'
+                      ? 'Departamento de Psicología'
+                      : userR === 'orientador'
+                      ? 'Equipo de Orientación'
+                      : 'Estudiante')
+                );
                 setIsVerified(verified);
-                // Immediately transition user to the platform content upon logging in
-                setActiveScreen('inicio');
+
+                const session = authService.getSession();
+                if (session) {
+                  setUserDocumento(session.documento || '');
+                  setUserSede(session.sede || 'Sede Principal');
+                }
+
+                // Immediately transition user to the appropriate platform interface
+                const targetScreen = userR === 'estudiante' ? 'inicio' : 'panel-orientador';
+                setActiveScreen(targetScreen);
                 showToast(
                   lang === 'es'
                     ? `¡Bienvenido a Expresa Te, ${name || email.split('@')[0]}!`
@@ -510,8 +623,48 @@ export default function App() {
             />
           )
         ) : (
-          /* ALL PLATFORM CONTENT: Renders ONLY after user has authenticated */
+          /* ALL PLATFORM CONTENT: Renders ONLY after user has authenticated and tailored to user role */
           <>
+            {/* Staff Header Notification Banner when on staff mode */}
+            {isStaff && (
+              <div className="mb-6 p-4 rounded-2xl bg-surface-container-low border border-outline-variant/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold ${
+                    userPerfil === 'Psicología'
+                      ? 'bg-purple-100 text-purple-800'
+                      : 'bg-teal-100 text-teal-800'
+                  }`}>
+                    <span className="material-symbols-outlined text-[20px]">
+                      {userPerfil === 'Psicología' ? 'psychology' : 'diversity_3'}
+                    </span>
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <span className="font-label-md font-bold text-on-surface">
+                      Espacio Administrativo Oficial: {userPerfil}
+                    </span>
+                    <span className="text-xs text-on-surface-variant">
+                      Sesión activa para {userName} • Sede Principal (Ley 1090 / 1620)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('panel-orientador')}
+                    className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl font-label-sm font-bold cursor-pointer transition-all ${
+                      activeScreen === 'panel-orientador'
+                        ? 'bg-primary text-on-primary shadow-xs'
+                        : 'bg-surface-container text-on-surface-variant hover:text-on-surface'
+                    }`}
+                  >
+                    Gestión de Casos & Censo
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Student Screens */}
             {activeScreen === 'inicio' && (
               <WelcomeScreen
                 lang={lang}
@@ -522,7 +675,7 @@ export default function App() {
               />
             )}
 
-            {activeScreen === 'panel-estudiante' && (
+            {activeScreen === 'panel-estudiante' && !isStaff && (
               <StudentDashboardScreen
                 lang={lang}
                 onNavigate={handleNavigate}
@@ -548,23 +701,27 @@ export default function App() {
               />
             )}
 
-            {(activeScreen === 'orientacion' ||
-              activeScreen === 'solicitud-enviada' ||
-              activeScreen === 'panel-orientador') && (
-              <OrientationScreens
+            {/* Student Orientation View (Confidential submission & private tracking) */}
+            {(activeScreen === 'orientacion' || activeScreen === 'solicitud-enviada') && !isStaff && (
+              <StudentOrientationView
                 lang={lang}
-                subScreen={
-                  activeScreen === 'solicitud-enviada'
-                    ? 'sent'
-                    : activeScreen === 'panel-orientador'
-                    ? 'counselor'
-                    : 'form'
-                }
-                onChangeSubScreen={(sub) => {
-                  if (sub === 'form') setActiveScreen('orientacion');
-                  if (sub === 'sent') setActiveScreen('solicitud-enviada');
-                  if (sub === 'counselor') setActiveScreen('panel-orientador');
-                }}
+                studentEmail={userEmail}
+                studentName={userName}
+                studentGrade={userGrade}
+                onNavigate={handleNavigate}
+                onShowToast={showToast}
+              />
+            )}
+
+            {/* Administrative Staff Dashboard (Triage, Census, Protocols Ley 1620, Pause) */}
+            {activeScreen === 'panel-orientador' && isStaff && (
+              <AdminDashboardView
+                lang={lang}
+                adminName={userName}
+                adminEmail={userEmail}
+                adminRole={userRole}
+                adminPerfil={userPerfil}
+                adminGrade={userGrade}
                 onNavigate={handleNavigate}
                 onShowToast={showToast}
               />
@@ -579,6 +736,10 @@ export default function App() {
                 userName={userName}
                 userEmail={userEmail}
                 userGrade={userGrade}
+                userRole={userRole}
+                userPerfil={userPerfil}
+                userDocumento={userDocumento}
+                userSede={userSede}
                 isVerified={isVerified}
                 onNavigate={handleNavigate}
                 onUpdateProfile={(name, grade) => {
@@ -817,36 +978,45 @@ export default function App() {
         </div>
       )}
 
-      {/* Mobile-Only Bottom Navigation Bar (Rendered ONLY after logging in) */}
+      {/* Mobile-Only Bottom Navigation Bar (Rendered ONLY after logging in, tailored to role) */}
       {isLoggedIn && (
         <nav
           aria-label="Navegación móvil"
           className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/90 backdrop-blur-xl shadow-[0_-8px_24px_rgba(0,0,0,0.06)] border-t border-outline-variant/20"
         >
-          <div className="flex items-center justify-around h-16 px-2">
-            {[
-              { id: 'inicio', icon: 'home', label: tNav.inicio },
-              { id: 'recursos', icon: 'local_library', label: tNav.recursos },
-              { id: 'autocuidado', icon: 'spa', label: tNav.autocuidado },
-              { id: 'orientacion', icon: 'forum', label: tNav.orientacion },
-              { id: 'perfil', icon: 'person_outline', label: tNav.perfil },
-            ].map((tab) => {
+          <div className="flex items-center justify-around h-16 px-1 max-w-lg mx-auto">
+            {(isStaff
+              ? [
+                  { id: 'panel-orientador', icon: 'assignment', label: lang === 'es' ? 'Casos' : 'Cases' },
+                  { id: 'recursos', icon: 'local_library', label: tNav.recursos },
+                  { id: 'autocuidado', icon: 'spa', label: lang === 'es' ? 'Pausa' : 'Pause' },
+                  { id: 'perfil', icon: 'badge', label: tNav.perfil },
+                ]
+              : [
+                  { id: 'inicio', icon: 'home', label: tNav.inicio },
+                  { id: 'panel-estudiante', icon: 'dashboard', label: lang === 'es' ? 'Mi Espacio' : 'My Space' },
+                  { id: 'recursos', icon: 'local_library', label: tNav.recursos },
+                  { id: 'autocuidado', icon: 'spa', label: tNav.autocuidado },
+                  { id: 'orientacion', icon: 'forum', label: tNav.orientacion },
+                  { id: 'perfil', icon: 'person', label: tNav.perfil },
+                ]
+            ).map((tab) => {
               const active = isNavActive(tab.id);
               return (
                 <button
                   key={tab.id}
                   type="button"
                   onClick={() => handleNavigate(tab.id)}
-                  className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 transition-colors cursor-pointer ${
+                  className={`flex flex-col items-center justify-center flex-1 min-w-0 min-h-[44px] py-1 transition-colors cursor-pointer ${
                     active
                       ? 'text-primary font-bold'
                       : 'text-on-surface-variant hover:text-on-surface'
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[22px] mb-0.5">
+                  <span className="material-symbols-outlined text-[20px] sm:text-[22px] mb-0.5">
                     {tab.icon}
                   </span>
-                  <span className="font-label-sm tracking-tight text-[11px]">
+                  <span className="font-label-sm tracking-tight text-[10px] sm:text-[11px] truncate max-w-full px-0.5">
                     {tab.label}
                   </span>
                 </button>
