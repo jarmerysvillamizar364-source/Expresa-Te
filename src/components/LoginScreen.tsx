@@ -3,8 +3,6 @@ import { ASSETS, Language, translations } from '../data/translations';
 import { authService } from '../services/authService';
 import { validateAnyEmail } from '../utils/institutionalValidator';
 import {
-  STUDENTS_CENSUS,
-  ADMINISTRATIVE_CENSUS,
   StudentCensusRecord,
   AdministrativeCensusRecord,
   CensusRecord,
@@ -63,9 +61,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const [regError, setRegError] = useState<string | null>(null);
   const [isSubmittingReg, setIsSubmittingReg] = useState(false);
 
-  // Census records inspection modal
-  const [showCensusModal, setShowCensusModal] = useState(false);
-  const [censusTab, setCensusTab] = useState<'estudiantes' | 'administrativos'>('estudiantes');
 
   // --------------------------------------------------------------------------
   // DOCUMENT LOOKUP IN PRE-LOADED CENSUS DATABASE
@@ -91,12 +86,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         status: 'not_found',
         message:
           lang === 'es'
-            ? `El documento ${docQuery} no figura en la base de datos de ${
+            ? `El documento ${docQuery} no figura en los registros de ${
                 regRole === 'estudiante' ? 'estudiantes' : 'personal administrativo'
-              }. Verifica el número o consulta el censo escolar.`
-            : `ID ${docQuery} was not found in the ${
+              }. Verifica el número e intenta nuevamente.`
+            : `ID ${docQuery} was not found in ${
                 regRole === 'estudiante' ? 'student' : 'staff'
-              } database.`,
+              } records. Please check the number and try again.`,
       });
       setDocValidated(false);
       setCensusRecord(null);
@@ -112,19 +107,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         status: 'success',
         message:
           lang === 'es'
-            ? '✓ Documento validado en la base de datos oficial. Completa tu correo y contraseña.'
-            : '✓ ID verified in official database. Complete your email and password.',
+            ? '✓ Documento validado correctamente. Completa tu correo y contraseña.'
+            : '✓ ID verified successfully. Complete your email and password.',
       });
       setDocValidated(true);
       setCensusRecord(check.record);
     }
-  };
-
-  const handleSelectFromCensus = (record: CensusRecord) => {
-    setRegRole(record.rol);
-    setRegDoc(record.documento);
-    setShowCensusModal(false);
-    handleVerifyDocument(record.documento);
   };
 
   // --------------------------------------------------------------------------
@@ -225,29 +213,29 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const adminRec = censusRecord && censusRecord.rol === 'administrativo' ? (censusRecord as AdministrativeCensusRecord) : null;
 
   return (
-    <div className="flex flex-col items-center justify-center w-full py-6 sm:py-10 animate-fade-in">
-      <div className="w-full max-w-xl bg-surface-container-lowest rounded-3xl p-6 sm:p-10 border border-outline-variant/30 shadow-2xl flex flex-col items-center relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center w-full py-4 sm:py-8 px-2 sm:px-4 animate-fade-in">
+      <div className="w-full max-w-lg bg-surface-container-lowest rounded-3xl p-4 sm:p-8 border border-outline-variant/30 shadow-2xl flex flex-col items-center relative overflow-hidden">
         {/* Subtle decorative background gradient */}
-        <div className="absolute -top-16 -right-16 w-56 h-56 bg-primary-fixed/25 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-secondary-fixed/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-16 -right-16 w-48 h-48 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-secondary-fixed/15 rounded-full blur-3xl pointer-events-none" />
 
         {/* Brand Anchor */}
         <div className="w-full flex flex-col items-center text-center mb-6">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white shadow-sm p-2 flex items-center justify-center border border-outline-variant/30 mb-4">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-xs p-1.5 flex items-center justify-center border border-outline-variant/30 mb-3">
             <img
               alt="Expresa Te Logo"
               className="w-full h-full object-contain"
               src={ASSETS.loginEmblem}
             />
           </div>
-          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
             Expresa Te
           </h1>
-          <p className="font-body-md text-on-surface-variant mt-1.5 max-w-md">
+          <p className="text-xs sm:text-sm text-on-surface-variant mt-1 max-w-sm">
             {t.subtitle}
           </p>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-tertiary mt-2">
-            <span className="material-symbols-outlined text-[16px]">
+            <span className="material-symbols-outlined text-[15px]">
               lock
             </span>
             <span>{t.badge}</span>
@@ -402,25 +390,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
             </button>
 
-            {/* Link to Census Inspection Drawer for easy evaluation */}
+            {/* Link to Register */}
             <div className="pt-2 flex flex-col items-center gap-2 border-t border-outline-variant/20">
-              <button
-                type="button"
-                onClick={() => setShowCensusModal(true)}
-                className="inline-flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-primary font-semibold transition-colors cursor-pointer py-1"
-              >
-                <span className="material-symbols-outlined text-[16px] text-tertiary">
-                  fact_check
-                </span>
-                <span>{t.viewCensusBtn}</span>
-              </button>
               <button
                 type="button"
                 onClick={() => {
                   setAuthMode('register');
                   setRegError(null);
                 }}
-                className="font-label-md text-primary font-semibold hover:underline cursor-pointer"
+                className="font-label-md text-primary font-semibold hover:underline cursor-pointer py-1"
               >
                 {t.noAccountPrompt}
               </button>
@@ -497,22 +475,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
             {/* Step 2: Document Input & Validation */}
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between">
-                <label htmlFor="reg-doc" className="font-label-lg text-on-surface font-semibold text-left">
-                  {t.docLabel}
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCensusTab(regRole === 'estudiante' ? 'estudiantes' : 'administrativos');
-                    setShowCensusModal(true);
-                  }}
-                  className="font-label-sm text-primary hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-[15px]">list_alt</span>
-                  <span>Ver censo</span>
-                </button>
-              </div>
+              <label htmlFor="reg-doc" className="font-label-lg text-on-surface font-semibold text-left">
+                {t.docLabel}
+              </label>
 
               <div className="flex gap-2">
                 <div className="relative flex-1 flex items-center">
@@ -806,161 +771,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         </div>
       </div>
 
-      {/* ==================================================================== */}
-      {/* MODAL: CENSO INSTITUCIONAL PREVIO (15 Estudiantes y 3 Administrativos) */}
-      {/* ==================================================================== */}
-      {showCensusModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in"
-          onClick={() => setShowCensusModal(false)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl max-h-[85vh] bg-surface-container-lowest rounded-3xl p-6 shadow-2xl border border-outline-variant/30 flex flex-col gap-4 overflow-hidden"
-          >
-            <div className="flex items-start justify-between pb-3 border-b border-outline-variant/20">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary-fixed/40 text-primary flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[22px]">database</span>
-                </div>
-                <div className="flex flex-col text-left">
-                  <h3 className="font-title-lg font-bold text-on-surface">
-                    {t.censusModalTitle}
-                  </h3>
-                  <p className="font-body-sm text-on-surface-variant">
-                    {t.censusModalDesc}
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowCensusModal(false)}
-                className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-[18px]">close</span>
-              </button>
-            </div>
 
-            {/* Modal Tabs: 15 Estudiantes vs 3 Administrativos */}
-            <div className="grid grid-cols-2 p-1 bg-surface-container-low rounded-xl border border-outline-variant/30">
-              <button
-                type="button"
-                onClick={() => setCensusTab('estudiantes')}
-                className={`py-2 rounded-lg font-label-md font-bold transition-all cursor-pointer ${
-                  censusTab === 'estudiantes'
-                    ? 'bg-primary text-on-primary shadow-xs'
-                    : 'text-on-surface-variant hover:text-on-surface'
-                }`}
-              >
-                Estudiantes ({STUDENTS_CENSUS.length} registros)
-              </button>
-              <button
-                type="button"
-                onClick={() => setCensusTab('administrativos')}
-                className={`py-2 rounded-lg font-label-md font-bold transition-all cursor-pointer ${
-                  censusTab === 'administrativos'
-                    ? 'bg-primary text-on-primary shadow-xs'
-                    : 'text-on-surface-variant hover:text-on-surface'
-                }`}
-              >
-                Administrativos ({ADMINISTRATIVE_CENSUS.length} registros: 2 Orientación, 1 Psicología)
-              </button>
-            </div>
-
-            {/* List of Records */}
-            <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
-              {censusTab === 'estudiantes' ? (
-                <div className="space-y-2">
-                  <div className="text-xs font-semibold text-primary px-1">
-                    15 Estudiantes registrados para validación por documento:
-                  </div>
-                  {STUDENTS_CENSUS.map((st, idx) => (
-                    <div
-                      key={st.documento}
-                      className="p-3 rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-left transition-colors"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
-                          {idx + 1}
-                        </span>
-                        <div className="min-w-0">
-                          <div className="font-bold text-sm text-on-surface truncate">
-                            {st.nombreCompleto}
-                          </div>
-                          <div className="text-xs text-on-surface-variant">
-                            Doc: <span className="font-mono font-semibold text-primary">{st.documento}</span> • {st.grado} • {st.sede}
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectFromCensus(st)}
-                        className="w-full sm:w-auto h-9 px-4 rounded-xl bg-primary text-on-primary font-label-sm font-semibold hover:bg-primary/95 active:scale-[0.98] transition-all cursor-pointer shrink-0 shadow-2xs flex items-center justify-center whitespace-nowrap"
-                      >
-                        Usar documento
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="text-xs font-semibold text-primary px-1">
-                    3 Perfiles Administrativos (2 Orientación y 1 Psicología):
-                  </div>
-                  {ADMINISTRATIVE_CENSUS.map((adm, idx) => (
-                    <div
-                      key={adm.documento}
-                      className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-left transition-colors"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="w-6 h-6 rounded-full bg-secondary/10 text-secondary text-xs font-bold flex items-center justify-center shrink-0">
-                          {idx + 1}
-                        </span>
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-on-surface truncate">
-                              {adm.nombreCompleto}
-                            </span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                              adm.perfil === 'Psicología'
-                                ? 'bg-purple-100 text-purple-800'
-                                : 'bg-teal-100 text-teal-800'
-                            }`}>
-                              {adm.perfil}
-                            </span>
-                          </div>
-                          <div className="text-xs text-on-surface-variant mt-0.5">
-                            Doc: <span className="font-mono font-semibold text-primary">{adm.documento}</span> • {adm.cargo}
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectFromCensus(adm)}
-                        className="w-full sm:w-auto h-9 px-4 rounded-xl bg-secondary text-on-secondary font-label-sm font-semibold hover:bg-secondary/95 active:scale-[0.98] transition-all cursor-pointer shrink-0 shadow-2xs flex items-center justify-center whitespace-nowrap"
-                      >
-                        Usar documento
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="pt-2 border-t border-outline-variant/20 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setShowCensusModal(false)}
-                className="h-10 px-5 rounded-xl bg-surface-container-high text-on-surface font-label-md font-semibold cursor-pointer hover:bg-surface-container active:scale-[0.98] transition-all whitespace-nowrap"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Forgot Password Modal */}
       {showForgotModal && (

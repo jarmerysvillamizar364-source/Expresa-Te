@@ -143,7 +143,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
       <div className="w-full flex items-center gap-1.5 overflow-x-auto pb-1 bg-surface-container-low p-1.5 rounded-2xl border border-outline-variant/30 shadow-2xs">
         {[
           { id: 'casos' as const, label: `Gestión de Casos (${newCount} nuevos)`, icon: 'inbox' },
-          { id: 'censo' as const, label: `Directorio Escolar (${STUDENTS_CENSUS.length} estudiantes)`, icon: 'groups' },
+          { id: 'censo' as const, label: 'Verificación de Estudiantes', icon: 'person_search' },
           { id: 'protocolos' as const, label: 'Protocolos & Convivencia (Ley 1620)', icon: 'policy' },
           { id: 'pausa' as const, label: 'Pausa y Cuidado del Profesional', icon: 'spa' },
         ].map((tab) => {
@@ -418,70 +418,106 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className="text-xl font-bold text-on-surface">
-                Directorio y Censo de Estudiantes Matriculados
+                Consulta y Verificación Confidencial de Estudiantes
               </h2>
               <p className="text-xs text-on-surface-variant">
-                15 registros habilitados en el censo oficial para seguimiento y verificación.
+                Búsqueda segura para verificación de expedientes conforme a la Ley 1581 de 2012 y Ley 1098 de 2006.
               </p>
             </div>
 
-            {/* Filter by Grade */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-on-surface-variant">Filtrar por grado:</span>
-              <select
-                value={censusGradeFilter}
-                onChange={(e) => setCensusGradeFilter(e.target.value)}
-                className="h-9 px-3 rounded-xl bg-surface-container-low border border-outline-variant/30 text-xs font-bold text-on-surface outline-none cursor-pointer"
-              >
-                <option value="todos">Todos los grados</option>
-                <option value="11">Grado 11°</option>
-                <option value="10">Grado 10°</option>
-                <option value="9">Grado 9°</option>
-                <option value="8">Grado 8°</option>
-                <option value="7">Grado 7°</option>
-              </select>
+            {/* Confidential Search Input */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+              <div className="relative min-w-[240px]">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">
+                  search
+                </span>
+                <input
+                  type="text"
+                  placeholder="Buscar por documento o nombre..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full h-10 pl-9 pr-3 rounded-xl bg-surface-container-low border border-outline-variant/30 text-xs font-medium text-on-surface outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </div>
+
+              {/* Filter by Grade */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-on-surface-variant whitespace-nowrap">Grado:</span>
+                <select
+                  value={censusGradeFilter}
+                  onChange={(e) => setCensusGradeFilter(e.target.value)}
+                  className="h-10 px-3 rounded-xl bg-surface-container-low border border-outline-variant/30 text-xs font-bold text-on-surface outline-none cursor-pointer"
+                >
+                  <option value="todos">Todos los grados</option>
+                  <option value="11">Grado 11°</option>
+                  <option value="10">Grado 10°</option>
+                  <option value="9">Grado 9°</option>
+                  <option value="8">Grado 8°</option>
+                  <option value="7">Grado 7°</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {STUDENTS_CENSUS
-              .filter((st) => censusGradeFilter === 'todos' || st.grado.includes(censusGradeFilter))
-              .map((st: StudentCensusRecord, idx) => (
-                <div
-                  key={st.documento}
-                  className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 shadow-xs flex flex-col justify-between space-y-3"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="w-9 h-9 rounded-xl bg-primary-fixed/40 text-primary flex items-center justify-center font-bold text-sm">
-                      {idx + 1}
+          {/* If no search term and no grade filter selected, show confidential query notice */}
+          {!searchTerm.trim() && censusGradeFilter === 'todos' ? (
+            <div className="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant/30 text-center flex flex-col items-center max-w-lg mx-auto space-y-3">
+              <div className="w-14 h-14 rounded-2xl bg-primary-fixed/30 text-primary flex items-center justify-center">
+                <span className="material-symbols-outlined text-[28px]">shield_person</span>
+              </div>
+              <h3 className="font-title-md font-bold text-on-surface">
+                Consulta protegida de expedientes
+              </h3>
+              <p className="text-xs text-on-surface-variant leading-relaxed">
+                Por políticas de sigilo profesional y protección de datos de menores, los expedientes no se exhiben en bloque. Ingresa el número de documento o nombre del estudiante arriba para consultar su ficha institucional.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {STUDENTS_CENSUS
+                .filter((st) => {
+                  const matchGrade = censusGradeFilter === 'todos' || st.grado.includes(censusGradeFilter);
+                  const q = searchTerm.toLowerCase().trim();
+                  const matchQuery = !q || st.nombreCompleto.toLowerCase().includes(q) || st.documento.includes(q);
+                  return matchGrade && matchQuery;
+                })
+                .map((st: StudentCensusRecord, idx) => (
+                  <div
+                    key={st.documento}
+                    className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 shadow-xs flex flex-col justify-between space-y-3"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="w-9 h-9 rounded-xl bg-primary-fixed/40 text-primary flex items-center justify-center font-bold text-sm">
+                        {idx + 1}
+                      </div>
+                      <span className="text-xs font-mono px-2 py-0.5 rounded-md bg-surface-container-low text-primary font-bold border border-outline-variant/20">
+                        Doc: {st.documento}
+                      </span>
                     </div>
-                    <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-surface-container-low text-primary font-bold border border-outline-variant/20">
-                      Doc: {st.documento}
-                    </span>
-                  </div>
 
-                  <div>
-                    <h4 className="font-bold text-base text-on-surface">{st.nombreCompleto}</h4>
-                    <p className="text-xs text-on-surface-variant font-medium mt-0.5">{st.grado}</p>
-                    <p className="text-xs text-on-surface-variant">{st.sede} • Jornada {st.jornada}</p>
-                  </div>
+                    <div>
+                      <h4 className="font-bold text-base text-on-surface">{st.nombreCompleto}</h4>
+                      <p className="text-xs text-on-surface-variant font-medium mt-0.5">{st.grado}</p>
+                      <p className="text-xs text-on-surface-variant">{st.sede} • Jornada {st.jornada}</p>
+                    </div>
 
-                  <div className="pt-2 border-t border-outline-variant/15 flex items-center justify-between text-xs">
-                    <span className="inline-flex items-center gap-1 text-tertiary font-semibold">
-                      <span className="material-symbols-outlined text-[15px]">verified</span>
-                      <span>Censo oficial</span>
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => onShowToast(`Expediente escolar de ${st.nombreCompleto} en orden.`)}
-                      className="text-primary hover:underline font-bold cursor-pointer"
-                    >
-                      Ver ficha
-                    </button>
+                    <div className="pt-2 border-t border-outline-variant/15 flex items-center justify-between text-xs">
+                      <span className="inline-flex items-center gap-1 text-tertiary font-semibold">
+                        <span className="material-symbols-outlined text-[15px]">verified</span>
+                        <span>Verificado</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => onShowToast(`Expediente escolar de ${st.nombreCompleto} consultado confidencialmente.`)}
+                        className="text-primary hover:underline font-bold cursor-pointer"
+                      >
+                        Ver ficha
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
-          </div>
+                ))}
+            </div>
+          )}
         </div>
       )}
 

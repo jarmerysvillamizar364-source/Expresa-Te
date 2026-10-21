@@ -13,6 +13,10 @@ export const ASSETS = {
     'https://lh3.googleusercontent.com/aida-public/AB6AXuAGIcoPfvGy9utMaFfoF5Pti0OebMRUq-93tHRJhc8TJbgFz-5810Xmf7cpEscJrBeLzReNwP7piCbAm29SL1yb8q_9eRK2CWseQWt0W1OGe9PTenBeJJziW9qa0yM5zO94TOOKDJPzA-TSwH4Kt7bXaql3Fsn8ydtA4srqRhosUPV5oLl55QbgvJlhAxPlG9GAaWAKHpsiVVb1Gr-Uk1ciz7lFPhRiU1zdakGBnwuFaNKPsUTgBdfv9Q',
   recSupport:
     'https://lh3.googleusercontent.com/aida-public/AB6AXuBDdDzLNgGpLtHKSSTuoOFGQRX-GMcf24WOKrZFCwbyFhypz_Zi9C0nEYtyHPIzMHA30DwSk-fIAJXbMlqcV5J2Ud_3Rdbya6WimrZiB8kFNTt_unxO301mEK6r8AAErEAoEDB8xGK3MmWRxE54GKp2O8JZyMZ1B1n2c5jq2RLkJEdMvNGtk3iGmssbzCPoe1Z9EMGR-fq9LutAfV43aZFI5zpCYMRfTZcLXm8PGb2q1yNUkyFiepTsng',
+  videoStop: '/src/assets/images/video_stop_technique_1792612453981.jpg',
+  videoExam: '/src/assets/images/video_exam_anxiety_1792612455262.jpg',
+  videoCoexistence: '/src/assets/images/video_peaceful_coexistence_1792612455559.jpg',
+  infographicEmotional: '/src/assets/images/infographic_emotional_scale_1792612455887.jpg',
 };
 
 export const translations = {

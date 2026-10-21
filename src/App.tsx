@@ -198,48 +198,48 @@ export default function App() {
           label: lang === 'es' ? 'Gestión de Casos' : 'Case Management',
           icon: 'dashboard_customize',
         },
-        { id: 'recursos', label: tNav.recursos, icon: 'local_library' },
+        { id: 'recursos', label: lang === 'es' ? 'Audiovisuales' : 'Media Hub', icon: 'smart_display' },
         { id: 'autocuidado', label: lang === 'es' ? 'Pausa Profesional' : 'Staff Self-Care', icon: 'spa' },
       ]
     : [
         { id: 'inicio', label: tNav.inicio, icon: 'home' },
-        { id: 'panel-estudiante', label: tSwitch.studentDashboard, icon: 'dashboard' },
-        { id: 'recursos', label: tNav.recursos, icon: 'local_library' },
+        { id: 'panel-estudiante', label: lang === 'es' ? 'Mi Espacio' : 'My Space', icon: 'dashboard' },
+        { id: 'recursos', label: lang === 'es' ? 'Audiovisuales' : 'Media Hub', icon: 'smart_display' },
         { id: 'autocuidado', label: tNav.autocuidado, icon: 'spa' },
-        { id: 'orientacion', label: tNav.orientacion, icon: 'forum' },
+        { id: 'orientacion', label: tNav.orientacion, icon: 'support_agent' },
       ];
 
   return (
     <div className="bg-surface text-on-surface font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
       {/* Top Web Navigation Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_4px_24px_-4px_rgba(20,184,166,0.08)] border-b border-outline-variant/20 transition-colors">
-        <div className="max-w-7xl mx-auto h-20 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto h-16 sm:h-20 px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
           {/* Brand Zone: Official Emblem + Logo + Institutional Badge */}
           <button
             type="button"
             onClick={() => handleNavigate(isLoggedIn ? 'inicio' : 'login')}
-            className="flex items-center gap-3 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
+            className="flex items-center gap-2 sm:gap-3 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-w-0"
           >
-            <div className="w-11 h-11 rounded-2xl bg-white shadow-xs p-1 flex items-center justify-center border border-outline-variant/30 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white shadow-xs p-1 flex items-center justify-center border border-outline-variant/30 group-hover:scale-105 transition-transform shrink-0">
               <img
                 alt="Expresa Te Logo"
                 className="w-full h-full object-contain"
                 src={ASSETS.loginEmblem}
               />
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="font-headline-sm font-bold text-primary tracking-tight leading-none">
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="text-base sm:text-xl font-bold text-primary tracking-tight leading-none truncate">
                   Expresa Te
                 </span>
-                <span className="hidden sm:inline-flex items-center gap-1 text-tertiary font-label-sm font-semibold">
+                <span className="hidden lg:inline-flex items-center gap-1 text-tertiary font-label-sm font-semibold">
                   <span className="material-symbols-outlined text-[15px]">
                     shield_lock
                   </span>
                   <span>100% Seguro</span>
                 </span>
               </div>
-              <span className="font-label-sm text-on-surface-variant hidden xs:inline mt-0.5">
+              <span className="font-label-sm text-on-surface-variant hidden md:inline mt-0.5 truncate">
                 {tHeader.subtitle}
               </span>
             </div>
@@ -280,9 +280,9 @@ export default function App() {
             </div>
           )}
 
-          {/* Controls Zone: Emergency / Crisis Hotline + Dark/Light Mode + ES/EN Language + Account */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            {/* Quick Emergency / Crisis Button (Publicly accessible support) */}
+          {/* Controls Zone: Crisis Hotline (>=sm) + PWA (>=sm) + Theme + Lang + Account + Hamburger */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Quick Emergency / Crisis Button (Publicly accessible support, hidden on mobile for width) */}
             <button
               type="button"
               onClick={() => {
@@ -293,16 +293,18 @@ export default function App() {
                 );
               }}
               title={lang === 'es' ? 'Línea de Crisis y Ayuda Inmediata' : 'Crisis & Immediate Help Line'}
-              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-4 rounded-xl bg-error-container/40 text-error hover:bg-error-container/70 border border-error/30 font-label-md font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap"
+              className="hidden sm:inline-flex items-center gap-1.5 h-9 sm:h-10 px-3 sm:px-4 rounded-xl bg-error-container/40 text-error hover:bg-error-container/70 border border-error/30 font-label-sm font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap"
             >
-              <span className="material-symbols-outlined text-[18px] text-error">
+              <span className="material-symbols-outlined text-[17px] text-error">
                 emergency
               </span>
               <span>{lang === 'es' ? 'Línea 106' : 'Help 106'}</span>
             </button>
 
-            {/* In-App PWA Install Trigger */}
-            <PWAInstallButton lang={lang} variant="header" />
+            {/* In-App PWA Install Trigger (Header variant hidden on mobile, shown in drawer and banner) */}
+            <div className="hidden sm:inline-flex">
+              <PWAInstallButton lang={lang} variant="header" />
+            </div>
 
             {/* Dark / Light Mode Toggle Button */}
             <button
@@ -310,24 +312,24 @@ export default function App() {
               onClick={() => setDarkMode(!darkMode)}
               title={tHeader.themeTooltip}
               aria-label={tHeader.themeTooltip}
-              className="flex items-center gap-2 h-10 px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md font-semibold transition-all active:scale-[0.98] cursor-pointer border border-outline-variant/30 whitespace-nowrap"
+              className="w-8 h-8 sm:w-auto sm:h-10 sm:px-3 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md font-semibold transition-all active:scale-[0.98] cursor-pointer border border-outline-variant/30 flex items-center justify-center shrink-0"
             >
-              <span className="material-symbols-outlined text-[19px] text-primary">
+              <span className="material-symbols-outlined text-[18px] text-primary">
                 {darkMode ? 'light_mode' : 'dark_mode'}
               </span>
-              <span className="hidden xl:inline">{darkMode ? tHeader.lightMode : tHeader.darkMode}</span>
+              <span className="hidden xl:inline ml-1.5 text-xs">{darkMode ? tHeader.lightMode : tHeader.darkMode}</span>
             </button>
 
             {/* Language Selector: ES / EN */}
             <div
               role="group"
               aria-label="Selector de idioma"
-              className="flex items-center bg-surface-container-low p-1 rounded-xl border border-outline-variant/30 h-10"
+              className="flex items-center bg-surface-container-low p-0.5 rounded-xl border border-outline-variant/30 h-8 sm:h-10 shrink-0"
             >
               <button
                 type="button"
                 onClick={() => setLang('es')}
-                className={`h-8 px-3 rounded-lg font-label-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+                className={`h-7 sm:h-8 px-2 sm:px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   lang === 'es'
                     ? 'bg-primary text-on-primary shadow-xs'
                     : 'text-on-surface-variant hover:text-on-surface'
@@ -338,7 +340,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setLang('en')}
-                className={`h-8 px-3 rounded-lg font-label-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
+                className={`h-7 sm:h-8 px-2 sm:px-3 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   lang === 'en'
                     ? 'bg-primary text-on-primary shadow-xs'
                     : 'text-on-surface-variant hover:text-on-surface'
@@ -348,23 +350,23 @@ export default function App() {
               </button>
             </div>
 
-            {/* User Profile Button (Visible only after logging in) or Login Indicator */}
+            {/* User Profile Button: Icon only on small mobile (<640px), full on desktop */}
             {isLoggedIn ? (
               <button
                 type="button"
                 onClick={() => handleNavigate('perfil')}
-                className="flex items-center gap-2 h-10 pl-2.5 pr-4 bg-primary-container text-on-primary rounded-xl font-label-md font-bold shadow-xs hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
+                className="w-8 h-8 sm:w-auto sm:h-10 sm:pl-2.5 sm:pr-3.5 bg-primary-container text-on-primary rounded-xl font-label-sm font-bold shadow-xs hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
               >
-                <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[17px]">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-white/20 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[15px]">
                     person
                   </span>
                 </div>
-                <span className="max-w-[120px] truncate">{userName || 'Mi Perfil'}</span>
+                <span className="hidden sm:inline max-w-[100px] truncate">{userName || 'Perfil'}</span>
               </button>
             ) : (
-              <div className="hidden sm:inline-flex items-center gap-2 h-10 px-4 bg-surface-container-low text-secondary rounded-xl font-label-md font-bold border border-outline-variant/30 whitespace-nowrap">
-                <span className="material-symbols-outlined text-[18px]">
+              <div className="hidden sm:inline-flex items-center gap-1.5 h-10 px-3 bg-surface-container-low text-secondary rounded-xl font-label-sm font-bold border border-outline-variant/30 whitespace-nowrap">
+                <span className="material-symbols-outlined text-[17px]">
                   login
                 </span>
                 <span>{translations[lang].welcome.loginBtn}</span>
@@ -376,9 +378,9 @@ export default function App() {
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Abrir menú de navegación"
-              className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors active:scale-95 cursor-pointer"
+              className="md:hidden w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors active:scale-95 cursor-pointer shrink-0"
             >
-              <span className="material-symbols-outlined text-[22px]">
+              <span className="material-symbols-outlined text-[20px]">
                 {menuOpen ? 'close' : 'menu'}
               </span>
             </button>
@@ -394,7 +396,7 @@ export default function App() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-80 h-full bg-surface-container-lowest p-6 shadow-2xl border-l border-outline-variant/30 flex flex-col justify-between overflow-y-auto"
+            className="w-72 sm:w-80 max-w-[85vw] h-full bg-surface-container-lowest p-5 sm:p-6 shadow-2xl border-l border-outline-variant/30 flex flex-col justify-between overflow-y-auto"
           >
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between pb-4 border-b border-outline-variant/20">
