@@ -108,15 +108,15 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
   return (
     <div className="flex flex-col w-full space-y-8 pb-12 animate-fade-in text-left">
       {/* 1. Header Banner tailored to Counselor / Psychologist */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-8 border border-outline-variant/30 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-8 border border-outline-variant/30 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest text-primary shadow-xs">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
             <span className="material-symbols-outlined text-[18px]">verified_user</span>
-            <span className="font-label-sm font-bold uppercase tracking-wider">
+            <span>
               {adminPerfil === 'Psicología' ? 'Gabinete de Psicología' : 'Gabinete de Orientación Escolar'}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-on-surface tracking-tight">
+          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
             Panel Profesional: <span className="text-primary">{adminName}</span>
           </h1>
           <p className="font-body-md text-on-surface-variant leading-relaxed">
@@ -125,7 +125,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
         </div>
 
         <div className="flex flex-col items-start md:items-end gap-2 shrink-0">
-          <div className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl font-label-sm font-bold shadow-xs border ${
+          <div className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-label-md font-bold shadow-2xs border ${
             adminPerfil === 'Psicología'
               ? 'bg-purple-100 text-purple-900 border-purple-200'
               : 'bg-teal-100 text-teal-900 border-teal-200'
@@ -140,7 +140,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
       </section>
 
       {/* 2. Primary Navigation Tabs for Administrative Staff */}
-      <div className="w-full flex items-center gap-2 overflow-x-auto pb-1 bg-surface-container-low p-1.5 rounded-2xl border border-outline-variant/30 shadow-2xs">
+      <div className="w-full flex items-center gap-1.5 overflow-x-auto pb-1 bg-surface-container-low p-1.5 rounded-2xl border border-outline-variant/30 shadow-2xs">
         {[
           { id: 'casos' as const, label: `Gestión de Casos (${newCount} nuevos)`, icon: 'inbox' },
           { id: 'censo' as const, label: `Directorio Escolar (${STUDENTS_CENSUS.length} estudiantes)`, icon: 'groups' },
@@ -153,9 +153,9 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 py-2.5 px-4 rounded-xl font-label-md font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`flex items-center gap-2 h-11 px-4 rounded-xl font-label-md font-bold transition-all cursor-pointer whitespace-nowrap active:scale-[0.98] ${
                 active
-                  ? 'bg-primary text-on-primary shadow-sm'
+                  ? 'bg-primary text-on-primary shadow-xs'
                   : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
               }`}
             >
@@ -173,42 +173,42 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
         <div className="space-y-6">
           {/* Metrics Summary Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 shadow-xs flex flex-col justify-between">
+            <div className="bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 shadow-2xs flex flex-col justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
                 Total Solicitudes
               </span>
-              <span className="text-3xl font-extrabold text-on-surface mt-2">{totalCount}</span>
+              <span className="font-headline-lg font-bold text-on-surface mt-2">{totalCount}</span>
             </div>
 
-            <div className="bg-surface-container-lowest p-5 rounded-2xl border border-primary/30 shadow-xs flex flex-col justify-between bg-primary-fixed/10">
+            <div className="bg-surface-container-lowest p-5 rounded-2xl border border-primary/30 shadow-2xs flex flex-col justify-between bg-primary-fixed/10">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-primary">
                   Nuevas (Por revisar)
                 </span>
-                <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-xs font-bold text-primary font-mono">EN ESPERA</span>
               </div>
-              <span className="text-3xl font-extrabold text-primary mt-2">{newCount}</span>
+              <span className="font-headline-lg font-bold text-primary mt-2">{newCount}</span>
             </div>
 
-            <div className="bg-surface-container-lowest p-5 rounded-2xl border border-secondary/30 shadow-xs flex flex-col justify-between">
+            <div className="bg-surface-container-lowest p-5 rounded-2xl border border-secondary/30 shadow-2xs flex flex-col justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-secondary">
                 En Revisión / Cita
               </span>
-              <span className="text-3xl font-extrabold text-secondary mt-2">
+              <span className="font-headline-lg font-bold text-secondary mt-2">
                 {inReviewCount + scheduledCount}
               </span>
             </div>
 
-            <div className="bg-surface-container-lowest p-5 rounded-2xl border border-teal-500/30 shadow-xs flex flex-col justify-between">
+            <div className="bg-surface-container-lowest p-5 rounded-2xl border border-teal-500/30 shadow-2xs flex flex-col justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-teal-800">
                 Resueltas & Seguras
               </span>
-              <span className="text-3xl font-extrabold text-teal-700 mt-2">{resolvedCount}</span>
+              <span className="font-headline-lg font-bold text-teal-700 mt-2">{resolvedCount}</span>
             </div>
           </div>
 
           {/* Filters & Search Toolbar */}
-          <div className="bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/30 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="bg-surface-container-lowest p-3.5 rounded-2xl border border-outline-variant/30 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             {/* Status Filter Buttons */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
               {[
@@ -222,9 +222,9 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                   key={st.id}
                   type="button"
                   onClick={() => setStatusFilter(st.id)}
-                  className={`px-3 py-1.5 rounded-xl font-label-sm font-bold text-xs cursor-pointer transition-colors ${
+                  className={`h-9 px-3.5 rounded-xl font-label-sm font-bold text-xs cursor-pointer transition-all active:scale-[0.98] whitespace-nowrap flex items-center justify-center ${
                     statusFilter === st.id
-                      ? 'bg-primary text-on-primary'
+                      ? 'bg-primary text-on-primary shadow-2xs'
                       : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
                   }`}
                 >
@@ -397,7 +397,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                     <button
                       type="button"
                       onClick={() => handleOpenActionModal(c)}
-                      className="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-label-md font-bold flex items-center gap-2 cursor-pointer shadow-xs hover:bg-primary/95 transition-all"
+                      className="h-10 px-5 rounded-xl bg-primary text-on-primary font-label-md font-bold flex items-center gap-2 cursor-pointer shadow-xs hover:bg-primary/95 active:scale-[0.98] transition-all whitespace-nowrap"
                     >
                       <span className="material-symbols-outlined text-[18px]">edit_note</span>
                       <span>Atender Caso & Responder</span>
@@ -710,13 +710,13 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setSelectedCase(null)}
-                  className="px-4 py-2 rounded-xl bg-surface-container text-on-surface font-label-md font-semibold cursor-pointer"
+                  className="h-10 px-5 rounded-xl bg-surface-container text-on-surface font-label-md font-semibold cursor-pointer hover:bg-surface-container-high active:scale-[0.98] transition-all whitespace-nowrap"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-primary text-on-primary font-label-md font-bold cursor-pointer shadow-xs hover:bg-primary/95 transition-all"
+                  className="h-10 px-5 rounded-xl bg-primary text-on-primary font-label-md font-bold cursor-pointer shadow-xs hover:bg-primary/95 active:scale-[0.98] transition-all whitespace-nowrap"
                 >
                   Guardar y Notificar
                 </button>

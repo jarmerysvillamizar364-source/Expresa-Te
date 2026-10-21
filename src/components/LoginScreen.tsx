@@ -243,11 +243,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
             Expresa Te
           </h1>
-          <p className="font-body-md text-on-surface-variant mt-1 max-w-md">
+          <p className="font-body-md text-on-surface-variant mt-1.5 max-w-md">
             {t.subtitle}
           </p>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low text-primary font-label-sm font-semibold border border-outline-variant/30 mt-3 shadow-2xs">
-            <span className="material-symbols-outlined text-[16px] text-tertiary">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-tertiary mt-2">
+            <span className="material-symbols-outlined text-[16px]">
               lock
             </span>
             <span>{t.badge}</span>
@@ -255,16 +255,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         </div>
 
         {/* Tab Switcher: Iniciar Sesión / Crear Cuenta */}
-        <div className="w-full grid grid-cols-2 p-1.5 bg-surface-container-low rounded-2xl mb-6 border border-outline-variant/30">
+        <div className="w-full grid grid-cols-2 p-1 bg-surface-container-low rounded-2xl mb-6 border border-outline-variant/30">
           <button
             type="button"
             onClick={() => {
               setAuthMode('login');
               setLoginError(null);
             }}
-            className={`py-2.5 rounded-xl font-label-lg font-bold transition-all cursor-pointer ${
+            className={`h-11 rounded-xl font-label-lg font-bold transition-all cursor-pointer flex items-center justify-center whitespace-nowrap ${
               authMode === 'login'
-                ? 'bg-primary text-on-primary shadow-sm'
+                ? 'bg-primary text-on-primary shadow-xs'
                 : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >
@@ -276,9 +276,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               setAuthMode('register');
               setRegError(null);
             }}
-            className={`py-2.5 rounded-xl font-label-lg font-bold transition-all cursor-pointer ${
+            className={`h-11 rounded-xl font-label-lg font-bold transition-all cursor-pointer flex items-center justify-center whitespace-nowrap ${
               authMode === 'register'
-                ? 'bg-primary text-on-primary shadow-sm'
+                ? 'bg-primary text-on-primary shadow-xs'
                 : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >
@@ -396,7 +396,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             <button
               type="submit"
               disabled={isSubmittingLogin}
-              className="w-full h-12 rounded-xl bg-primary text-on-primary font-title-md font-bold flex items-center justify-center gap-2 shadow-md hover:bg-primary/95 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50 mt-1"
+              className="w-full h-12 rounded-xl bg-primary text-on-primary font-label-lg font-bold flex items-center justify-center gap-2 shadow-sm hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50 mt-1 whitespace-nowrap"
             >
               <span>{isSubmittingLogin ? 'Verificando...' : t.submitBtn}</span>
               <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
@@ -549,7 +549,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 <button
                   type="button"
                   onClick={() => handleVerifyDocument()}
-                  className="px-4 h-12 rounded-xl bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface font-label-md font-bold transition-all shrink-0 cursor-pointer border border-outline-variant/30 active:scale-95 flex items-center gap-1.5"
+                  className="px-5 h-12 rounded-xl bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface font-label-md font-bold transition-all shrink-0 cursor-pointer border border-outline-variant/30 active:scale-[0.98] flex items-center gap-2 whitespace-nowrap"
                 >
                   <span className="material-symbols-outlined text-[18px]">search</span>
                   <span>{t.docSearchBtn}</span>
@@ -576,7 +576,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                       setAuthMode('login');
                       setIdentifier(regDoc);
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-secondary text-on-secondary font-bold text-xs shrink-0 cursor-pointer"
+                    className="h-8 px-3 rounded-lg bg-secondary text-on-secondary font-bold text-xs shrink-0 cursor-pointer whitespace-nowrap active:scale-[0.98]"
                   >
                     Iniciar Sesión
                   </button>
@@ -745,7 +745,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmittingReg}
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-title-md font-bold flex items-center justify-center gap-2 shadow-md hover:opacity-95 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50 mt-2"
+                  className="w-full h-12 rounded-xl bg-primary text-on-primary font-label-lg font-bold flex items-center justify-center gap-2 shadow-sm hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50 mt-2 whitespace-nowrap"
                 >
                   <span className="material-symbols-outlined text-[20px]">how_to_reg</span>
                   <span>{isSubmittingReg ? 'Creando cuenta...' : t.registerBtn}</span>
@@ -897,7 +897,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                       <button
                         type="button"
                         onClick={() => handleSelectFromCensus(st)}
-                        className="w-full sm:w-auto px-3 py-2 sm:py-1.5 rounded-lg bg-primary text-on-primary font-label-sm font-semibold hover:bg-primary/90 transition-all cursor-pointer shrink-0 shadow-2xs text-center"
+                        className="w-full sm:w-auto h-9 px-4 rounded-xl bg-primary text-on-primary font-label-sm font-semibold hover:bg-primary/95 active:scale-[0.98] transition-all cursor-pointer shrink-0 shadow-2xs flex items-center justify-center whitespace-nowrap"
                       >
                         Usar documento
                       </button>
@@ -939,7 +939,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                       <button
                         type="button"
                         onClick={() => handleSelectFromCensus(adm)}
-                        className="w-full sm:w-auto px-3 py-2 sm:py-1.5 rounded-lg bg-secondary text-on-secondary font-label-sm font-semibold hover:bg-secondary/90 transition-all cursor-pointer shrink-0 shadow-2xs text-center"
+                        className="w-full sm:w-auto h-9 px-4 rounded-xl bg-secondary text-on-secondary font-label-sm font-semibold hover:bg-secondary/95 active:scale-[0.98] transition-all cursor-pointer shrink-0 shadow-2xs flex items-center justify-center whitespace-nowrap"
                       >
                         Usar documento
                       </button>
@@ -953,7 +953,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               <button
                 type="button"
                 onClick={() => setShowCensusModal(false)}
-                className="px-4 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-md font-semibold cursor-pointer"
+                className="h-10 px-5 rounded-xl bg-surface-container-high text-on-surface font-label-md font-semibold cursor-pointer hover:bg-surface-container active:scale-[0.98] transition-all whitespace-nowrap"
               >
                 Cerrar
               </button>

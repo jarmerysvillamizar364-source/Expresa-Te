@@ -125,26 +125,26 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
   return (
     <div className="flex flex-col w-full space-y-10 pb-12">
       {/* 1. Header Banner */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-10 border border-outline-variant/30 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-10 border border-outline-variant/30 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-3 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest text-primary shadow-xs">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
             <span className="material-symbols-outlined text-[16px]">
               auto_stories
             </span>
-            <span className="font-label-sm font-bold uppercase tracking-wider">
+            <span>
               {t.badge}
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-on-surface tracking-tight">
+          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
             {t.title}
           </h1>
-          <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+          <p className="font-body-md text-on-surface-variant leading-relaxed">
             {t.subtitle}
           </p>
         </div>
 
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-surface-container-lowest text-primary font-label-md font-bold shadow-xs border border-outline-variant/30">
-          <span className="material-symbols-outlined text-[20px] text-tertiary">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-surface-container-lowest text-primary font-label-md font-bold shadow-2xs border border-outline-variant/30">
+          <span className="material-symbols-outlined text-[18px] text-tertiary">
             verified
           </span>
           <span>{lang === 'es' ? 'Acceso libre y confidencial' : 'Free & confidential'}</span>
@@ -152,7 +152,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
       </section>
 
       {/* 2. Web Search & Category Filter Bar */}
-      <section className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-surface-container-lowest p-4 sm:p-5 rounded-3xl border border-outline-variant/30 shadow-sm">
+      <section className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-surface-container-lowest p-3.5 sm:p-4 rounded-3xl border border-outline-variant/30 shadow-2xs">
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
           <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px] pointer-events-none">
@@ -163,7 +163,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t.searchPlaceholder}
-            className="w-full h-11 pl-11 pr-4 bg-surface-container-low text-on-surface placeholder:text-outline-variant font-body-md rounded-2xl border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all"
+            className="w-full h-11 pl-11 pr-4 bg-surface-container-low text-on-surface placeholder:text-outline-variant font-body-md rounded-xl border border-outline-variant/30 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all"
           />
         </div>
 
@@ -176,7 +176,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveCategory(cat.id)}
-                className={`flex items-center gap-1.5 h-10 px-4 rounded-2xl font-label-md font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 h-10 px-4 rounded-xl font-label-md font-bold whitespace-nowrap transition-all cursor-pointer active:scale-[0.98] ${
                   active
                     ? 'bg-primary text-on-primary shadow-xs'
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
@@ -271,7 +271,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
                     details: item.details,
                   })
                 }
-                className="h-10 px-5 rounded-2xl font-label-md font-bold bg-primary text-on-primary hover:bg-primary/90 shadow-sm active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+                className="h-10 px-4 rounded-xl font-label-md font-bold bg-primary text-on-primary hover:bg-primary/95 shadow-xs active:scale-[0.98] transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
               >
                 <span>{t.viewResource}</span>
                 <span className="material-symbols-outlined text-[16px]">
@@ -284,15 +284,15 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
       </section>
 
       {/* 4. Bottom Support Card (Orientation Counselor Assistance) */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-high rounded-3xl p-6 sm:p-10 border border-outline-variant/30 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+      <section className="relative overflow-hidden bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-high rounded-3xl p-6 sm:p-10 border border-outline-variant/30 shadow-2xs flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-secondary text-on-secondary flex items-center justify-center shrink-0 shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-secondary text-on-secondary flex items-center justify-center shrink-0 shadow-xs">
             <span className="material-symbols-outlined text-[28px]">
               chat_bubble_outline
             </span>
           </div>
           <div className="space-y-1.5">
-            <h3 className="text-xl sm:text-2xl font-bold text-on-surface">
+            <h3 className="font-headline-sm font-bold text-on-surface">
               {t.notFoundTitle}
             </h3>
             <p className="font-body-md text-on-surface-variant max-w-xl leading-relaxed">
@@ -304,7 +304,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
         <button
           type="button"
           onClick={() => onNavigate('orientacion')}
-          className="h-12 px-6 rounded-2xl bg-secondary text-on-secondary font-label-lg font-bold shadow-md shadow-secondary/25 hover:bg-secondary/90 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+          className="h-12 px-6 rounded-xl bg-secondary text-on-secondary font-label-lg font-bold shadow-xs hover:bg-secondary/95 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 whitespace-nowrap"
         >
           <span className="material-symbols-outlined text-[20px]">send</span>
           <span>{t.talkCounselor}</span>
@@ -500,18 +500,18 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
   return (
     <div className="flex flex-col w-full space-y-10 pb-12">
       {/* 1. Header Banner with Interactive 4-7-8 Breathing Orb */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-10 border border-outline-variant/30 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-10 border border-outline-variant/30 shadow-2xs grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-7 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest text-primary shadow-xs">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
             <span className="material-symbols-outlined text-[16px]">eco</span>
-            <span className="font-label-sm font-bold uppercase tracking-wider">
+            <span>
               {t.badge}
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-on-surface tracking-tight">
+          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
             {t.title}
           </h1>
-          <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed max-w-xl">
+          <p className="font-body-md text-on-surface-variant leading-relaxed max-w-xl">
             {t.subtitle}
           </p>
 
@@ -526,7 +526,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
                     : 'Pausa completada'
                 );
               }}
-              className="h-12 px-6 rounded-2xl bg-primary text-on-primary font-label-lg font-bold shadow-md shadow-primary/25 hover:opacity-95 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+              className="h-12 px-6 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
             >
               <span className="material-symbols-outlined text-[20px]">
                 {breathingActive ? 'pause' : 'play_arrow'}
@@ -537,7 +537,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
         </div>
 
         {/* Breathing Visual Orb */}
-        <div className="lg:col-span-5 bg-surface-container-lowest rounded-3xl p-6 sm:p-8 border border-outline-variant/30 shadow-md flex flex-col items-center text-center">
+        <div className="lg:col-span-5 bg-surface-container-lowest rounded-3xl p-6 sm:p-8 border border-outline-variant/30 shadow-2xs flex flex-col items-center text-center">
           <span className="font-title-md font-bold text-on-surface mb-1">
             {t.breatheTitle}
           </span>
@@ -556,7 +556,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
               }`}
             ></div>
             <div
-              className={`w-28 h-28 rounded-full bg-gradient-to-tr from-primary to-primary-container text-on-primary flex flex-col items-center justify-center shadow-lg transition-transform duration-1000 ${
+              className={`w-28 h-28 rounded-full bg-gradient-to-tr from-primary to-primary-container text-on-primary flex flex-col items-center justify-center shadow-md transition-transform duration-1000 ${
                 breathingActive && breathingPhase === 'inhale'
                   ? 'scale-115'
                   : breathingActive && breathingPhase === 'hold'
@@ -584,7 +584,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
       </section>
 
       {/* 2. Category Filter Bar */}
-      <section className="flex items-center gap-2 overflow-x-auto pb-1 bg-surface-container-lowest p-3 rounded-2xl border border-outline-variant/30 shadow-xs">
+      <section className="flex items-center gap-2 overflow-x-auto pb-1 bg-surface-container-lowest p-2.5 rounded-2xl border border-outline-variant/30 shadow-2xs">
         {[
           { id: 'all', label: t.filterAll, icon: 'apps' },
           { id: 'mente', label: t.filterMind, icon: 'self_improvement' },
@@ -597,7 +597,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
               key={tab.id}
               type="button"
               onClick={() => setActiveFilter(tab.id)}
-              className={`flex items-center gap-2 h-10 px-4 rounded-xl font-label-md font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 h-10 px-4 rounded-xl font-label-md font-bold transition-all cursor-pointer whitespace-nowrap active:scale-[0.98] ${
                 active
                   ? 'bg-primary text-on-primary shadow-xs'
                   : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
@@ -617,7 +617,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
         {filtered.map((item) => (
           <article
             key={item.id}
-            className="group bg-surface-container-lowest rounded-3xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-lg hover:border-primary/40 transition-all flex flex-col justify-between"
+            className="group bg-surface-container-lowest rounded-3xl p-6 border border-outline-variant/30 shadow-2xs hover:shadow-md hover:border-primary/40 transition-all flex flex-col justify-between"
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -628,13 +628,13 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
                     {item.icon}
                   </span>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-surface-container-low font-label-sm font-bold text-on-surface-variant">
+                <span className="text-xs font-bold text-primary">
                   {item.tag}
                 </span>
               </div>
 
               <div>
-                <h2 className="text-xl font-bold text-on-surface group-hover:text-primary transition-colors">
+                <h2 className="font-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">
                   {item.title}
                 </h2>
                 <p className="font-body-sm text-on-surface-variant leading-relaxed mt-2">
@@ -652,7 +652,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
                     detail: item.detail,
                   })
                 }
-                className="w-full h-11 rounded-2xl bg-surface-container-low hover:bg-surface-container text-primary font-label-md font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="w-full h-10 rounded-xl bg-surface-container-low hover:bg-surface-container text-primary font-label-md font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-[0.98] whitespace-nowrap"
               >
                 <span>{t.viewActivity}</span>
                 <span className="material-symbols-outlined text-[18px]">
@@ -749,11 +749,11 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
               <span className="font-medium">{t.privateNote}</span>
             </div>
 
-            <div className="flex gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setModalActivity(null)}
-                className="flex-1 h-12 rounded-2xl bg-surface-container text-on-surface font-label-lg font-bold hover:bg-surface-container-high cursor-pointer"
+                className="flex-1 h-11 px-5 rounded-xl bg-surface-container text-on-surface font-label-lg font-bold hover:bg-surface-container-high active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 {t.modalBack}
               </button>
@@ -763,7 +763,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
                   onShowToast(`${t.beginActivity}: ${modalActivity.title}`);
                   setModalActivity(null);
                 }}
-                className="flex-1 h-12 rounded-2xl bg-primary text-on-primary font-label-lg font-bold shadow-md shadow-primary/20 hover:opacity-95 cursor-pointer flex items-center justify-center gap-2"
+                className="flex-1 h-11 px-5 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-md shadow-primary/20 hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap"
               >
                 <span className="material-symbols-outlined text-[20px]">
                   play_arrow

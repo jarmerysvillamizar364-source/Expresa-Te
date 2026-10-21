@@ -224,7 +224,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <button
               type="button"
               onClick={() => setIsEditing(true)}
-              className="inline-flex items-center gap-1 font-label-md text-primary font-semibold bg-surface-container-low px-3 py-1.5 rounded-full hover:bg-surface-container transition-colors active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg font-label-md text-primary font-semibold bg-surface-container-low hover:bg-surface-container transition-colors active:scale-95 cursor-pointer whitespace-nowrap"
             >
               <span className="material-symbols-outlined text-[16px]">
                 edit
@@ -235,7 +235,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <button
               type="button"
               onClick={handleSaveEdit}
-              className="inline-flex items-center gap-1 font-label-md text-on-primary font-semibold bg-primary px-3 py-1.5 rounded-full hover:opacity-90 transition-colors active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg font-label-md text-on-primary font-semibold bg-primary hover:opacity-90 transition-colors active:scale-95 cursor-pointer whitespace-nowrap shadow-xs"
             >
               <span className="material-symbols-outlined text-[16px]">
                 check
@@ -262,14 +262,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="w-full h-9 px-2.5 rounded-lg bg-surface-container-low text-on-surface font-title-md outline-none ring-2 ring-primary/50"
+                className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface font-title-md outline-none ring-2 ring-primary/50"
               />
             ) : (
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className="font-title-md text-on-surface font-semibold truncate max-w-[200px] sm:max-w-none">
                   {userName || userEmail.split('@')[0]}
                 </span>
-                <span className={`font-label-sm px-2 py-0.5 rounded-full font-bold ${
+                <span className={`font-label-sm px-2.5 py-0.5 rounded-md font-bold ${
                   isStaff
                     ? userPerfil === 'Psicología'
                       ? 'bg-purple-100 text-purple-900 border border-purple-200'
@@ -304,7 +304,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     type="text"
                     value={editGrade}
                     onChange={(e) => setEditGrade(e.target.value)}
-                    className="w-full h-8 px-2 mt-0.5 rounded bg-surface-container-lowest text-on-surface font-body-sm outline-none ring-1 ring-primary"
+                    className="w-full h-9 px-2.5 mt-0.5 rounded-md bg-surface-container-lowest text-on-surface font-body-sm outline-none ring-1 ring-primary"
                   />
                 ) : (
                   <span className="font-body-sm text-on-surface font-medium truncate">
@@ -313,7 +313,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 )}
               </div>
             </div>
-            <span className="font-label-sm text-tertiary bg-surface-container-lowest px-2.5 py-1 rounded-full font-medium shrink-0">
+            <span className="font-label-sm text-tertiary bg-surface-container-lowest px-2.5 py-1 rounded-md font-medium shrink-0">
               {isStaff ? (lang === 'es' ? 'Activo en Censo' : 'Census Active') : t.activeBadge}
             </span>
           </div>
@@ -361,7 +361,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </div>
             <div className="flex items-center gap-1.5 shrink-0">
               <span
-                className={`font-label-sm px-2 py-0.5 rounded-full font-medium ${
+                className={`font-label-sm px-2.5 py-0.5 rounded-md font-semibold ${
                   isVerified
                     ? 'text-tertiary bg-tertiary/10'
                     : 'text-amber-600 bg-amber-500/10'
@@ -584,21 +584,21 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         <button
           type="button"
           onClick={() => setConfirmModal('logout')}
-          className="w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-surface-container-low text-error hover:bg-error-container/40 active:scale-[0.98] transition-all font-label-lg font-semibold cursor-pointer"
+          className="w-full h-11 px-5 flex items-center justify-center gap-2 rounded-xl bg-surface-container-low text-error hover:bg-error-container/40 active:scale-[0.98] transition-all font-label-lg font-bold cursor-pointer whitespace-nowrap"
         >
           <span className="material-symbols-outlined text-[20px]">logout</span>
-          {t.logoutBtn}
+          <span>{t.logoutBtn}</span>
         </button>
 
         <button
           type="button"
           onClick={() => setConfirmModal('delete')}
-          className="w-full h-12 flex items-center justify-center gap-2 rounded-xl border border-error/40 bg-error-container/20 text-error hover:bg-error-container/50 active:scale-[0.98] transition-all font-label-lg font-semibold cursor-pointer"
+          className="w-full h-11 px-5 flex items-center justify-center gap-2 rounded-xl border border-error/40 bg-error-container/20 text-error hover:bg-error-container/50 active:scale-[0.98] transition-all font-label-lg font-bold cursor-pointer whitespace-nowrap"
         >
           <span className="material-symbols-outlined text-[20px]">
             delete_forever
           </span>
-          {t.deleteAccountBtn}
+          <span>{t.deleteAccountBtn}</span>
         </button>
 
         <p className="text-center font-label-sm text-outline pt-1">
@@ -633,11 +633,11 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 ? t.logoutConfirmDesc
                 : t.deleteConfirmDesc}
             </p>
-            <div className="flex gap-2.5 pt-2">
+            <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
               <button
                 type="button"
                 onClick={() => setConfirmModal('none')}
-                className="flex-1 h-11 rounded-xl bg-surface-container text-on-surface font-label-lg font-semibold cursor-pointer"
+                className="flex-1 h-11 px-5 rounded-xl bg-surface-container text-on-surface font-label-lg font-bold hover:bg-surface-container-high active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 {t.cancelBtn}
               </button>
@@ -652,7 +652,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     onDeleteAccount();
                   }
                 }}
-                className="flex-1 h-11 rounded-xl bg-error text-on-error font-label-lg font-semibold shadow-sm cursor-pointer"
+                className="flex-1 h-11 px-5 rounded-xl bg-error text-on-error font-label-lg font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 {confirmModal === 'logout'
                   ? t.confirmLogoutBtn
@@ -751,7 +751,7 @@ export const AccountDeletionReceiptScreen: React.FC<DeleteReceiptProps> = ({
 
       {/* Header */}
       <div className="space-y-space-xs px-space-sm">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low text-primary rounded-full font-label-sm font-semibold tracking-wide uppercase">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low text-primary rounded-md font-label-sm font-semibold tracking-wide uppercase">
           <span className="material-symbols-outlined text-[14px]">
             verified_user
           </span>
@@ -776,7 +776,7 @@ export const AccountDeletionReceiptScreen: React.FC<DeleteReceiptProps> = ({
               #BAJA-9042-ET
             </span>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1 bg-error-container text-on-error-container rounded-full">
+          <div className="flex items-center gap-1.5 px-3 py-1 bg-error-container text-on-error-container rounded-md">
             <span className="w-2 h-2 rounded-full bg-error"></span>
             <span className="font-label-sm font-semibold">
               {t.statusDeleted}
@@ -861,7 +861,7 @@ export const AccountDeletionReceiptScreen: React.FC<DeleteReceiptProps> = ({
         <button
           type="button"
           onClick={handleDownloadReceipt}
-          className="w-full h-12 rounded-lg bg-gradient-to-r from-primary to-primary-container text-on-primary font-label-lg font-semibold shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+          className="w-full h-11 px-5 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-label-lg font-bold shadow-md flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap"
         >
           <span className="material-symbols-outlined text-[20px]">
             download
@@ -872,7 +872,7 @@ export const AccountDeletionReceiptScreen: React.FC<DeleteReceiptProps> = ({
         <button
           type="button"
           onClick={() => onNavigate('login')}
-          className="w-full h-12 rounded-lg bg-secondary-fixed text-on-secondary-fixed font-label-lg font-semibold hover:opacity-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full h-11 px-5 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-label-lg font-bold hover:opacity-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
         >
           <span className="material-symbols-outlined text-[18px]">login</span>
           <span>{t.testLoginUnregisteredBtn}</span>
@@ -881,7 +881,7 @@ export const AccountDeletionReceiptScreen: React.FC<DeleteReceiptProps> = ({
         <button
           type="button"
           onClick={onRestoreDemoAccount}
-          className="w-full h-11 rounded-lg bg-surface-container-low text-primary font-label-md font-semibold hover:bg-surface-container transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+          className="w-full h-11 px-5 rounded-xl bg-surface-container-low text-primary font-label-md font-semibold hover:bg-surface-container transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
         >
           <span className="material-symbols-outlined text-[18px]">
             restore
@@ -892,7 +892,7 @@ export const AccountDeletionReceiptScreen: React.FC<DeleteReceiptProps> = ({
         <button
           type="button"
           onClick={() => onNavigate('inicio')}
-          className="w-full h-11 rounded-lg text-on-surface-variant font-label-md hover:text-on-surface transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-10 px-4 rounded-xl text-on-surface-variant font-label-md hover:text-on-surface transition-all flex items-center justify-center cursor-pointer whitespace-nowrap"
         >
           {t.backHomeBtn}
         </button>

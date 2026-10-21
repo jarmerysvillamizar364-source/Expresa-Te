@@ -94,15 +94,15 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
   return (
     <div className="flex flex-col w-full space-y-8 pb-12 animate-fade-in">
       {/* Top Banner */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-8 border border-outline-variant/30 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-8 border border-outline-variant/30 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest text-primary shadow-xs">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
             <span className="material-symbols-outlined text-[18px]">support_agent</span>
-            <span className="font-label-sm font-bold uppercase tracking-wider">
+            <span>
               {lang === 'es' ? 'Atención y Escucha Confidencial' : 'Confidential Support'}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-on-surface tracking-tight">
+          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
             {lang === 'es' ? 'Solicitar Orientación y Acompañamiento' : 'Request Guidance & Support'}
           </h1>
           <p className="font-body-md text-on-surface-variant leading-relaxed">
@@ -113,8 +113,8 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
         </div>
 
         <div className="flex flex-col items-start md:items-end gap-2 shrink-0">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-surface-container-lowest text-primary shadow-xs border border-outline-variant/30 font-label-sm font-bold">
-            <span className="material-symbols-outlined text-[18px]">verified_user</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-surface-container-lowest text-primary shadow-2xs border border-outline-variant/30 font-label-md font-bold">
+            <span className="material-symbols-outlined text-[18px] text-tertiary">verified_user</span>
             <span>100% Protegido y Seguro</span>
           </div>
           <span className="text-xs text-on-surface-variant">
@@ -125,13 +125,13 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
 
       {/* Mode Tabs: Nueva Solicitud vs Mis Solicitudes */}
       <div className="flex justify-center w-full">
-        <div className="inline-flex items-center gap-2 p-1.5 bg-surface-container-low rounded-2xl border border-outline-variant/30 max-w-md w-full">
+        <div className="inline-flex items-center gap-1 p-1 bg-surface-container-low rounded-2xl border border-outline-variant/30 max-w-md w-full h-12">
           <button
             type="button"
             onClick={() => setActiveTab('nueva')}
-            className={`flex-1 py-2.5 px-4 rounded-xl font-label-md font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+            className={`flex-1 h-10 px-4 rounded-xl font-label-md font-bold transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap active:scale-[0.98] ${
               activeTab === 'nueva'
-                ? 'bg-primary text-on-primary shadow-sm'
+                ? 'bg-primary text-on-primary shadow-xs'
                 : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >
@@ -145,9 +145,9 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
               loadMyRequests();
               setActiveTab('mis_solicitudes');
             }}
-            className={`flex-1 py-2.5 px-4 rounded-xl font-label-md font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+            className={`flex-1 h-10 px-4 rounded-xl font-label-md font-bold transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap active:scale-[0.98] ${
               activeTab === 'mis_solicitudes'
-                ? 'bg-primary text-on-primary shadow-sm'
+                ? 'bg-primary text-on-primary shadow-xs'
                 : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >
@@ -342,7 +342,7 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 rounded-xl bg-primary text-on-primary font-title-md font-bold flex items-center justify-center gap-2 shadow-md hover:bg-primary/95 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50"
+                className="w-full h-12 rounded-xl bg-primary text-on-primary font-label-lg font-bold flex items-center justify-center gap-2 shadow-sm hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50 whitespace-nowrap"
               >
                 <span className="material-symbols-outlined text-[20px]">send</span>
                 <span>{isSubmitting ? 'Enviando confidencialmente...' : 'Enviar Solicitud Confidencial'}</span>
@@ -353,7 +353,7 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
           {/* Right Column: Confidentiality & Emergency Hotlines (5 Cols) */}
           <div className="lg:col-span-5 space-y-5 text-left">
             {/* Trust Guarantee */}
-            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-outline-variant/30 shadow-xs space-y-4">
+            <div className="p-6 rounded-3xl bg-surface-container-lowest border border-outline-variant/30 shadow-2xs space-y-4">
               <div className="flex items-center gap-2.5 text-primary font-bold">
                 <span className="material-symbols-outlined text-[22px]">shield</span>
                 <span className="font-title-md">Garantía de Confidencialidad</span>
@@ -378,7 +378,7 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
             </div>
 
             {/* Immediate Help Hotlines */}
-            <div className="p-6 rounded-3xl bg-error-container/30 border border-error/20 shadow-xs space-y-3">
+            <div className="p-6 rounded-3xl bg-error-container/30 border border-error/20 shadow-2xs space-y-3">
               <div className="flex items-center gap-2 text-error font-bold">
                 <span className="material-symbols-outlined text-[20px]">emergency</span>
                 <span className="font-title-md">¿Necesitas ayuda urgente e inmediata?</span>
@@ -390,7 +390,7 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
                 <button
                   type="button"
                   onClick={() => onShowToast('Línea 106 de atención emocional activa 24/7')}
-                  className="w-full py-2.5 px-4 rounded-xl bg-error text-on-error font-label-md font-bold flex items-center justify-between cursor-pointer shadow-xs hover:bg-error/90 transition-all"
+                  className="w-full h-11 px-4 rounded-xl bg-error text-on-error font-label-md font-bold flex items-center justify-between cursor-pointer shadow-xs hover:bg-error/90 active:scale-[0.98] transition-all whitespace-nowrap"
                 >
                   <span className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px]">phone</span>
@@ -402,7 +402,7 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
                 <button
                   type="button"
                   onClick={() => onShowToast('Línea 141 de Protección ICBF')}
-                  className="w-full py-2.5 px-4 rounded-xl bg-surface-container-lowest text-on-surface font-label-md font-bold flex items-center justify-between cursor-pointer border border-outline-variant/30 hover:bg-surface-container-low transition-all"
+                  className="w-full h-11 px-4 rounded-xl bg-surface-container-lowest text-on-surface font-label-md font-bold flex items-center justify-between cursor-pointer border border-outline-variant/30 hover:bg-surface-container-low active:scale-[0.98] transition-all whitespace-nowrap"
                 >
                   <span className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-[18px] text-tertiary">phone</span>

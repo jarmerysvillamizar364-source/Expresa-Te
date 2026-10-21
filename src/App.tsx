@@ -216,7 +216,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => handleNavigate(isLoggedIn ? 'inicio' : 'login')}
-            className="flex items-center gap-3 text-left cursor-pointer shrink-0 group"
+            className="flex items-center gap-3 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
           >
             <div className="w-11 h-11 rounded-2xl bg-white shadow-xs p-1 flex items-center justify-center border border-outline-variant/30 group-hover:scale-105 transition-transform">
               <img
@@ -230,8 +230,8 @@ export default function App() {
                 <span className="font-headline-sm font-bold text-primary tracking-tight leading-none">
                   Expresa Te
                 </span>
-                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed/30 text-primary font-label-sm font-semibold border border-primary/20">
-                  <span className="material-symbols-outlined text-[13px] text-tertiary">
+                <span className="hidden sm:inline-flex items-center gap-1 text-tertiary font-label-sm font-semibold">
+                  <span className="material-symbols-outlined text-[15px]">
                     shield_lock
                   </span>
                   <span>100% Seguro</span>
@@ -246,7 +246,7 @@ export default function App() {
           {/* Center Navigation Zone */}
           {isLoggedIn ? (
             /* Desktop Web Navigation Links (Rendered ONLY after user logs in) */
-            <nav className="hidden md:flex items-center gap-1 lg:gap-1.5" aria-label="Navegación principal">
+            <nav className="hidden md:flex items-center gap-1.5" aria-label="Navegación principal">
               {navItems.map((item) => {
                 const active = isNavActive(item.id);
                 return (
@@ -254,13 +254,13 @@ export default function App() {
                     key={item.id}
                     type="button"
                     onClick={() => handleNavigate(item.id)}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-label-md font-semibold transition-all cursor-pointer ${
+                    className={`flex items-center gap-2 h-10 px-4 rounded-xl font-label-md transition-all cursor-pointer whitespace-nowrap active:scale-[0.98] ${
                       active
-                        ? 'bg-primary-fixed/40 text-primary shadow-xs font-bold'
-                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
+                        ? 'bg-primary-fixed/40 text-primary shadow-2xs font-bold'
+                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-semibold'
                     }`}
                   >
-                    <span className="material-symbols-outlined text-[18px]">
+                    <span className="material-symbols-outlined text-[19px]">
                       {item.icon}
                     </span>
                     <span>{item.label}</span>
@@ -270,8 +270,8 @@ export default function App() {
             </nav>
           ) : (
             /* Badge shown before user logs in (no internal platform content is exposed) */
-            <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-low text-primary font-label-sm font-semibold border border-outline-variant/30 shadow-xs">
-              <span className="material-symbols-outlined text-[16px] text-tertiary">
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-low text-primary font-label-md font-semibold border border-outline-variant/30 shadow-2xs">
+              <span className="material-symbols-outlined text-[18px] text-tertiary">
                 shield_lock
               </span>
               <span>{lang === 'es' ? 'Portal de Acceso Institucional' : 'Institutional Access Portal'}</span>
@@ -279,7 +279,7 @@ export default function App() {
           )}
 
           {/* Controls Zone: Emergency / Crisis Hotline + Dark/Light Mode + ES/EN Language + Account */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
             {/* Quick Emergency / Crisis Button (Publicly accessible support) */}
             <button
               type="button"
@@ -291,9 +291,9 @@ export default function App() {
                 );
               }}
               title={lang === 'es' ? 'Línea de Crisis y Ayuda Inmediata' : 'Crisis & Immediate Help Line'}
-              className="hidden sm:flex items-center gap-1.5 h-9 px-3 rounded-full bg-error-container/40 text-error hover:bg-error-container/70 border border-error/30 font-label-sm font-bold transition-all active:scale-95 cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 h-10 px-4 rounded-xl bg-error-container/40 text-error hover:bg-error-container/70 border border-error/30 font-label-md font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap"
             >
-              <span className="material-symbols-outlined text-[17px] text-error">
+              <span className="material-symbols-outlined text-[18px] text-error">
                 emergency
               </span>
               <span>{lang === 'es' ? 'Línea 106' : 'Help 106'}</span>
@@ -305,9 +305,9 @@ export default function App() {
               onClick={() => setDarkMode(!darkMode)}
               title={tHeader.themeTooltip}
               aria-label={tHeader.themeTooltip}
-              className="flex items-center gap-1.5 h-9 px-3 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm font-semibold transition-all active:scale-95 cursor-pointer border border-outline-variant/30"
+              className="flex items-center gap-2 h-10 px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md font-semibold transition-all active:scale-[0.98] cursor-pointer border border-outline-variant/30 whitespace-nowrap"
             >
-              <span className="material-symbols-outlined text-[18px] text-primary">
+              <span className="material-symbols-outlined text-[19px] text-primary">
                 {darkMode ? 'light_mode' : 'dark_mode'}
               </span>
               <span className="hidden xl:inline">{darkMode ? tHeader.lightMode : tHeader.darkMode}</span>
@@ -317,12 +317,12 @@ export default function App() {
             <div
               role="group"
               aria-label="Selector de idioma"
-              className="flex items-center bg-surface-container-low p-0.5 rounded-full border border-outline-variant/30"
+              className="flex items-center bg-surface-container-low p-1 rounded-xl border border-outline-variant/30 h-10"
             >
               <button
                 type="button"
                 onClick={() => setLang('es')}
-                className={`h-8 px-2.5 rounded-full font-label-sm font-bold transition-all cursor-pointer ${
+                className={`h-8 px-3 rounded-lg font-label-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
                   lang === 'es'
                     ? 'bg-primary text-on-primary shadow-xs'
                     : 'text-on-surface-variant hover:text-on-surface'
@@ -333,7 +333,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setLang('en')}
-                className={`h-8 px-2.5 rounded-full font-label-sm font-bold transition-all cursor-pointer ${
+                className={`h-8 px-3 rounded-lg font-label-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
                   lang === 'en'
                     ? 'bg-primary text-on-primary shadow-xs'
                     : 'text-on-surface-variant hover:text-on-surface'
@@ -348,18 +348,18 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => handleNavigate('perfil')}
-                className="flex items-center gap-2 h-9 pl-2 pr-3.5 bg-primary-container text-on-primary rounded-full font-label-sm font-bold shadow-xs hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                className="flex items-center gap-2 h-10 pl-2.5 pr-4 bg-primary-container text-on-primary rounded-xl font-label-md font-bold shadow-xs hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[16px]">
+                <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[17px]">
                     person
                   </span>
                 </div>
                 <span className="max-w-[120px] truncate">{userName || 'Mi Perfil'}</span>
               </button>
             ) : (
-              <div className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3.5 bg-surface-container-low text-secondary rounded-full font-label-sm font-bold border border-outline-variant/30">
-                <span className="material-symbols-outlined text-[17px]">
+              <div className="hidden sm:inline-flex items-center gap-2 h-10 px-4 bg-surface-container-low text-secondary rounded-xl font-label-md font-bold border border-outline-variant/30 whitespace-nowrap">
+                <span className="material-symbols-outlined text-[18px]">
                   login
                 </span>
                 <span>{translations[lang].welcome.loginBtn}</span>
@@ -371,7 +371,7 @@ export default function App() {
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Abrir menú de navegación"
-              className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors active:scale-95 cursor-pointer"
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors active:scale-95 cursor-pointer"
             >
               <span className="material-symbols-outlined text-[22px]">
                 {menuOpen ? 'close' : 'menu'}
@@ -1007,16 +1007,16 @@ export default function App() {
                   key={tab.id}
                   type="button"
                   onClick={() => handleNavigate(tab.id)}
-                  className={`flex flex-col items-center justify-center flex-1 min-w-0 min-h-[44px] py-1 transition-colors cursor-pointer ${
+                  className={`flex flex-col items-center justify-center flex-1 min-w-0 min-h-[48px] py-1 transition-all cursor-pointer rounded-xl select-none active:scale-95 ${
                     active
                       ? 'text-primary font-bold'
                       : 'text-on-surface-variant hover:text-on-surface'
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[20px] sm:text-[22px] mb-0.5">
+                  <span className="material-symbols-outlined text-[22px] mb-0.5">
                     {tab.icon}
                   </span>
-                  <span className="font-label-sm tracking-tight text-[10px] sm:text-[11px] truncate max-w-full px-0.5">
+                  <span className="font-label-sm tracking-tight text-[11px] font-semibold truncate max-w-full px-0.5 leading-tight">
                     {tab.label}
                   </span>
                 </button>

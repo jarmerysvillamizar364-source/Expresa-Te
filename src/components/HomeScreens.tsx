@@ -44,15 +44,12 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column (7 cols): Inspiring title, mood selector, and primary actions */}
           <div className="lg:col-span-7 flex flex-col items-start text-left space-y-5">
-            {/* Top Pill badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/90 backdrop-blur-md shadow-xs border border-outline-variant/30">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <span className="font-label-sm font-bold text-primary tracking-wide uppercase">
-                {t.communitySub}
-              </span>
-              <span className="text-outline-variant">•</span>
-              <span className="font-label-sm text-tertiary font-semibold flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">
+            {/* Top context tag */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-primary">
+              <span className="tracking-wide uppercase">{t.communitySub}</span>
+              <span className="text-outline-variant">·</span>
+              <span className="text-tertiary flex items-center gap-1">
+                <span className="material-symbols-outlined text-[15px]">
                   verified
                 </span>
                 {t.safeBadge}
@@ -60,12 +57,12 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-on-surface tracking-tight leading-tight">
+            <h1 className="font-headline-xl font-bold text-on-surface tracking-tight leading-tight">
               {t.heroTitle}
             </h1>
 
             {/* Supportive Subtitle */}
-            <p className="text-base sm:text-lg text-on-surface-variant max-w-xl leading-relaxed">
+            <p className="font-body-lg text-on-surface-variant max-w-xl leading-relaxed">
               {t.heroDesc}
             </p>
 
@@ -104,13 +101,13 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
                         setSelectedMood(m.id);
                         onShowToast(`${m.emoji} ${m.label}: ${m.feedback}`);
                       }}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl transition-all cursor-pointer font-label-md active:scale-95 border ${
+                      className={`flex items-center gap-2 h-11 px-4 rounded-xl transition-all cursor-pointer font-label-md active:scale-[0.98] border whitespace-nowrap ${
                         isSelected
-                          ? 'bg-primary text-on-primary border-primary shadow-md font-bold'
-                          : 'bg-surface-container-lowest/80 text-on-surface hover:bg-surface-container-lowest border-outline-variant/30 shadow-xs'
+                          ? 'bg-primary text-on-primary border-primary shadow-xs font-bold'
+                          : 'bg-surface-container-lowest/90 text-on-surface hover:bg-surface-container-low border-outline-variant/30 shadow-2xs'
                       }`}
                     >
-                      <span className="text-lg">{m.emoji}</span>
+                      <span className="text-base">{m.emoji}</span>
                       <span>{m.label}</span>
                     </button>
                   );
@@ -119,11 +116,11 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
             </div>
 
             {/* Primary Action Buttons */}
-            <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+            <div className="w-full flex flex-wrap items-center gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => onNavigate('recursos')}
-                className="h-12 px-6 rounded-2xl bg-gradient-to-r from-primary-container to-primary text-on-primary font-label-lg font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-2 hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer"
+                className="h-12 px-6 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-sm flex items-center justify-center gap-2 hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 <span className="material-symbols-outlined text-[20px]">
                   auto_stories
@@ -134,7 +131,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigate('orientacion')}
-                className="h-12 px-6 rounded-2xl bg-surface-container-lowest text-secondary font-label-lg font-bold border border-outline-variant/30 hover:bg-secondary-fixed/40 flex items-center justify-center gap-2 shadow-xs active:scale-[0.98] transition-all cursor-pointer"
+                className="h-12 px-6 rounded-xl bg-surface-container-lowest text-secondary font-label-lg font-bold border border-outline-variant/40 hover:bg-secondary-fixed/30 flex items-center justify-center gap-2 shadow-2xs active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 <span className="material-symbols-outlined text-[20px]">
                   support_agent
@@ -146,9 +143,9 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
                 <button
                   type="button"
                   onClick={() => onNavigate('panel-estudiante')}
-                  className="h-12 px-5 rounded-2xl bg-tertiary-fixed/40 text-tertiary font-label-md font-bold flex items-center justify-center gap-1.5 hover:bg-tertiary-fixed/70 transition-all cursor-pointer"
+                  className="h-12 px-5 rounded-xl bg-surface-container-low text-on-surface font-label-md font-bold flex items-center justify-center gap-2 hover:bg-surface-container border border-outline-variant/30 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
                 >
-                  <span className="material-symbols-outlined text-[18px]">
+                  <span className="material-symbols-outlined text-[19px] text-tertiary">
                     dashboard
                   </span>
                   <span>{lang === 'es' ? 'Mi Panel' : 'My Dashboard'}</span>
@@ -203,9 +200,9 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
                   setIsBreathing(next);
                   onShowToast(next ? t.pauseActive : 'Pausa finalizada. ¡Excelente trabajo!');
                 }}
-                className={`w-full py-3 px-5 rounded-xl font-label-md font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                className={`w-full h-11 px-5 rounded-xl font-label-md font-bold flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap active:scale-[0.98] ${
                   isBreathing
-                    ? 'bg-primary text-on-primary shadow-sm'
+                    ? 'bg-primary text-on-primary shadow-xs'
                     : 'bg-surface-container-low hover:bg-surface-container text-primary border border-outline-variant/30'
                 }`}
               >
@@ -217,7 +214,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
             </div>
 
             {/* Quick Helpline Assurance Card */}
-            <div className="bg-surface-container-lowest/80 backdrop-blur-sm rounded-2xl p-4 border border-outline-variant/30 flex items-center justify-between gap-3 shadow-xs">
+            <div className="bg-surface-container-lowest/90 backdrop-blur-sm rounded-2xl p-4 border border-outline-variant/30 flex items-center justify-between gap-3 shadow-2xs">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-error-container/40 text-error flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-[20px]">
@@ -236,7 +233,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigate('orientacion')}
-                className="px-3.5 py-1.5 rounded-xl bg-secondary text-on-secondary font-label-sm font-bold hover:bg-secondary/90 transition-all cursor-pointer shrink-0"
+                className="h-9 px-4 rounded-xl bg-secondary text-on-secondary font-label-sm font-bold hover:bg-secondary/95 transition-all cursor-pointer shrink-0 active:scale-[0.98] whitespace-nowrap flex items-center justify-center"
               >
                 {lang === 'es' ? 'Ver líneas' : 'View lines'}
               </button>
@@ -279,7 +276,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
         ].map((pillar, idx) => (
           <div
             key={idx}
-            className="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-xs flex flex-col gap-2.5 hover:shadow-md transition-shadow"
+            className="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-2xs flex flex-col gap-2.5 hover:shadow-xs transition-shadow"
           >
             <div className={`w-10 h-10 rounded-xl ${pillar.bg} ${pillar.color} flex items-center justify-center shrink-0`}>
               <span className="material-symbols-outlined text-[22px]">
@@ -300,20 +297,20 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
       <section className="flex flex-col space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed/30 text-primary font-label-sm font-bold uppercase tracking-wider mb-2">
-              <span className="material-symbols-outlined text-[15px]">
+            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary mb-1.5">
+              <span className="material-symbols-outlined text-[16px]">
                 local_library
               </span>
               <span>{t.findResourcesTitle}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+            <h2 className="font-headline-md font-bold text-on-surface tracking-tight">
               {t.findResourcesSub}
             </h2>
           </div>
           <button
             type="button"
             onClick={() => onNavigate('recursos')}
-            className="self-start sm:self-auto inline-flex items-center gap-1 font-label-md font-bold text-primary hover:underline cursor-pointer"
+            className="self-start sm:self-auto inline-flex items-center gap-1.5 font-label-md font-bold text-primary hover:underline cursor-pointer"
           >
             <span>{lang === 'es' ? 'Ver toda la biblioteca' : 'View all library'}</span>
             <span className="material-symbols-outlined text-[18px]">
@@ -326,7 +323,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
           {/* Card 1 */}
           <article
             onClick={() => onNavigate('recursos')}
-            className="group bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-lg hover:border-primary/40 transition-all cursor-pointer flex flex-col justify-between"
+            className="group bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-2xs hover:shadow-md hover:border-primary/40 transition-all cursor-pointer flex flex-col justify-between"
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -335,7 +332,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
                     air
                   </span>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm font-bold">
+                <span className="text-xs font-bold text-primary">
                   {t.card1Tag}
                 </span>
               </div>
@@ -357,7 +354,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
           {/* Card 2 */}
           <article
             onClick={() => onNavigate('recursos')}
-            className="group bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-lg hover:border-secondary/40 transition-all cursor-pointer flex flex-col justify-between"
+            className="group bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-2xs hover:shadow-md hover:border-secondary/40 transition-all cursor-pointer flex flex-col justify-between"
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -366,7 +363,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
                     balance
                   </span>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm font-bold">
+                <span className="text-xs font-bold text-secondary">
                   {t.card2Tag}
                 </span>
               </div>
@@ -388,7 +385,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
           {/* Card 3 */}
           <article
             onClick={() => onNavigate('recursos')}
-            className="group bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-sm hover:shadow-lg hover:border-tertiary/40 transition-all cursor-pointer flex flex-col justify-between"
+            className="group bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-2xs hover:shadow-md hover:border-tertiary/40 transition-all cursor-pointer flex flex-col justify-between"
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -397,7 +394,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
                     diversity_1
                   </span>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm font-bold">
+                <span className="text-xs font-bold text-tertiary">
                   {t.card3Tag}
                 </span>
               </div>
@@ -421,7 +418,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
       {/* 4. TWO-COLUMN INTERACTIVE CALLOUTS: Guidance Request & Self-Care Space */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Callout 1: Guidance */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-high p-8 sm:p-10 border border-outline-variant/30 flex flex-col justify-between shadow-sm">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-high p-8 sm:p-10 border border-outline-variant/30 flex flex-col justify-between shadow-2xs">
           <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-primary-fixed/20 blur-2xl pointer-events-none"></div>
 
           <div className="relative z-10 space-y-4">
@@ -430,7 +427,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
                 forum
               </span>
             </div>
-            <h3 className="text-2xl font-bold text-on-surface tracking-tight">
+            <h3 className="font-headline-sm font-bold text-on-surface tracking-tight">
               {t.talkTitle}
             </h3>
             <p className="font-body-md text-on-surface-variant leading-relaxed">
@@ -456,7 +453,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('orientacion')}
-              className="w-full h-12 rounded-2xl bg-primary text-on-primary font-label-lg font-bold flex items-center justify-center gap-2 shadow-md shadow-primary/20 hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer"
+              className="w-full h-12 rounded-xl bg-primary text-on-primary font-label-lg font-bold flex items-center justify-center gap-2 shadow-sm hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
             >
               <span className="material-symbols-outlined text-[20px]">
                 chat_bubble
@@ -467,14 +464,14 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
         </div>
 
         {/* Callout 2: Self-Care & Grounding Suite */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-high p-8 sm:p-10 border border-outline-variant/30 flex flex-col justify-between shadow-sm">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-high p-8 sm:p-10 border border-outline-variant/30 flex flex-col justify-between shadow-2xs">
           <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-tertiary-fixed/20 blur-2xl pointer-events-none"></div>
 
           <div className="relative z-10 space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-surface-container-lowest flex items-center justify-center text-tertiary shadow-xs">
               <span className="material-symbols-outlined text-[26px]">spa</span>
             </div>
-            <h3 className="text-2xl font-bold text-on-surface tracking-tight">
+            <h3 className="font-headline-sm font-bold text-on-surface tracking-tight">
               {lang === 'es' ? 'Herramientas de Autocuidado y Calma' : 'Self-Care & Calming Tools'}
             </h3>
             <p className="font-body-md text-on-surface-variant leading-relaxed">
@@ -502,7 +499,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('autocuidado')}
-              className="w-full h-12 rounded-2xl bg-tertiary text-on-tertiary font-label-lg font-bold flex items-center justify-center gap-2 shadow-md shadow-tertiary/20 hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer"
+              className="w-full h-12 rounded-xl bg-tertiary text-on-tertiary font-label-lg font-bold flex items-center justify-center gap-2 shadow-sm hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
             >
               <span className="material-symbols-outlined text-[20px]">
                 self_improvement
@@ -567,23 +564,23 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
   return (
     <div className="flex flex-col w-full space-y-10 pb-8">
       {/* 1. Header Banner with Student Info & Privacy Badge */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-8 lg:p-10 border border-outline-variant/30 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-8 lg:p-10 border border-outline-variant/30 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-3 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest text-primary shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            <span className="font-label-sm font-bold uppercase tracking-wider">{t.badge}</span>
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
+            <span className="material-symbols-outlined text-[16px]">dashboard</span>
+            <span>{t.badge}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-on-surface tracking-tight">
+          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
             {t.greetingPrefix} <span className="text-primary">{userName ? `${userName}` : 'Expresa Te'}</span>
           </h1>
-          <p className="text-base text-on-surface-variant leading-relaxed">
+          <p className="font-body-md text-on-surface-variant leading-relaxed">
             {t.greetingDesc}
           </p>
         </div>
 
-        <div className="flex flex-col items-start md:items-end gap-2.5 shrink-0">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-surface-container-lowest text-primary shadow-xs border border-outline-variant/30 font-label-sm font-bold">
-            <span className="material-symbols-outlined text-[18px]">
+        <div className="flex flex-col items-start md:items-end gap-2 shrink-0">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-surface-container-lowest text-primary shadow-2xs border border-outline-variant/30 font-label-md font-bold">
+            <span className="material-symbols-outlined text-[18px] text-tertiary">
               verified_user
             </span>
             <span>{t.privacyTitle}</span>
@@ -595,7 +592,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
       </section>
 
       {/* 2. Emotional Check-in Widget & Advice Banner */}
-      <section className="bg-surface-container-lowest p-6 sm:p-8 rounded-3xl border border-outline-variant/30 shadow-sm space-y-6">
+      <section className="bg-surface-container-lowest p-6 sm:p-8 rounded-3xl border border-outline-variant/30 shadow-2xs space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-primary-fixed/40 text-primary flex items-center justify-center">
@@ -603,7 +600,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
                 sentiment_satisfied
               </span>
             </div>
-            <h2 className="text-xl font-bold text-on-surface">{t.checkinTitle}</h2>
+            <h2 className="font-headline-sm font-bold text-on-surface">{t.checkinTitle}</h2>
           </div>
           {savedFeedback && (
             <span className="font-label-sm font-bold text-tertiary flex items-center gap-1">
@@ -626,9 +623,9 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
                   setTimeout(() => setSavedFeedback(false), 3000);
                   onShowToast(`${m.label}: ${m.advice}`);
                 }}
-                className={`flex flex-col items-center justify-center p-5 rounded-2xl transition-all cursor-pointer active:scale-95 border ${
+                className={`flex flex-col items-center justify-center p-5 rounded-2xl transition-all cursor-pointer active:scale-[0.98] border ${
                   isSelected
-                    ? 'bg-primary-fixed/30 border-primary shadow-md font-bold'
+                    ? 'bg-primary-fixed/30 border-primary shadow-xs font-bold'
                     : 'bg-surface-container-low/70 hover:bg-surface-container border-outline-variant/20 text-on-surface'
                 }`}
               >
@@ -658,7 +655,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
       {/* 3. Quick Action 3-Column Desktop Grid */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl sm:text-2xl font-bold text-on-surface">{t.exploreTitle}</h2>
+          <h2 className="font-headline-sm font-bold text-on-surface">{t.exploreTitle}</h2>
           <span className="font-label-sm font-bold text-on-surface-variant uppercase tracking-wider">
             {t.quickActions}
           </span>
@@ -669,7 +666,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('recursos')}
-            className="group flex flex-col justify-between p-6 bg-surface-container-lowest hover:bg-surface-container-low rounded-3xl border border-outline-variant/30 shadow-sm hover:shadow-md transition-all active:scale-[0.99] text-left cursor-pointer"
+            className="group flex flex-col justify-between p-6 bg-surface-container-lowest hover:bg-surface-container-low rounded-3xl border border-outline-variant/30 shadow-2xs hover:shadow-sm transition-all active:scale-[0.99] text-left cursor-pointer"
           >
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-primary-fixed/40 text-primary flex items-center justify-center shadow-xs">
@@ -681,7 +678,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
                 <h3 className="font-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">
                   {t.resTitle}
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm font-bold">
+                <span className="text-xs font-bold text-primary">
                   {t.resTag}
                 </span>
               </div>
@@ -701,7 +698,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('autocuidado')}
-            className="group flex flex-col justify-between p-6 bg-surface-container-lowest hover:bg-surface-container-low rounded-3xl border border-outline-variant/30 shadow-sm hover:shadow-md transition-all active:scale-[0.99] text-left cursor-pointer"
+            className="group flex flex-col justify-between p-6 bg-surface-container-lowest hover:bg-surface-container-low rounded-3xl border border-outline-variant/30 shadow-2xs hover:shadow-sm transition-all active:scale-[0.99] text-left cursor-pointer"
           >
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-tertiary-fixed text-tertiary flex items-center justify-center shadow-xs">
@@ -711,7 +708,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
                 <h3 className="font-headline-sm font-bold text-on-surface group-hover:text-tertiary transition-colors">
                   {t.selfTitle}
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm font-bold">
+                <span className="text-xs font-bold text-tertiary">
                   {t.selfTag}
                 </span>
               </div>
@@ -731,7 +728,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('orientacion')}
-            className="group flex flex-col justify-between p-6 bg-surface-container-lowest hover:bg-surface-container-low rounded-3xl border border-outline-variant/30 shadow-sm hover:shadow-md transition-all active:scale-[0.99] text-left cursor-pointer"
+            className="group flex flex-col justify-between p-6 bg-surface-container-lowest hover:bg-surface-container-low rounded-3xl border border-outline-variant/30 shadow-2xs hover:shadow-sm transition-all active:scale-[0.99] text-left cursor-pointer"
           >
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-secondary-fixed text-secondary flex items-center justify-center shadow-xs">
@@ -743,7 +740,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
                 <h3 className="font-headline-sm font-bold text-on-surface group-hover:text-secondary transition-colors">
                   {t.oriTitle}
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm font-bold">
+                <span className="text-xs font-bold text-secondary">
                   {t.oriTag}
                 </span>
               </div>
