@@ -280,38 +280,27 @@ export default function App() {
       {/* Top Web Navigation Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_4px_24px_-4px_rgba(20,184,166,0.08)] border-b border-outline-variant/20 transition-colors">
         <div className="max-w-7xl mx-auto h-16 sm:h-18 px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 lg:gap-3">
-          {/* Brand Zone: Official Emblem + Logo + Institutional Badge */}
+          {/* Brand Zone: Site Name "Expresa Te" first, and beside it the logo in banner format */}
           <button
             type="button"
             onClick={() => handleNavigate(isLoggedIn ? 'inicio' : 'login')}
-            className="flex items-center gap-2 sm:gap-2.5 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-w-0"
+            className="flex items-center gap-2 sm:gap-3 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-w-0"
+            title="Expresa Te"
           >
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white shadow-xs p-1 flex items-center justify-center border border-outline-variant/30 group-hover:scale-105 transition-transform shrink-0">
+            <span className="text-lg sm:text-xl md:text-2xl font-black text-primary tracking-tight leading-none group-hover:text-primary/85 transition-colors">
+              Expresa Te
+            </span>
+            <div className="h-10 sm:h-11 md:h-12 px-1.5 py-0.5 rounded-xl bg-white shadow-2xs border border-outline-variant/30 flex items-center justify-center shrink-0 group-hover:scale-102 transition-transform">
               <img
                 alt="Expresa Te Logo"
-                className="w-full h-full object-contain"
-                src={ASSETS.loginEmblem}
+                className="h-full w-auto max-h-12 object-contain"
+                src="/assets/aistudio/image_6440f15d.png"
+                loading="eager"
               />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-base sm:text-lg lg:text-xl font-bold text-primary tracking-tight leading-none truncate">
-                  Expresa Te
-                </span>
-                <span className="hidden 2xl:inline-flex items-center gap-1 text-tertiary font-label-sm font-semibold">
-                  <span className="material-symbols-outlined text-[14px]">
-                    shield_lock
-                  </span>
-                  <span>100% Seguro</span>
-                </span>
-              </div>
-              <span className="font-label-sm text-on-surface-variant hidden 2xl:inline mt-0.5 truncate max-w-[200px]">
-                {tHeader.subtitle}
-              </span>
             </div>
           </button>
 
-          {/* Center Navigation Zone: Shown on lg+ with adaptive labels so all options stay visible */}
+          {/* Center Navigation Zone: Shown on lg+ ONLY after user logs in */}
           {isLoggedIn ? (
             /* Desktop Web Navigation Links (Rendered ONLY after user logs in) */
             <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 min-w-0" aria-label="Navegación principal">
@@ -337,15 +326,7 @@ export default function App() {
                 );
               })}
             </nav>
-          ) : (
-            /* Badge shown before user logs in (no internal platform content is exposed) */
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-low text-primary text-xs font-semibold border border-outline-variant/30 shadow-2xs">
-              <span className="material-symbols-outlined text-[16px] text-tertiary">
-                shield_lock
-              </span>
-              <span>{lang === 'es' ? 'Portal de Acceso Institucional' : 'Institutional Access Portal'}</span>
-            </div>
-          )}
+          ) : null}
 
           {/* Controls Zone: Crisis Hotline + PWA (2xl) + Theme + Single Lang Toggle + Account/Dropdown + Hamburger */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
@@ -403,8 +384,8 @@ export default function App() {
               </span>
             </button>
 
-            {/* User Profile Dropdown Menu (When logged in) / Login Button (When NOT logged in) */}
-            {isLoggedIn ? (
+            {/* User Profile Dropdown Menu (Shown ONLY when logged in) */}
+            {isLoggedIn && (
               <UserProfileDropdown
                 lang={lang}
                 userName={userName}
@@ -422,17 +403,6 @@ export default function App() {
                 onShowToast={showToast}
                 activeScreen={activeScreen}
               />
-            ) : (
-              <button
-                type="button"
-                onClick={() => handleNavigate('login')}
-                className="h-8 sm:h-9 md:h-10 px-2.5 sm:px-3.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs"
-              >
-                <span className="material-symbols-outlined text-[16px]">
-                  login
-                </span>
-                <span>{translations[lang].welcome.loginBtn}</span>
-              </button>
             )}
 
             {/* Hamburger button for mobile / tablet drawer */}
@@ -642,8 +612,14 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Container: Gated so ALL platform content renders ONLY after login */}
-      <main className="flex-1 w-full max-w-7xl mx-auto pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col min-w-0">
+      {/* Main Container: Centered vertically and horizontally before login, standard dashboard padding when logged in */}
+      <main
+        className={`w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col min-w-0 transition-all ${
+          !isLoggedIn
+            ? 'flex-1 min-h-[calc(100vh-4.5rem)] pt-20 pb-8 sm:pt-22 sm:pb-12 max-w-4xl items-center justify-center'
+            : 'flex-1 max-w-7xl pt-24 sm:pt-28 pb-16'
+        }`}
+      >
         {!isLoggedIn ? (
           /* FIRST INTERFACE BEFORE LOGIN: Only LoginScreen or Deletion Receipt */
           activeScreen === 'comprobante-eliminar' ? (

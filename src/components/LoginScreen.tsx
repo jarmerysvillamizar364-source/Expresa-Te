@@ -213,19 +213,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const adminRec = censusRecord && censusRecord.rol === 'administrativo' ? (censusRecord as AdministrativeCensusRecord) : null;
 
   return (
-    <div className="flex flex-col items-center justify-center w-full py-4 sm:py-8 px-2 sm:px-4 animate-fade-in">
-      <div className="w-full max-w-lg bg-surface-container-lowest rounded-3xl p-4 sm:p-8 border border-outline-variant/30 shadow-2xl flex flex-col items-center relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center w-full my-auto py-2 sm:py-6 px-2 sm:px-4 animate-fade-in">
+      <div className="w-full max-w-lg bg-surface-container-lowest rounded-3xl p-5 sm:p-8 md:p-9 border border-outline-variant/30 shadow-2xl flex flex-col items-center relative overflow-hidden my-auto">
         {/* Subtle decorative background gradient */}
         <div className="absolute -top-16 -right-16 w-48 h-48 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-secondary-fixed/15 rounded-full blur-3xl pointer-events-none" />
 
         {/* Brand Anchor */}
         <div className="w-full flex flex-col items-center text-center mb-6">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-xs p-1.5 flex items-center justify-center border border-outline-variant/30 mb-3">
+          <div className="h-16 sm:h-20 px-3 py-1.5 rounded-2xl bg-white shadow-xs flex items-center justify-center border border-outline-variant/30 mb-3">
             <img
               alt="Expresa Te Logo"
-              className="w-full h-full object-contain"
-              src={ASSETS.loginEmblem}
+              className="h-full w-auto object-contain"
+              src={ASSETS.bannerLogo || '/assets/aistudio/image_6440f15d.png'}
             />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">

@@ -17,6 +17,7 @@ export const ASSETS = {
   videoExam: '/src/assets/images/video_exam_anxiety_1792612455262.jpg',
   videoCoexistence: '/src/assets/images/video_peaceful_coexistence_1792612455559.jpg',
   infographicEmotional: '/src/assets/images/infographic_emotional_scale_1792612455887.jpg',
+  bannerLogo: '/assets/aistudio/image_6440f15d.png',
 };
 
 export const translations = {
