@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import express, { Request, Response, NextFunction } from 'express';
+import express, { type Request, type Response, type NextFunction } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -12,7 +12,7 @@ import {
   normalizeEmail,
   INSTITUTIONAL_DOMAIN,
 } from './src/utils/institutionalValidator.ts';
-import { User, SessionMetadata } from './src/types/auth.ts';
+import type { User, SessionMetadata } from './src/types/auth.ts';
 
 dotenv.config();
 

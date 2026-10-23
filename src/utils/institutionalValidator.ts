@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ValidationResult } from '../types/auth';
+import type { ValidationResult } from '../types/auth.ts';
 
 export const INSTITUTIONAL_DOMAIN = 'colegio.edu.co';
 export const INSTITUTIONAL_SUFFIX = `@${INSTITUTIONAL_DOMAIN}`;
