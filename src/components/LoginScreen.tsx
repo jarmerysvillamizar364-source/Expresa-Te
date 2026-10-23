@@ -7,7 +7,6 @@ import {
   ArrowRight,
   ShieldCheck,
   HeartHandshake,
-  Sparkles,
   PhoneCall,
   School,
   UserCheck,
@@ -16,7 +15,6 @@ import {
   AlertCircle,
   HelpCircle,
   UserPlus,
-  Compass,
   Building2,
   LockKeyhole,
 } from 'lucide-react';
@@ -248,26 +246,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         {/* ================================================================== */}
         <div className="lg:col-span-6 flex flex-col items-start text-left space-y-6">
           
-          {/* Badges / Etiquetas superiores */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/70 text-cyan-300 border border-cyan-500/40 text-[11px] font-bold tracking-wider uppercase shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span>PORTAL INSTITUCIONAL OFICIAL</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 text-slate-300 border border-slate-700/60 text-[11px] font-semibold">
-              <Building2 className="w-3.5 h-3.5 text-slate-400" />
-              <span>I.E. Vallejuelos • Medellín</span>
-            </span>
-          </div>
-
-          {/* Título Principal con Degradado Vibrante (Cian / Esmeralda) */}
-          <div>
+          {/* Título Principal con Degradado Vibrante (Cian / Esmeralda) - Ubicado directamente arriba */}
+          <div className="space-y-3">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-none">
               <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
                 Expresa Te
               </span>
             </h1>
-            <p className="text-lg sm:text-xl font-medium text-slate-200 mt-3 leading-snug">
+            <p className="text-lg sm:text-xl font-medium text-slate-200 leading-snug">
               {isEs
                 ? 'Portal institucional de bienestar y orientación escolar.'
                 : 'Official school wellness and guidance portal.'}
