@@ -230,7 +230,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   const adminRec = censusRecord && censusRecord.rol === 'administrativo' ? (censusRecord as AdministrativeCensusRecord) : null;
 
   return (
-    <div className="w-full flex items-center justify-center py-6 sm:py-10 lg:py-14 animate-fade-in">
+    <div className="w-full flex items-center justify-center py-2 sm:py-6 lg:py-8 animate-fade-in">
       {/* Background ambient glowing spheres */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-1/4 -left-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px]" />
@@ -239,15 +239,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       </div>
 
       {/* Main Split Layout Container */}
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start lg:items-center">
         
         {/* ================================================================== */}
         {/* SECCIÓN IZQUIERDA: Presentación e Identidad Institucional */}
         {/* ================================================================== */}
-        <div className="lg:col-span-6 flex flex-col items-start text-left space-y-6">
+        <div className="lg:col-span-6 flex flex-col items-start text-left space-y-6 pt-0">
           
           {/* Título Principal con Degradado Vibrante (Cian / Esmeralda) - Ubicado directamente arriba */}
-          <div className="space-y-3">
+          <div className="space-y-3 w-full">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-none">
               <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
                 Expresa Te
