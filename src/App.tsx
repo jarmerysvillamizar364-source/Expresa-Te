@@ -359,12 +359,12 @@ export default function App() {
               onClick={() => setDarkMode(!darkMode)}
               title={tHeader.themeTooltip}
               aria-label={tHeader.themeTooltip}
-              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700/60 hover:border-cyan-500/40 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
+              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700/60 hover:border-cyan-500/40 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
             >
               {darkMode ? (
                 <Sun className="w-4 h-4 text-amber-300" />
               ) : (
-                <Moon className="w-4 h-4 text-cyan-400" />
+                <Moon className="w-4 h-4 text-slate-700 dark:text-cyan-400" />
               )}
             </button>
 
@@ -374,10 +374,10 @@ export default function App() {
               onClick={handleToggleLanguage}
               title={lang === 'es' ? 'Cambiar a inglés (Switch to English)' : 'Cambiar a español (Switch to Spanish)'}
               aria-label={lang === 'es' ? 'Cambiar idioma a inglés' : 'Switch language to Spanish'}
-              className="h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700/60 hover:border-cyan-500/40 transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 shrink-0 font-bold text-xs group shadow-xs"
+              className="h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700/60 hover:border-cyan-500/40 transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 shrink-0 font-bold text-xs group shadow-xs"
             >
-              <Globe className="w-3.5 h-3.5 text-cyan-400 group-hover:rotate-12 transition-transform" />
-              <span className="uppercase font-extrabold text-cyan-300">
+              <Globe className="w-3.5 h-3.5 text-teal-700 dark:text-cyan-400 group-hover:rotate-12 transition-transform" />
+              <span className="uppercase font-extrabold text-teal-800 dark:text-cyan-300">
                 {lang.toUpperCase()}
               </span>
             </button>
@@ -852,13 +852,13 @@ export default function App() {
       </main>
 
       {/* Web Footer */}
-      <footer className="w-full bg-surface-container-lowest/90 border-t border-outline-variant/30 pt-14 pb-12 mt-auto">
+      <footer className="w-full bg-slate-50 dark:bg-slate-950/90 border-t border-slate-200 dark:border-slate-800/80 pt-14 pb-12 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-outline-variant/20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-slate-200 dark:border-slate-800/80">
             {/* Col 1: Brand & Institutional Mission (4 cols on desktop) */}
             <div className="lg:col-span-4 flex flex-col items-start gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white p-1 border border-outline-variant/30 shadow-xs flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-white p-1 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-center">
                   <img
                     alt="Expresa Te Logo"
                     className="w-full h-full object-contain"
@@ -866,21 +866,21 @@ export default function App() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-headline-sm font-bold text-primary tracking-tight leading-none">
+                  <span className="font-headline-sm font-bold text-teal-700 dark:text-cyan-400 tracking-tight leading-none">
                     Expresa Te
                   </span>
-                  <span className="font-label-sm text-tertiary mt-0.5">
+                  <span className="font-label-sm text-emerald-700 dark:text-emerald-400 mt-0.5">
                     {tFooter.badgeSafe}
                   </span>
                 </div>
               </div>
 
-              <p className="font-body-sm text-on-surface-variant leading-relaxed max-w-sm">
+              <p className="font-body-sm text-slate-700 dark:text-slate-300 leading-relaxed max-w-sm">
                 {tFooter.tagline}
               </p>
 
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-low text-primary font-label-sm border border-outline-variant/30">
-                <span className="material-symbols-outlined text-[16px] text-tertiary">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 text-teal-700 dark:text-cyan-300 font-label-sm border border-slate-200 dark:border-slate-800">
+                <span className="material-symbols-outlined text-[16px] text-emerald-600 dark:text-emerald-400">
                   verified
                 </span>
                 <span>{tFooter.badgeSafe}</span>
@@ -889,16 +889,16 @@ export default function App() {
 
             {/* Col 2: Navigation Links or Access info depending on auth status */}
             <div className="lg:col-span-3 flex flex-col gap-3">
-              <span className="font-title-md font-bold text-on-surface">
+              <span className="font-title-md font-bold text-slate-900 dark:text-white">
                 {tFooter.colExploreTitle}
               </span>
               {isLoggedIn ? (
-                <ul className="flex flex-col gap-2 font-body-sm text-on-surface-variant">
+                <ul className="flex flex-col gap-2 font-body-sm text-slate-700 dark:text-slate-300">
                   <li>
                     <button
                       type="button"
                       onClick={() => handleNavigate('inicio')}
-                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                      className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors cursor-pointer text-left"
                     >
                       {tFooter.linkHome}
                     </button>
@@ -907,7 +907,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => handleNavigate('panel-estudiante')}
-                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                      className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors cursor-pointer text-left"
                     >
                       {tFooter.linkDashboard}
                     </button>
@@ -916,7 +916,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => handleNavigate('recursos')}
-                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                      className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors cursor-pointer text-left"
                     >
                       {tFooter.linkResources}
                     </button>
@@ -925,7 +925,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => handleNavigate('autocuidado')}
-                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                      className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors cursor-pointer text-left"
                     >
                       {tFooter.linkSelfcare}
                     </button>
@@ -934,7 +934,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => handleNavigate('perfil')}
-                      className="hover:text-primary transition-colors cursor-pointer text-left"
+                      className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors cursor-pointer text-left"
                     >
                       {tFooter.linkProfile}
                     </button>
@@ -942,7 +942,7 @@ export default function App() {
                 </ul>
               ) : (
                 <div className="space-y-2.5">
-                  <p className="font-body-sm text-on-surface-variant leading-relaxed">
+                  <p className="font-body-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                     {lang === 'es'
                       ? 'Inicia sesión con tu correo escolar para acceder a los recursos, panel y herramientas.'
                       : 'Sign in with your school email to access resources, dashboard, and tools.'}
@@ -950,7 +950,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => handleNavigate('login')}
-                    className="inline-flex items-center gap-1.5 font-label-sm font-bold text-primary hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1.5 font-label-sm font-bold text-teal-700 dark:text-cyan-400 hover:underline cursor-pointer"
                   >
                     <span>{lang === 'es' ? 'Ir al inicio de sesión' : 'Go to sign in'}</span>
                     <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
@@ -961,42 +961,42 @@ export default function App() {
 
             {/* Col 3: Crisis & 24/7 Hotlines (3 cols) */}
             <div className="lg:col-span-3 flex flex-col gap-3">
-              <span className="font-title-md font-bold text-on-surface flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-error text-[18px]">
+              <span className="font-title-md font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-rose-500 text-[18px]">
                   support_agent
                 </span>
                 <span>{tFooter.colHotlinesTitle}</span>
               </span>
-              <ul className="flex flex-col gap-2 font-body-sm text-on-surface-variant">
-                <li className="flex items-center justify-between p-2 rounded-lg bg-surface-container-low/70">
-                  <span className="font-semibold text-primary">{tFooter.line106Label}</span>
-                  <span className="font-label-sm px-2 py-0.5 rounded bg-primary/10 text-primary font-bold">24/7</span>
+              <ul className="flex flex-col gap-2 font-body-sm text-slate-700 dark:text-slate-300">
+                <li className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
+                  <span className="font-semibold text-teal-700 dark:text-teal-400">{tFooter.line106Label}</span>
+                  <span className="font-label-sm px-2 py-0.5 rounded bg-teal-100 dark:bg-teal-500/20 text-teal-800 dark:text-teal-300 font-bold">24/7</span>
                 </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-surface-container-low/70">
-                  <span className="font-semibold text-secondary">{tFooter.line192Label}</span>
-                  <span className="font-label-sm px-2 py-0.5 rounded bg-secondary/10 text-secondary font-bold">Gratis</span>
+                <li className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
+                  <span className="font-semibold text-cyan-700 dark:text-cyan-400">{tFooter.line192Label}</span>
+                  <span className="font-label-sm px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 font-bold">Gratis</span>
                 </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-surface-container-low/70">
-                  <span className="font-semibold text-tertiary">{tFooter.line141Label}</span>
-                  <span className="font-label-sm px-2 py-0.5 rounded bg-tertiary/10 text-tertiary font-bold">ICBF</span>
+                <li className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-400">{tFooter.line141Label}</span>
+                  <span className="font-label-sm px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 font-bold">ICBF</span>
                 </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-surface-container-low/70">
-                  <span className="font-semibold text-on-surface">{tFooter.line123Label}</span>
-                  <span className="font-label-sm px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-bold">Urgencias</span>
+                <li className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
+                  <span className="font-semibold text-slate-900 dark:text-white">{tFooter.line123Label}</span>
+                  <span className="font-label-sm px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-bold">Urgencias</span>
                 </li>
               </ul>
             </div>
 
             {/* Col 4: Legal & Ethics (2 cols) */}
             <div className="lg:col-span-2 flex flex-col gap-3">
-              <span className="font-title-md font-bold text-on-surface">
+              <span className="font-title-md font-bold text-slate-900 dark:text-white">
                 {tFooter.colLegalTitle}
               </span>
-              <p className="font-body-sm text-on-surface-variant leading-relaxed">
+              <p className="font-body-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                 {tFooter.legalDesc}
               </p>
               <div className="flex flex-col gap-1.5 pt-1">
-                <span className="inline-flex items-center gap-1 text-tertiary font-label-sm">
+                <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-label-sm">
                   <span className="material-symbols-outlined text-[15px]">verified_user</span>
                   <span>{lang === 'es' ? 'Ley 1581 y 1098' : 'Data Protection'}</span>
                 </span>
@@ -1005,14 +1005,14 @@ export default function App() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-on-surface-variant font-body-sm">
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-slate-700 dark:text-slate-300 font-body-sm">
             <p>© {new Date().getFullYear()} {tFooter.rights}</p>
-            <div className="flex items-center gap-4 text-on-surface-variant font-label-sm">
-              <span className="text-primary font-semibold">
+            <div className="flex items-center gap-4 text-slate-700 dark:text-slate-300 font-label-sm">
+              <span className="text-teal-700 dark:text-teal-400 font-semibold">
                 {lang === 'es' ? 'Bienestar y Convivencia Escolar' : 'School Guidance & Wellbeing'}
               </span>
               <span>•</span>
-              <span className="text-tertiary font-medium">
+              <span className="text-emerald-700 dark:text-emerald-400 font-medium">
                 {lang === 'es' ? 'Entorno Protegido' : 'Protected Space'}
               </span>
             </div>

@@ -232,10 +232,10 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
             <span className="material-symbols-outlined text-[18px]">smart_display</span>
             <span>{isEs ? 'Centro de Educación Emocional & Audiovisuales' : 'Emotional Education & Audiovisual Hub'}</span>
           </div>
-          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
+          <h1 className="font-headline-lg font-bold text-slate-900 dark:text-white tracking-tight">
             {isEs ? 'Recursos Audiovisuales para tu Bienestar' : 'Audiovisual Resources for Your Wellbeing'}
           </h1>
-          <p className="font-body-md text-on-surface-variant leading-relaxed">
+          <p className="font-body-md text-slate-700 dark:text-slate-300 leading-relaxed">
             {isEs
               ? 'Videos pedagógicos, masterclasses interactivas, audioguías de meditación e infografías diseñadas para ayudarte a comprender tus emociones y fortalecer tu convivencia escolar.'
               : 'Educational videos, masterclasses, guided relaxation audios, and clear infographics crafted to help you understand emotions and thrive at school.'}
@@ -817,10 +817,10 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
             <span className="material-symbols-outlined text-[18px]">self_improvement</span>
             <span>{isEs ? 'Centro de Autocuidado y Prácticas Activas' : 'Self-Care Center & Live Practice'}</span>
           </div>
-          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
+          <h1 className="font-headline-lg font-bold text-slate-900 dark:text-white tracking-tight">
             {isEs ? 'Herramientas Prácticas para el Día a Día' : 'Daily Practical Grounding Tools'}
           </h1>
-          <p className="font-body-md text-on-surface-variant leading-relaxed">
+          <p className="font-body-md text-slate-700 dark:text-slate-300 leading-relaxed">
             {isEs
               ? 'Espacio interactivo de entrenamiento: respiración guiada, anclaje sensorial, temporizador de estudio y descarga mental confidencial.'
               : 'Interactive wellbeing workshop: paced breathing, sensory grounding, study focus timer, and private mental release.'}

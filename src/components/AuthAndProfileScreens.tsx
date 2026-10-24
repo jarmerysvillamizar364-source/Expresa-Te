@@ -77,10 +77,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         <div className="flex flex-col pt-space-xs">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="font-headline-lg-mobile text-on-surface font-bold tracking-tight">
+              <h1 className="font-headline-lg-mobile text-slate-900 dark:text-white font-bold tracking-tight">
                 {t.title}
               </h1>
-              <p className="font-body-sm text-on-surface-variant mt-0.5">
+              <p className="font-body-sm text-slate-700 dark:text-slate-300 mt-0.5">
                 {t.subtitle}
               </p>
             </div>
@@ -188,10 +188,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       <div className="flex flex-col pt-space-xs">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-headline-lg-mobile text-on-surface font-bold tracking-tight">
+            <h1 className="font-headline-lg-mobile text-slate-900 dark:text-white font-bold tracking-tight">
               {t.title}
             </h1>
-            <p className="font-body-sm text-on-surface-variant mt-0.5">
+            <p className="font-body-sm text-slate-700 dark:text-slate-300 mt-0.5">
               {t.subtitle}
             </p>
           </div>
@@ -800,10 +800,10 @@ export const AccountDeletionReceiptScreen: React.FC<DeleteReceiptProps> = ({
           </span>
           {t.badge}
         </span>
-        <h1 className="font-headline-lg-mobile text-on-surface font-bold tracking-tight">
+        <h1 className="font-headline-lg-mobile text-slate-900 dark:text-white font-bold tracking-tight">
           {t.title}
         </h1>
-        <p className="font-body-md text-on-surface-variant leading-relaxed">
+        <p className="font-body-md text-slate-700 dark:text-slate-300 leading-relaxed">
           {t.subtitle}
         </p>
       </div>

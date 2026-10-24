@@ -116,10 +116,10 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
               {adminPerfil === 'Psicología' ? 'Gabinete de Psicología' : 'Gabinete de Orientación Escolar'}
             </span>
           </div>
-          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
-            Panel Profesional: <span className="text-primary">{adminName}</span>
+          <h1 className="font-headline-lg font-bold text-slate-900 dark:text-white tracking-tight">
+            Panel Profesional: <span className="text-teal-700 dark:text-cyan-400">{adminName}</span>
           </h1>
-          <p className="font-body-md text-on-surface-variant leading-relaxed">
+          <p className="font-body-md text-slate-700 dark:text-slate-300 leading-relaxed">
             {adminGrade} • Sede Principal. Gestión confidencial de solicitudes de acompañamiento, triaje y seguimiento socioemocional escolar.
           </p>
         </div>

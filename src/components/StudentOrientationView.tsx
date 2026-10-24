@@ -102,10 +102,10 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
               {lang === 'es' ? 'Atención y Escucha Confidencial' : 'Confidential Support'}
             </span>
           </div>
-          <h1 className="font-headline-lg font-bold text-on-surface tracking-tight">
+          <h1 className="font-headline-lg font-bold text-slate-900 dark:text-white tracking-tight">
             {lang === 'es' ? 'Solicitar Orientación y Acompañamiento' : 'Request Guidance & Support'}
           </h1>
-          <p className="font-body-md text-on-surface-variant leading-relaxed">
+          <p className="font-body-md text-slate-700 dark:text-slate-300 leading-relaxed">
             {lang === 'es'
               ? 'Este es tu espacio seguro para comunicarte con los equipos de Orientación Escolar y Psicología. Nadie más verá tu solicitud.'
               : 'This is your confidential space to reach out to school guidance and psychology teams. Only assigned counselors see your request.'}

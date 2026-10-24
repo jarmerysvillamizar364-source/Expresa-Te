@@ -252,7 +252,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 Expresa Te
               </span>
             </h1>
-            <p className="text-lg sm:text-xl font-medium text-slate-600 dark:text-slate-300 leading-snug">
+            <p className="text-lg sm:text-xl font-medium text-slate-700 dark:text-slate-300 leading-snug">
               {isEs
                 ? 'Portal institucional de bienestar y orientación escolar.'
                 : 'Official school wellness and guidance portal.'}
@@ -280,8 +280,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">100% Confidencial</p>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">Ley 1090 / 1620</p>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">100% Confidencial</p>
+                    <p className="text-[10px] text-slate-700 dark:text-slate-300 truncate">Ley 1090 / 1620</p>
                   </div>
                 </div>
 
@@ -290,8 +290,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     <HeartHandshake className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">Acompañamiento</p>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">Orientación y Psico</p>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">Acompañamiento</p>
+                    <p className="text-[10px] text-slate-700 dark:text-slate-300 truncate">Orientación y Psico</p>
                   </div>
                 </div>
               </div>
@@ -299,14 +299,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div>
 
           {/* Descripción Institucional */}
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300/90 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
             {isEs
               ? 'Espacio confidencial y protegido para la comunidad escolar. Conecta en tiempo real con la comunidad educativa.'
               : 'A confidential and protected space for our school community. Connect in real time with guidance staff.'}
           </p>
 
           {/* Institutional Trust Footer Indicator */}
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 pt-1">
+          <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 pt-1">
             <LockKeyhole className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>
               {isEs
@@ -333,7 +333,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                   {authMode === 'login' ? 'Iniciar Sesión' : 'Crear Cuenta'}
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
                   {authMode === 'login'
                     ? 'Ingresa tus credenciales institucionales de acceso'
                     : 'Regístrate validando tu documento con la base escolar'}
@@ -351,7 +351,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                   className={`h-11 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
                     authMode === 'login'
                       ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 shadow-md shadow-cyan-500/20'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <UserCheck className="w-4 h-4" />
@@ -366,7 +366,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                   className={`h-11 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
                     authMode === 'register'
                       ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 shadow-md shadow-cyan-500/20'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <UserPlus className="w-4 h-4" />
@@ -478,7 +478,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                       >
                         <Check className="w-3 h-3 stroke-[3]" />
                       </div>
-                      <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">{t.rememberDevice}</span>
+                      <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">{t.rememberDevice}</span>
                     </label>
                   </div>
 
@@ -531,14 +531,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                         className={`p-3 rounded-xl border text-left flex flex-col gap-0.5 transition-all cursor-pointer ${
                           regRole === 'estudiante'
                             ? 'border-cyan-500 dark:border-cyan-400 bg-cyan-50/80 dark:bg-cyan-950/40 text-cyan-900 dark:text-cyan-300 shadow-sm'
-                            : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 hover:bg-slate-100 dark:hover:bg-slate-800/40 text-slate-600 dark:text-slate-400'
+                            : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 hover:bg-slate-100 dark:hover:bg-slate-800/40 text-slate-700 dark:text-slate-300'
                         }`}
                       >
                         <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
                           <School className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                           <span>{t.roleStudent}</span>
                         </div>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                        <span className="text-[11px] text-slate-700 dark:text-slate-300 truncate">
                           {t.roleStudentDesc}
                         </span>
                       </button>
@@ -554,14 +554,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                         className={`p-3 rounded-xl border text-left flex flex-col gap-0.5 transition-all cursor-pointer ${
                           regRole === 'administrativo'
                             ? 'border-cyan-500 dark:border-cyan-400 bg-cyan-50/80 dark:bg-cyan-950/40 text-cyan-900 dark:text-cyan-300 shadow-sm'
-                            : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 hover:bg-slate-100 dark:hover:bg-slate-800/40 text-slate-600 dark:text-slate-400'
+                            : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 hover:bg-slate-100 dark:hover:bg-slate-800/40 text-slate-700 dark:text-slate-300'
                         }`}
                       >
                         <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-slate-900 dark:text-white">
                           <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                           <span>{t.roleAdmin}</span>
                         </div>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                        <span className="text-[11px] text-slate-700 dark:text-slate-300 truncate">
                           {t.roleAdminDesc}
                         </span>
                       </button>
@@ -654,19 +654,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                       </div>
                       <div className="text-xs space-y-1">
                         <div>
-                          <span className="text-slate-600 dark:text-slate-400 font-medium">{t.nameLabel}: </span>
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">{t.nameLabel}: </span>
                           <span className="font-bold text-slate-900 dark:text-white">{censusRecord.nombreCompleto}</span>
                         </div>
                         {studentRec && (
                           <div>
-                            <span className="text-slate-600 dark:text-slate-400 font-medium">{t.gradeLabel}: </span>
+                            <span className="text-slate-700 dark:text-slate-300 font-medium">{t.gradeLabel}: </span>
                             <span className="font-bold text-teal-700 dark:text-cyan-300">{studentRec.grado}</span>
-                            <span className="text-slate-500 dark:text-slate-400"> ({studentRec.sede})</span>
+                            <span className="text-slate-700 dark:text-slate-300"> ({studentRec.sede})</span>
                           </div>
                         )}
                         {adminRec && (
                           <div>
-                            <span className="text-slate-600 dark:text-slate-400 font-medium">{t.positionLabel}: </span>
+                            <span className="text-slate-700 dark:text-slate-300 font-medium">{t.positionLabel}: </span>
                             <span className="font-bold text-emerald-700 dark:text-emerald-300">{adminRec.cargo} ({adminRec.perfil})</span>
                           </div>
                         )}
@@ -772,7 +772,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                   )}
 
                   {!docValidated && (
-                    <div className="p-3.5 rounded-xl bg-slate-100/70 dark:bg-slate-950/50 text-slate-600 dark:text-slate-400 text-xs text-center border border-slate-200 dark:border-slate-800/80">
+                    <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-950/50 text-slate-700 dark:text-slate-300 text-xs text-center border border-slate-200 dark:border-slate-800/80">
                       <p>
                         Ingresa tu número de documento y presiona <strong>&quot;Buscar en censo&quot;</strong> para habilitar el registro con tus datos institucionales.
                       </p>
@@ -786,7 +786,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                         setAuthMode('login');
                         setLoginError(null);
                       }}
-                      className="text-xs text-teal-600 dark:text-cyan-400 hover:text-teal-700 dark:hover:text-cyan-300 font-semibold cursor-pointer"
+                      className="text-xs text-teal-700 dark:text-cyan-400 hover:text-teal-800 dark:hover:text-cyan-300 font-semibold cursor-pointer"
                     >
                       {t.alreadyHaveAccountPrompt}
                     </button>
@@ -810,15 +810,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     <PhoneCall className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                       {isEs ? 'Línea 106 de Ayuda Emocional' : 'Crisis Helpline 106'}
                     </p>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                    <p className="text-[10px] text-slate-700 dark:text-slate-300 truncate">
                       {isEs ? 'Acompañamiento gratuito y confidencial' : 'Toll-free 24/7 emotional support'}
                     </p>
                   </div>
                 </div>
-                <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-100 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 px-2 py-0.5 rounded-full shrink-0">
+                <span className="text-[11px] font-bold text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 px-2 py-0.5 rounded-full shrink-0">
                   24/7 Gratis
                 </span>
               </div>
@@ -841,20 +841,20 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-left"
           >
-            <div className="w-12 h-12 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center border border-cyan-200 dark:border-cyan-500/20">
+            <div className="w-12 h-12 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 flex items-center justify-center border border-cyan-200 dark:border-cyan-500/20">
               <Lock className="w-6 h-6" />
             </div>
             <div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 Recuperación de Acceso Institucional
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-2 leading-relaxed">
                 Por motivos de seguridad y resguardo de menores en el entorno escolar, puedes restablecer tus credenciales acercándote al Departamento de Orientación y Psicología de la <strong>I.E. Vallejuelos</strong> o consultando tu documento de censo institucional.
               </p>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 text-xs text-slate-600 dark:text-slate-400 space-y-1 border border-slate-200 dark:border-slate-800">
-              <div className="font-bold text-slate-800 dark:text-slate-200">Horario de atención presencial:</div>
-              <div>Lunes a Viernes de 7:00 AM a 4:00 PM • Consultorio de Bienestar</div>
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 text-xs text-slate-700 dark:text-slate-300 space-y-1 border border-slate-200 dark:border-slate-800">
+              <div className="font-bold text-slate-900 dark:text-white">Horario de atención presencial:</div>
+              <div className="text-slate-700 dark:text-slate-300">Lunes a Viernes de 7:00 AM a 4:00 PM • Consultorio de Bienestar</div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button
