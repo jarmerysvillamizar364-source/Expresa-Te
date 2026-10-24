@@ -14,8 +14,8 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
   const [showGuideModal, setShowGuideModal] = useState(false);
 
-  // If already running standalone, suppress
-  if (isInstalled) {
+  // If already running standalone or if banner variant (suppressed), return null
+  if (isInstalled || variant === 'banner') {
     return null;
   }
 
@@ -50,38 +50,6 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
           {isEs ? 'Instalar App' : 'Install App'}
         </span>
       </button>
-    );
-  } else if (variant === 'banner') {
-    buttonContent = (
-      <div className="w-full bg-gradient-to-r from-primary/10 via-primary-container/30 to-secondary-container/20 rounded-2xl p-4 sm:p-5 border border-primary/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-sm">
-            <span className="material-symbols-outlined text-[26px]">
-              phone_iphone
-            </span>
-          </div>
-          <div>
-            <h4 className="font-title-md font-bold text-on-surface">
-              {isEs ? 'Instala Expresa Te en tu celular o computador' : 'Install Expresa Te on your device'}
-            </h4>
-            <p className="font-body-sm text-on-surface-variant">
-              {isEs
-                ? 'Accede más rápido, sin barras del navegador y consulta recursos aún sin conexión.'
-                : 'Access faster, standalone experience without browser bars, and view cached resources offline.'}
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={handleInstallClick}
-          className="h-11 px-5 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-2"
-        >
-          <span className="material-symbols-outlined text-[20px]">
-            download
-          </span>
-          <span>{isEs ? 'Instalar Ahora' : 'Install Now'}</span>
-        </button>
-      </div>
     );
   } else {
     // Menu or card variant

@@ -35,7 +35,8 @@ export type ActiveScreen =
 
 export default function App() {
   const [lang, setLang] = useState<Language>('es');
-  const [darkMode, setDarkMode] = useState<boolean>(true);
+  // Initial state: ALWAYS Light Mode by default upon entering
+  const [darkMode, setDarkMode] = useState<boolean>(false);
   // Default first interface is strictly 'login' until authenticated
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>('login');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -95,12 +96,16 @@ export default function App() {
     }
   }, []);
 
+  // Theme effect: cleanly add or remove 'dark' on <html> and <body>
   useEffect(() => {
     const root = document.documentElement;
+    const body = document.body;
     if (darkMode) {
       root.classList.add('dark');
+      body.classList.add('dark');
     } else {
       root.classList.remove('dark');
+      body.classList.remove('dark');
     }
   }, [darkMode]);
 
@@ -277,9 +282,9 @@ export default function App() {
       ];
 
   return (
-    <div className="bg-surface text-on-surface font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
+    <div className="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-body-md min-h-screen flex flex-col antialiased selection:bg-cyan-500/20 selection:text-cyan-900 dark:selection:text-cyan-200 transition-colors duration-200">
       {/* Top Web Navigation Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-surface/90 dark:bg-[#070D1E]/90 backdrop-blur-xl shadow-[0_4px_24px_-4px_rgba(6,182,212,0.12)] border-b border-outline-variant/20 dark:border-slate-800/80 transition-colors">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl shadow-xs dark:shadow-[0_4px_24px_-4px_rgba(6,182,212,0.12)] border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-200">
         <div className="max-w-7xl mx-auto h-16 sm:h-18 px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 lg:gap-3">
           {/* Brand Zone: Project Name "Expresa Te" with its respective logo */}
           <button
@@ -356,15 +361,43 @@ export default function App() {
             {/* Botón para cambiar de tema (Claro/Oscuro) */}
             <button
               type="button"
-              onClick={() => setDarkMode(!darkMode)}
-              title={tHeader.themeTooltip}
-              aria-label={tHeader.themeTooltip}
-              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700/60 hover:border-cyan-500/40 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
+              onClick={() => {
+                const nextMode = !darkMode;
+                setDarkMode(nextMode);
+                showToast(
+                  lang === 'es'
+                    ? nextMode
+                      ? 'Modo Oscuro activado'
+                      : 'Modo Claro activado'
+                    : nextMode
+                    ? 'Dark Mode enabled'
+                    : 'Light Mode enabled'
+                );
+              }}
+              title={
+                darkMode
+                  ? lang === 'es'
+                    ? 'Cambiar a Modo Claro'
+                    : 'Switch to Light Mode'
+                  : lang === 'es'
+                  ? 'Cambiar a Modo Oscuro'
+                  : 'Switch to Dark Mode'
+              }
+              aria-label={
+                darkMode
+                  ? lang === 'es'
+                    ? 'Cambiar a Modo Claro'
+                    : 'Switch to Light Mode'
+                  : lang === 'es'
+                  ? 'Cambiar a Modo Oscuro'
+                  : 'Switch to Dark Mode'
+              }
+              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 border border-slate-300 dark:border-slate-700/80 hover:border-cyan-500/40 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
             >
               {darkMode ? (
-                <Sun className="w-4 h-4 text-amber-300" />
+                <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
               ) : (
-                <Moon className="w-4 h-4 text-slate-700 dark:text-cyan-400" />
+                <Moon className="w-4 h-4 text-slate-700 transition-transform duration-300 hover:-rotate-12" />
               )}
             </button>
 

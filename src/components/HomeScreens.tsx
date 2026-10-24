@@ -85,7 +85,138 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
         <div className="absolute bottom-1/3 -left-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-[140px]" />
       </div>
 
-      {/* 1. HERO SECTION: Modern Split Presentation */}
+      {/* 1. THE 4 DISTINCT PLATFORM SECTIONS (Directamente debajo del menú de navegación) */}
+      <section className="space-y-4 pt-1">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-cyan-400">
+            <Compass className="w-4 h-4" />
+            <span>{isEs ? 'Estructura de la Plataforma' : 'Platform Sections'}</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            {isEs ? 'Todo en su Lugar: Cuatro Espacios Especializados' : 'Everything in Its Place: Four Core Spaces'}
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* Section 1: Educación Emocional & Audiovisuales */}
+          <article
+            onClick={() => onNavigate('recursos')}
+            className="group bg-white/90 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800/90 hover:border-cyan-500/40 shadow-xl backdrop-blur-xl transition-all cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 text-teal-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/20 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                <Video className="w-6 h-6" />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold text-teal-700 dark:text-cyan-400 uppercase tracking-wider block mb-0.5">
+                  {isEs ? 'Apartado 1' : 'Section 1'}
+                </span>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-cyan-300 transition-colors">
+                  {isEs ? 'Educación & Audiovisuales' : 'Education & Audiovisual'}
+                </h3>
+              </div>
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                {isEs
+                  ? 'Masterclasses animadas (Técnica STOP, Manejo de Exámenes), audioguías de relajación e infografías descargables.'
+                  : 'Animated masterclasses (STOP Method, Exam Focus), guided audio podcasts, and clear emotional infographics.'}
+              </p>
+            </div>
+            <div className="pt-4 mt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-teal-700 dark:text-cyan-400 text-xs font-bold">
+              <span>{isEs ? 'Ver biblioteca' : 'Open library'}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </article>
+
+          {/* Section 2: Centro de Autocuidado */}
+          <article
+            onClick={() => onNavigate('autocuidado')}
+            className="group bg-white/90 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/40 shadow-xl backdrop-blur-xl transition-all cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                <Heart className="w-6 h-6" />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block mb-0.5">
+                  {isEs ? 'Apartado 2' : 'Section 2'}
+                </span>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
+                  {isEs ? 'Autocuidado Activo' : 'Active Self-Care'}
+                </h3>
+              </div>
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                {isEs
+                  ? 'Herramientas interactivas en vivo: Respirador rítmico (4-7-8 y Caja), anclaje sensorial 5-4-3-2-1 y temporizador Pomodoro 25/5.'
+                  : 'Live hands-on tools: Paced breathing orb (4-7-8 & Box), 5-4-3-2-1 grounding checklist, and Pomodoro study timer.'}
+              </p>
+            </div>
+            <div className="pt-4 mt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-emerald-700 dark:text-emerald-400 text-xs font-bold">
+              <span>{isEs ? 'Abrir herramientas' : 'Open tools'}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </article>
+
+          {/* Section 3: Orientación y Psicología */}
+          <article
+            onClick={() => onNavigate('orientacion')}
+            className="group bg-white/90 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800/90 hover:border-cyan-500/40 shadow-xl backdrop-blur-xl transition-all cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 text-teal-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/20 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                <HeartHandshake className="w-6 h-6" />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold text-teal-700 dark:text-cyan-400 uppercase tracking-wider block mb-0.5">
+                  {isEs ? 'Apartado 3' : 'Section 3'}
+                </span>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-cyan-300 transition-colors">
+                  {isEs ? 'Orientación y Psicología' : 'Guidance & Psychology'}
+                </h3>
+              </div>
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                {isEs
+                  ? 'Agenda consultas y citas confidenciales con el gabinete escolar. Haz seguimiento privado de tus respuestas.'
+                  : 'Book confidential appointments with certified school psychologists and track your private replies.'}
+              </p>
+            </div>
+            <div className="pt-4 mt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-teal-700 dark:text-cyan-400 text-xs font-bold">
+              <span>{isEs ? 'Pedir consulta' : 'Request support'}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </article>
+
+          {/* Section 4: Mi Perfil y Privacidad */}
+          <article
+            onClick={() => onNavigate('perfil')}
+            className="group bg-white/90 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800/90 hover:border-slate-400 dark:hover:border-slate-700 shadow-xl backdrop-blur-xl transition-all cursor-pointer flex flex-col justify-between"
+          >
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                <User className="w-6 h-6" />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wider block mb-0.5">
+                  {isEs ? 'Apartado 4' : 'Section 4'}
+                </span>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-cyan-300 transition-colors">
+                  {isEs ? 'Mi Perfil & Ajustes' : 'My Profile & Privacy'}
+                </h3>
+              </div>
+              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                {isEs
+                  ? 'Administra tu sesión institucional, tema claro/oscuro, preferencias de privacidad y marco ético Ley 1581 / 1090.'
+                  : 'Manage your institutional session, dark/light display preferences, confidentiality settings, and ethical policies.'}
+              </p>
+            </div>
+            <div className="pt-4 mt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-slate-700 dark:text-slate-300 text-xs font-bold">
+              <span>{isEs ? 'Gestionar perfil' : 'Manage profile'}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </article>
+        </div>
+      </section>
+
+      {/* 2. HERO SECTION & BIENVENIDA */}
       <section className="relative overflow-hidden rounded-3xl bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/90 p-6 sm:p-10 lg:p-12 shadow-xl dark:shadow-2xl backdrop-blur-xl">
         <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-cyan-500/10 dark:bg-cyan-500/15 blur-3xl pointer-events-none" />
         <div className="absolute -left-16 -bottom-16 w-80 h-80 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 blur-3xl pointer-events-none" />
@@ -253,140 +384,6 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
               </button>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* PWA Install Banner */}
-      <PWAInstallButton lang={lang} variant="banner" />
-
-      {/* 2. THE 4 DISTINCT PLATFORM SECTIONS */}
-      <section className="space-y-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-cyan-400">
-            <Compass className="w-4 h-4" />
-            <span>{isEs ? 'Estructura de la Plataforma' : 'Platform Sections'}</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-            {isEs ? 'Todo en su Lugar: Cuatro Espacios Especializados' : 'Everything in Its Place: Four Core Spaces'}
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {/* Section 1: Educación Emocional & Audiovisuales */}
-          <article
-            onClick={() => onNavigate('recursos')}
-            className="group bg-white/90 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800/90 hover:border-cyan-500/40 shadow-xl backdrop-blur-xl transition-all cursor-pointer flex flex-col justify-between"
-          >
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 text-teal-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/20 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                <Video className="w-6 h-6" />
-              </div>
-              <div>
-                <span className="text-[11px] font-bold text-teal-700 dark:text-cyan-400 uppercase tracking-wider block mb-0.5">
-                  {isEs ? 'Apartado 1' : 'Section 1'}
-                </span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-cyan-300 transition-colors">
-                  {isEs ? 'Educación & Audiovisuales' : 'Education & Audiovisual'}
-                </h3>
-              </div>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                {isEs
-                  ? 'Masterclasses animadas (Técnica STOP, Manejo de Exámenes), audioguías de relajación e infografías descargables.'
-                  : 'Animated masterclasses (STOP Method, Exam Focus), guided audio podcasts, and clear emotional infographics.'}
-              </p>
-            </div>
-            <div className="pt-4 mt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-teal-700 dark:text-cyan-400 text-xs font-bold">
-              <span>{isEs ? 'Ver biblioteca' : 'Open library'}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </article>
-
-          {/* Section 2: Centro de Autocuidado */}
-          <article
-            onClick={() => onNavigate('autocuidado')}
-            className="group bg-white/90 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800/90 hover:border-emerald-500/40 shadow-xl backdrop-blur-xl transition-all cursor-pointer flex flex-col justify-between"
-          >
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                <Heart className="w-6 h-6" />
-              </div>
-              <div>
-                <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block mb-0.5">
-                  {isEs ? 'Apartado 2' : 'Section 2'}
-                </span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
-                  {isEs ? 'Autocuidado Activo' : 'Active Self-Care'}
-                </h3>
-              </div>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                {isEs
-                  ? 'Herramientas interactivas en vivo: Respirador rítmico (4-7-8 y Caja), anclaje sensorial 5-4-3-2-1 y temporizador Pomodoro 25/5.'
-                  : 'Live hands-on tools: Paced breathing orb (4-7-8 & Box), 5-4-3-2-1 grounding checklist, and Pomodoro study timer.'}
-              </p>
-            </div>
-            <div className="pt-4 mt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-emerald-700 dark:text-emerald-400 text-xs font-bold">
-              <span>{isEs ? 'Abrir herramientas' : 'Open tools'}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </article>
-
-          {/* Section 3: Orientación y Psicología */}
-          <article
-            onClick={() => onNavigate('orientacion')}
-            className="group bg-white/90 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800/90 hover:border-cyan-500/40 shadow-xl backdrop-blur-xl transition-all cursor-pointer flex flex-col justify-between"
-          >
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 text-teal-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-500/20 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                <HeartHandshake className="w-6 h-6" />
-              </div>
-              <div>
-                <span className="text-[11px] font-bold text-teal-700 dark:text-cyan-400 uppercase tracking-wider block mb-0.5">
-                  {isEs ? 'Apartado 3' : 'Section 3'}
-                </span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-cyan-300 transition-colors">
-                  {isEs ? 'Orientación y Psicología' : 'Guidance & Psychology'}
-                </h3>
-              </div>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                {isEs
-                  ? 'Agenda consultas y citas confidenciales con el gabinete escolar. Haz seguimiento privado de tus respuestas.'
-                  : 'Book confidential appointments with certified school psychologists and track your private replies.'}
-              </p>
-            </div>
-            <div className="pt-4 mt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-teal-700 dark:text-cyan-400 text-xs font-bold">
-              <span>{isEs ? 'Pedir consulta' : 'Request support'}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </article>
-
-          {/* Section 4: Mi Perfil y Privacidad */}
-          <article
-            onClick={() => onNavigate('perfil')}
-            className="group bg-white/90 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800/90 hover:border-slate-400 dark:hover:border-slate-700 shadow-xl backdrop-blur-xl transition-all cursor-pointer flex flex-col justify-between"
-          >
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                <User className="w-6 h-6" />
-              </div>
-              <div>
-                <span className="text-[11px] font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wider block mb-0.5">
-                  {isEs ? 'Apartado 4' : 'Section 4'}
-                </span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-cyan-300 transition-colors">
-                  {isEs ? 'Mi Perfil & Ajustes' : 'My Profile & Privacy'}
-                </h3>
-              </div>
-              <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                {isEs
-                  ? 'Administra tu sesión institucional, tema claro/oscuro, preferencias de privacidad y marco ético Ley 1581 / 1090.'
-                  : 'Manage your institutional session, dark/light display preferences, confidentiality settings, and ethical policies.'}
-              </p>
-            </div>
-            <div className="pt-4 mt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-slate-700 dark:text-slate-300 text-xs font-bold">
-              <span>{isEs ? 'Gestionar perfil' : 'Manage profile'}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </article>
         </div>
       </section>
 
