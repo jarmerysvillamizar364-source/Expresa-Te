@@ -27,6 +27,7 @@ interface HomeProps {
   isLoggedIn: boolean;
   userName: string;
   onShowToast: (msg: string) => void;
+  onOpenAudiovisualModal?: (videoId?: string) => void;
 }
 
 export const WelcomeScreen: React.FC<HomeProps> = ({
@@ -35,6 +36,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
   isLoggedIn,
   userName,
   onShowToast,
+  onOpenAudiovisualModal,
 }) => {
   const t = translations[lang].welcome;
   const isEs = lang === 'es';
@@ -100,7 +102,13 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* Section 1: Educación Emocional & Audiovisuales */}
           <article
-            onClick={() => onNavigate('recursos')}
+            onClick={() => {
+              if (onOpenAudiovisualModal) {
+                onOpenAudiovisualModal('video-stop');
+              } else {
+                onNavigate('recursos');
+              }
+            }}
             className="group bg-white/90 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800/90 hover:border-cyan-500/40 shadow-xl backdrop-blur-xl transition-all cursor-pointer flex flex-col justify-between"
           >
             <div className="space-y-3">
@@ -122,7 +130,10 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
               </p>
             </div>
             <div className="pt-4 mt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-teal-700 dark:text-cyan-400 text-xs font-bold">
-              <span>{isEs ? 'Ver biblioteca' : 'Open library'}</span>
+              <span className="flex items-center gap-1.5">
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>{isEs ? 'Reproducir videos' : 'Play videos'}</span>
+              </span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </article>
@@ -304,7 +315,13 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
             <div className="w-full flex flex-wrap items-center gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => onNavigate('recursos')}
+                onClick={() => {
+                  if (onOpenAudiovisualModal) {
+                    onOpenAudiovisualModal();
+                  } else {
+                    onNavigate('recursos');
+                  }
+                }}
                 className="h-11 px-5 rounded-xl bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-bold text-xs sm:text-sm shadow-md shadow-cyan-500/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 <Video className="w-4 h-4" />
@@ -415,6 +432,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
   onNavigate,
   userName,
   onShowToast,
+  onOpenAudiovisualModal,
 }) => {
   const isEs = lang === 'es';
   const requests = orientationService.getRequests('estudiante');
@@ -487,7 +505,13 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             type="button"
-            onClick={() => onNavigate('recursos')}
+            onClick={() => {
+              if (onOpenAudiovisualModal) {
+                onOpenAudiovisualModal();
+              } else {
+                onNavigate('recursos');
+              }
+            }}
             className="p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/60 dark:hover:bg-slate-950/90 border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/30 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group"
           >
             <div className="flex items-center gap-2 text-teal-700 dark:text-cyan-400 font-bold text-xs sm:text-sm">

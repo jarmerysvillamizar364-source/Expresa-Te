@@ -16,6 +16,7 @@ import {
   UserPlus,
   Building2,
   LockKeyhole,
+  Video,
 } from 'lucide-react';
 import { ASSETS, Language, translations } from '../data/translations';
 import { authService } from '../services/authService';
@@ -39,6 +40,7 @@ export interface LoginScreenProps {
   ) => void;
   onNavigate: (screen: string) => void;
   onShowToast: (msg: string) => void;
+  onOpenAudiovisualModal?: (videoId?: string) => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({
@@ -46,6 +48,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   accountDeleted,
   onLoginSuccess,
   onShowToast,
+  onOpenAudiovisualModal,
 }) => {
   const t = translations[lang].login;
   const isEs = lang === 'es';
@@ -317,6 +320,25 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 : 'Protected platform with institutional encryption and school census verification.'}
             </span>
           </div>
+
+          {/* Botón interactivo para ver Audiovisuales antes de iniciar sesión */}
+          {onOpenAudiovisualModal && (
+            <div className="w-full pt-1">
+              <button
+                type="button"
+                onClick={() => onOpenAudiovisualModal()}
+                className="w-full h-11 px-4 rounded-2xl bg-gradient-to-r from-cyan-500/15 via-teal-500/15 to-emerald-500/15 hover:from-cyan-500/25 hover:to-emerald-500/25 border border-cyan-500/30 hover:border-cyan-400 text-teal-800 dark:text-cyan-300 font-bold text-xs sm:text-sm flex items-center justify-between transition-all cursor-pointer shadow-xs group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Video className="w-4 h-4" />
+                  </span>
+                  <span>{isEs ? 'Ver Audiovisuales y Videos de Bienestar' : 'Explore Wellness & Guidance Videos'}</span>
+                </div>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ================================================================== */}

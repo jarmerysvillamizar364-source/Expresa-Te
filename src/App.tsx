@@ -19,7 +19,8 @@ import { authService } from './services/authService';
 import { PWAInstallButton } from './components/PWAInstallButton';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { UserProfileDropdown } from './components/UserProfileDropdown';
-import { PhoneCall, Sun, Moon, Globe } from 'lucide-react';
+import { AudiovisualModal } from './components/AudiovisualModal';
+import { PhoneCall, Sun, Moon, Globe, Film } from 'lucide-react';
 
 export type ActiveScreen =
   | 'inicio'
@@ -51,6 +52,13 @@ export default function App() {
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [showAudiovisualModal, setShowAudiovisualModal] = useState<boolean>(false);
+  const [selectedModalVideoId, setSelectedModalVideoId] = useState<string | undefined>(undefined);
+
+  const handleOpenAudiovisualModal = (videoId?: string) => {
+    setSelectedModalVideoId(videoId);
+    setShowAudiovisualModal(true);
+  };
 
   const isStaff = userRole === 'orientador' || userRole === 'psicologo' || userRole === 'administrativo';
 
@@ -351,6 +359,17 @@ export default function App() {
             >
               <PhoneCall className="w-3.5 h-3.5 text-rose-400 group-hover:scale-110 transition-transform" />
               <span>{lang === 'es' ? 'Línea 106' : 'Line 106'}</span>
+            </button>
+
+            {/* Botón de acceso directo: "Audiovisuales" */}
+            <button
+              type="button"
+              onClick={() => handleOpenAudiovisualModal()}
+              title={lang === 'es' ? 'Abrir Centro de Videos y Audiovisuales' : 'Open Audiovisual Media Hub'}
+              className="inline-flex items-center gap-1.5 h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-teal-800 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(6,182,212,0.15)] group"
+            >
+              <Film className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform" />
+              <span>{lang === 'es' ? 'Audiovisuales' : 'Media Hub'}</span>
             </button>
 
             {/* In-App PWA Install Trigger (Header variant shown on 2xl+ screens) */}
@@ -717,6 +736,7 @@ export default function App() {
               }}
               onNavigate={handleNavigate}
               onShowToast={showToast}
+              onOpenAudiovisualModal={handleOpenAudiovisualModal}
             />
           )
         ) : (
@@ -769,6 +789,7 @@ export default function App() {
                 isLoggedIn={isLoggedIn}
                 userName={userName}
                 onShowToast={showToast}
+                onOpenAudiovisualModal={handleOpenAudiovisualModal}
               />
             )}
 
@@ -779,6 +800,7 @@ export default function App() {
                 isLoggedIn={isLoggedIn}
                 userName={userName}
                 onShowToast={showToast}
+                onOpenAudiovisualModal={handleOpenAudiovisualModal}
               />
             )}
 
@@ -1113,6 +1135,16 @@ export default function App() {
           </div>
         </nav>
       )}
+
+      {/* Global Interactive Audiovisual Modal & Video Player */}
+      <AudiovisualModal
+        isOpen={showAudiovisualModal}
+        onClose={() => setShowAudiovisualModal(false)}
+        lang={lang}
+        initialVideoId={selectedModalVideoId}
+        onNavigateToFullLibrary={() => handleNavigate('recursos')}
+        onOpenGuidance={() => handleNavigate('orientacion')}
+      />
     </div>
   );
 }

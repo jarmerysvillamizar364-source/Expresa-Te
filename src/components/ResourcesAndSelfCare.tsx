@@ -14,6 +14,7 @@ export interface ResourceItem {
   category: 'ansiedad' | 'academico' | 'convivencia' | 'emociones';
   duration: string;
   image: string;
+  embedUrl?: string;
   desc: string;
   takeaways: string[];
   transcript?: string;
@@ -33,7 +34,8 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'ansiedad' | 'academico' | 'convivencia' | 'emociones'>('all');
   const [activeMedia, setActiveMedia] = useState<ResourceItem | null>(null);
 
-  // Video player interactive state
+  // Video player interactive & embed state
+  const [videoPlayerMode, setVideoPlayerMode] = useState<'embed' | 'interactive'>('embed');
   const [isPlaying, setIsPlaying] = useState(false);
   const [videoProgress, setVideoProgress] = useState(25);
   const [audioProgress, setAudioProgress] = useState(15);
@@ -60,6 +62,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
       category: 'emociones',
       duration: '4:15 min',
       image: ASSETS.videoStop,
+      embedUrl: 'https://www.youtube-nocookie.com/embed/fD3lC_d8s6c',
       desc: isEs
         ? 'Aprende los cuatro pasos de la técnica STOP para detener impulsos, calmar tu sistema nervioso y responder con claridad.'
         : 'Master the 4 steps of the STOP technique to pause impulsive reactions, soothe your nervous system, and respond calmly.',
@@ -88,6 +91,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
       category: 'academico',
       duration: '6:30 min',
       image: ASSETS.videoExam,
+      embedUrl: 'https://www.youtube-nocookie.com/embed/1ZYbU88VzII',
       desc: isEs
         ? 'Estrategias basadas en neurociencia para vencer el bloqueo mental, organizar sesiones de estudio y mantener la calma el día de la prueba.'
         : 'Neuroscience-backed strategies to overcome mental blocks, structure study sessions, and stay grounded during test day.',
@@ -116,6 +120,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
       category: 'convivencia',
       duration: '5:45 min',
       image: ASSETS.videoCoexistence,
+      embedUrl: 'https://www.youtube-nocookie.com/embed/jZkq_7ZrnY8',
       desc: isEs
         ? 'Aprende a poner límites firmes y respetuosos, resolver malentendidos entre compañeros y actuar de forma segura ante situaciones de acoso.'
         : 'Learn how to set firm, respectful boundaries, resolve peer conflicts, and stand as an active positive ally against bullying.',
@@ -509,62 +514,112 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
               {/* Media Player Area */}
               {activeMedia.format === 'video' && (
                 <div className="space-y-3">
+                  {/* Mode switcher bar */}
+                  {activeMedia.embedUrl && (
+                    <div className="flex items-center justify-between pb-1 text-xs">
+                      <span className="font-bold text-slate-700 dark:text-slate-300">
+                        {isEs ? 'Reproductor Multimedia' : 'Media Player'}
+                      </span>
+                      <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <button
+                          type="button"
+                          onClick={() => setVideoPlayerMode('embed')}
+                          className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                            videoPlayerMode === 'embed'
+                              ? 'bg-cyan-500 text-slate-950 shadow-xs'
+                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                          }`}
+                        >
+                          {isEs ? 'Video Embebido' : 'Embed Player'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setVideoPlayerMode('interactive')}
+                          className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                            videoPlayerMode === 'interactive'
+                              ? 'bg-emerald-500 text-slate-950 shadow-xs'
+                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                          }`}
+                        >
+                          {isEs ? 'Modo Guiado' : 'Guided Player'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-md flex items-center justify-center">
-                    <img
-                      src={activeMedia.image}
-                      alt={activeMedia.title}
-                      className={`w-full h-full object-cover transition-opacity duration-300 ${
-                        isPlaying ? 'opacity-85' : 'opacity-70'
-                      }`}
-                    />
-
-                    {/* Active playback visual overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const next = !isPlaying;
-                          setIsPlaying(next);
-                          onShowToast(next ? 'Reproduciendo video...' : 'Video en pausa');
-                        }}
-                        className="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-transform cursor-pointer"
-                      >
-                        <span className="material-symbols-outlined text-[36px]">
-                          {isPlaying ? 'pause' : 'play_arrow'}
-                        </span>
-                      </button>
-                    </div>
-
-                    {/* Video Player Controls Bar */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent flex flex-col gap-1.5">
-                      {/* Scrub bar */}
-                      <div
-                        onClick={(e) => {
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          const clickX = e.clientX - rect.left;
-                          const pct = Math.round((clickX / rect.width) * 100);
-                          setVideoProgress(pct);
-                        }}
-                        className="w-full h-1.5 bg-white/30 rounded-full cursor-pointer overflow-hidden"
-                      >
-                        <div
-                          className="h-full bg-primary rounded-full transition-all"
-                          style={{ width: `${videoProgress}%` }}
+                    {videoPlayerMode === 'embed' && activeMedia.embedUrl ? (
+                      <iframe
+                        src={`${activeMedia.embedUrl}?autoplay=1&rel=0`}
+                        title={activeMedia.title}
+                        className="w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <>
+                        <img
+                          src={activeMedia.image}
+                          alt={activeMedia.title}
+                          className={`w-full h-full object-cover transition-opacity duration-300 ${
+                            isPlaying ? 'opacity-85' : 'opacity-70'
+                          }`}
                         />
-                      </div>
 
-                      <div className="flex items-center justify-between text-white text-[11px] font-mono">
-                        <div className="flex items-center gap-2">
-                          <span>{Math.floor((videoProgress / 100) * 4)}:{String(Math.floor(((videoProgress / 100) * 255) % 60)).padStart(2, '0')}</span>
-                          <span>/</span>
-                          <span>{activeMedia.duration}</span>
+                        {/* Active playback visual overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = !isPlaying;
+                              setIsPlaying(next);
+                              onShowToast(next ? 'Reproduciendo video...' : 'Video en pausa');
+                            }}
+                            className="w-16 h-16 rounded-full bg-cyan-400 text-slate-950 flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                          >
+                            <span className="material-symbols-outlined text-[36px]">
+                              {isPlaying ? 'pause' : 'play_arrow'}
+                            </span>
+                          </button>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="material-symbols-outlined text-[16px] text-white">volume_up</span>
-                          <span className="text-[10px] font-sans font-bold bg-white/20 px-1.5 py-0.5 rounded">HD 1080p</span>
+
+                        {/* Video Player Controls Bar */}
+                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent flex flex-col gap-1.5">
+                          {/* Scrub bar */}
+                          <div
+                            onClick={(e) => {
+                              const rect = e.currentTarget.getBoundingClientRect();
+                              const clickX = e.clientX - rect.left;
+                              const pct = Math.round((clickX / rect.width) * 100);
+                              setVideoProgress(pct);
+                            }}
+                            className="w-full h-1.5 bg-white/30 rounded-full cursor-pointer overflow-hidden"
+                          >
+                            <div
+                              className="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-full transition-all"
+                              style={{ width: `${videoProgress}%` }}
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between text-white text-[11px] font-mono">
+                            <div className="flex items-center gap-2">
+                              <span>
+                                {Math.floor((videoProgress / 100) * 4)}:
+                                {String(Math.floor(((videoProgress / 100) * 255) % 60)).padStart(2, '0')}
+                              </span>
+                              <span>/</span>
+                              <span>{activeMedia.duration}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="material-symbols-outlined text-[16px] text-white">volume_up</span>
+                              <span className="text-[10px] font-sans font-bold bg-white/20 px-1.5 py-0.5 rounded">
+                                HD 1080p
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
