@@ -296,11 +296,11 @@ export default function App() {
             <span className="text-xl sm:text-2xl font-black bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent tracking-tight leading-none group-hover:opacity-90 transition-opacity">
               Expresa Te
             </span>
-            <div className="h-10 sm:h-11 md:h-12 px-1.5 py-0.5 rounded-xl bg-slate-900/90 dark:bg-slate-950/90 shadow-2xs border border-slate-700/60 dark:border-slate-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 p-1 rounded-xl bg-white dark:bg-slate-900 shadow-2xs border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <img
                 alt="Expresa Te Logo"
-                className="h-full w-auto max-h-12 object-contain"
-                src="/assets/aistudio/image_6440f15d.png"
+                className="w-full h-full object-contain"
+                src="/assets/aistudio/expresa_te_logo_square.png"
                 loading="eager"
               />
             </div>

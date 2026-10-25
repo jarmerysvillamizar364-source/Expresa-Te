@@ -265,11 +265,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-50 dark:opacity-70 group-hover:opacity-100 transition-opacity pointer-events-none" />
             
             <div className="relative p-6 sm:p-7 rounded-3xl bg-white/85 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/90 hover:border-cyan-500/40 backdrop-blur-xl shadow-xl dark:shadow-2xl flex flex-col items-center justify-center text-center transition-all">
-              <div className="relative flex items-center justify-center py-2 px-6 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200/90 dark:border-slate-800/80 shadow-inner mb-4">
+              {/* Tarjeta Interior del Logo (Contenedor cuadrado/vertical con esquinas rounded-2xl y resplandor luminoso) */}
+              <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-60 md:h-60 rounded-2xl bg-white dark:bg-slate-950/80 p-3 sm:p-4 border border-teal-500/30 dark:border-cyan-400/40 shadow-[0_0_25px_rgba(20,184,166,0.3)] dark:shadow-[0_0_30px_rgba(20,184,166,0.4)] flex flex-col items-center justify-center mb-5 group-hover:shadow-[0_0_35px_rgba(20,184,166,0.5)] transition-all">
                 <img
                   alt="Expresa Te Logo Oficial"
-                  className="h-16 sm:h-20 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(20,184,166,0.25)]"
-                  src={ASSETS.bannerLogo || '/assets/aistudio/image_6440f15d.png'}
+                  className="w-full h-full object-contain filter drop-shadow-sm select-none"
+                  src="/assets/aistudio/expresa_te_logo_square.png"
+                  loading="eager"
                 />
               </div>
 
