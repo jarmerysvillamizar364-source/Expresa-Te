@@ -259,14 +259,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             </p>
           </div>
 
-          {/* Tarjeta/Contenedor visual al centro con Logo y Brillo Suave (Siempre fondo blanco con resplandor neón tanto en modo claro como en modo oscuro) */}
+          {/* Tarjeta/Contenedor visual al centro con Logo y Brillo Suave */}
           <div className="w-full relative group">
             {/* Ambient halo behind container - resplandor cian/esmeralda */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/30 via-teal-500/30 to-emerald-500/30 rounded-3xl blur-xl opacity-60 dark:opacity-85 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/25 via-teal-500/25 to-emerald-500/25 rounded-3xl blur-xl opacity-50 dark:opacity-40 group-hover:opacity-75 transition-opacity pointer-events-none" />
             
-            <div className="relative p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 dark:border-teal-400/50 hover:border-teal-500/60 shadow-[0_0_25px_rgba(20,184,166,0.25)] dark:shadow-[0_0_35px_rgba(20,184,166,0.45)] flex flex-col items-center justify-center text-center transition-all">
-              {/* Tarjeta Interior del Logo (Fondo blanco permanente con esquinas redondeadas y borde sutil) */}
-              <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-60 md:h-60 rounded-2xl bg-white p-3 sm:p-4 border border-teal-500/30 shadow-[0_0_20px_rgba(20,184,166,0.2)] flex flex-col items-center justify-center mb-5 group-hover:shadow-[0_0_30px_rgba(20,184,166,0.35)] transition-all">
+            {/* Tarjeta grande principal: blanca en modo claro, oscura en modo oscuro (dark:bg-slate-900) */}
+            <div className="relative p-6 sm:p-7 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-cyan-500/30 hover:border-teal-500/50 dark:hover:border-cyan-400/50 shadow-xl shadow-teal-500/10 dark:shadow-[0_0_25px_rgba(6,182,212,0.2)] flex flex-col items-center justify-center text-center transition-all">
+              {/* Tarjeta Interior del Logo (Insignia que se mantiene SIEMPRE en fondo blanco con esquinas redondeadas y borde brillante) */}
+              <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-60 md:h-60 rounded-2xl bg-white p-3 sm:p-4 border border-teal-500/30 dark:border-cyan-400/50 shadow-[0_0_20px_rgba(20,184,166,0.2)] dark:shadow-[0_0_25px_rgba(6,182,212,0.3)] flex flex-col items-center justify-center mb-5 group-hover:shadow-[0_0_30px_rgba(20,184,166,0.35)] dark:group-hover:shadow-[0_0_30px_rgba(6,182,212,0.45)] transition-all">
                 <img
                   alt="Expresa Te Logo Oficial"
                   className="w-full h-full object-contain filter drop-shadow-sm select-none"
@@ -275,25 +276,25 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 />
               </div>
 
-              {/* Badges de Confianza y Protección (Textos oscuros garantizados sobre el fondo blanco) */}
+              {/* Badges de Confianza y Protección (Adaptados con fondos oscuros sutiles y textos claros en modo oscuro) */}
               <div className="grid grid-cols-2 gap-2.5 w-full pt-2">
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/90 text-left shadow-xs">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/60 text-left shadow-xs">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 truncate">100% Confidencial</p>
-                    <p className="text-[10px] text-slate-700 truncate">Ley 1090 / 1620</p>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">100% Confidencial</p>
+                    <p className="text-[10px] text-slate-700 dark:text-slate-300 truncate">Ley 1090 / 1620</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/90 text-left shadow-xs">
-                  <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-600 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/60 text-left shadow-xs">
+                  <div className="w-7 h-7 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
                     <HeartHandshake className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 truncate">Acompañamiento</p>
-                    <p className="text-[10px] text-slate-700 truncate">Orientación y Psico</p>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">Acompañamiento</p>
+                    <p className="text-[10px] text-slate-700 dark:text-slate-300 truncate">Orientación y Psico</p>
                   </div>
                 </div>
               </div>
