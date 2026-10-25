@@ -259,14 +259,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             </p>
           </div>
 
-          {/* Tarjeta/Contenedor visual al centro con Logo y Brillo Suave */}
+          {/* Tarjeta/Contenedor visual al centro con Logo y Brillo Suave (Mantiene fondo blanco y resplandor neón tanto en modo claro como oscuro) */}
           <div className="w-full relative group">
             {/* Ambient halo behind container */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-50 dark:opacity-70 group-hover:opacity-100 transition-opacity pointer-events-none" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/30 via-teal-500/30 to-emerald-500/30 rounded-3xl blur-xl opacity-60 dark:opacity-90 group-hover:opacity-100 transition-opacity pointer-events-none" />
             
-            <div className="relative p-6 sm:p-7 rounded-3xl bg-white/85 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/90 hover:border-cyan-500/40 backdrop-blur-xl shadow-xl dark:shadow-2xl flex flex-col items-center justify-center text-center transition-all">
-              {/* Tarjeta Interior del Logo (Contenedor cuadrado/vertical con esquinas rounded-2xl y resplandor luminoso) */}
-              <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-60 md:h-60 rounded-2xl bg-white dark:bg-slate-950/80 p-3 sm:p-4 border border-teal-500/30 dark:border-cyan-400/40 shadow-[0_0_25px_rgba(20,184,166,0.3)] dark:shadow-[0_0_30px_rgba(20,184,166,0.4)] flex flex-col items-center justify-center mb-5 group-hover:shadow-[0_0_35px_rgba(20,184,166,0.5)] transition-all">
+            <div className="relative p-6 sm:p-7 rounded-3xl bg-white border border-slate-200 dark:border-teal-400/40 hover:border-teal-500/60 shadow-[0_0_25px_rgba(20,184,166,0.25)] dark:shadow-[0_0_35px_rgba(20,184,166,0.45)] flex flex-col items-center justify-center text-center transition-all">
+              {/* Tarjeta Interior del Logo (Contenedor cuadrado con esquinas rounded-2xl, fondo blanco siempre y resplandor luminoso) */}
+              <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-60 md:h-60 rounded-2xl bg-white p-3 sm:p-4 border border-teal-500/30 shadow-[0_0_20px_rgba(20,184,166,0.25)] flex flex-col items-center justify-center mb-5 group-hover:shadow-[0_0_30px_rgba(20,184,166,0.4)] transition-all">
                 <img
                   alt="Expresa Te Logo Oficial"
                   className="w-full h-full object-contain filter drop-shadow-sm select-none"
@@ -277,23 +277,23 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
               {/* Badges de Confianza y Protección */}
               <div className="grid grid-cols-2 gap-2.5 w-full pt-2">
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/70 text-left">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-left">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">100% Confidencial</p>
-                    <p className="text-[10px] text-slate-700 dark:text-slate-300 truncate">Ley 1090 / 1620</p>
+                    <p className="text-xs font-bold text-slate-900 truncate">100% Confidencial</p>
+                    <p className="text-[10px] text-slate-600 truncate">Ley 1090 / 1620</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800/70 text-left">
-                  <div className="w-7 h-7 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-left">
+                  <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-600 flex items-center justify-center shrink-0">
                     <HeartHandshake className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">Acompañamiento</p>
-                    <p className="text-[10px] text-slate-700 dark:text-slate-300 truncate">Orientación y Psico</p>
+                    <p className="text-xs font-bold text-slate-900 truncate">Acompañamiento</p>
+                    <p className="text-[10px] text-slate-600 truncate">Orientación y Psico</p>
                   </div>
                 </div>
               </div>
