@@ -1015,7 +1015,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
       {/* TOOL 1: RESPIRACIÓN RÍTMICA GUIADA EN VIVO */}
       {/* ================================================================== */}
       {activeTool === 'breathing' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-surface-container-lowest p-6 sm:p-10 rounded-3xl border border-outline-variant/30 shadow-xs">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center bg-surface-container-lowest p-4 sm:p-6 lg:p-10 rounded-3xl border border-outline-variant/30 shadow-xs overflow-hidden">
           <div className="lg:col-span-7 space-y-5">
             {/* Mode selection buttons */}
             <div className="flex flex-wrap items-center gap-2">
@@ -1138,12 +1138,12 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               {(breathingPhase === 'inhale' || breathingPhase === 'hold' || breathingPhase === 'exhale') ? (
                 <button
                   type="button"
                   onClick={() => stopBreathing('cancel')}
-                  className="h-12 px-6 rounded-xl bg-rose-600 text-white font-label-lg font-bold shadow-sm hover:bg-rose-700 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
+                  className="w-full sm:w-auto h-12 px-6 rounded-xl bg-rose-600 text-white font-label-lg font-bold shadow-sm hover:bg-rose-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
                 >
                   <span className="material-symbols-outlined text-[22px]">stop</span>
                   <span>{isEs ? 'Detener ejercicio' : 'Stop exercise'}</span>
@@ -1152,7 +1152,7 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
                 <button
                   type="button"
                   onClick={startBreathing}
-                  className="h-12 px-6 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
+                  className="w-full sm:w-auto h-12 px-6 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
                 >
                   <span className="material-symbols-outlined text-[22px]">
                     {breathingPhase === 'completed' ? 'replay' : 'play_arrow'}
@@ -1166,8 +1166,8 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
           </div>
 
           {/* Animated visual orb with strict 4s expansion / 7s hold / 8s shrink */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-3xl border border-outline-variant/20 text-center">
-            <div className="relative w-52 h-52 flex items-center justify-center mb-4">
+          <div className="lg:col-span-5 flex flex-col items-center justify-center p-4 sm:p-6 bg-surface-container-low rounded-3xl border border-outline-variant/20 text-center overflow-hidden">
+            <div className="relative w-44 h-44 sm:w-52 sm:h-52 flex items-center justify-center mb-4">
               {/* Outer pulsing ring */}
               <div
                 className={`absolute inset-0 rounded-full bg-primary/20 ${

@@ -94,7 +94,7 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
   return (
     <div className="flex flex-col w-full space-y-8 pb-12 animate-fade-in">
       {/* Top Banner */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-6 sm:p-8 border border-outline-variant/30 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-surface-container-low via-surface-container to-surface-container-highest p-4 sm:p-6 lg:p-8 border border-outline-variant/30 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
             <span className="material-symbols-outlined text-[18px]">support_agent</span>
@@ -161,7 +161,7 @@ export const StudentOrientationView: React.FC<StudentOrientationViewProps> = ({
       {activeTab === 'nueva' && !submittedRequest && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Form Column (7 Cols) */}
-          <div className="lg:col-span-7 bg-surface-container-lowest rounded-3xl p-6 sm:p-8 border border-outline-variant/30 shadow-sm space-y-6">
+          <div className="lg:col-span-7 bg-surface-container-lowest rounded-3xl p-4 sm:p-6 lg:p-8 border border-outline-variant/30 shadow-sm space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Target Area: Orientación Escolar vs Psicología */}
               <div className="space-y-2">

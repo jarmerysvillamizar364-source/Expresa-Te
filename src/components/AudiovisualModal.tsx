@@ -353,8 +353,8 @@ export const AudiovisualModal: React.FC<AudiovisualModalProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-end sm:self-center w-full sm:w-auto justify-between sm:justify-end">
-            <div className="relative flex-1 sm:w-64 max-w-xs">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+            <div className="relative flex-1 sm:w-64 max-w-full sm:max-w-xs min-w-0">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
@@ -369,7 +369,7 @@ export const AudiovisualModal: React.FC<AudiovisualModalProps> = ({
               type="button"
               onClick={onClose}
               title={isEs ? 'Cerrar reproductor' : 'Close player'}
-              className="w-9 h-9 rounded-xl bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-xl bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer shrink-0"
             >
               <X className="w-5 h-5" />
             </button>

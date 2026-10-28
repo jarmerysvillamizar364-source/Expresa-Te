@@ -61,7 +61,7 @@ export const EmergencyHelplineModal: React.FC<EmergencyHelplineModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-500/30 rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 my-auto text-left relative overflow-hidden"
+        className="w-full max-w-lg bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-500/30 rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6 my-auto text-left relative overflow-hidden"
       >
         {/* Glow ambient background aura */}
         <div className="absolute -top-16 -right-16 w-40 h-40 bg-rose-500/15 rounded-full blur-2xl pointer-events-none" />

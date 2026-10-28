@@ -314,11 +314,11 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
             </div>
 
             {/* Primary Action Buttons */}
-            <div className="w-full flex flex-wrap items-center gap-3 pt-2">
+            <div className="w-full flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => onNavigate('audiovisuales')}
-                className="h-11 px-5 rounded-xl bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-bold text-xs sm:text-sm shadow-md shadow-cyan-500/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
+                className="w-full sm:w-auto h-11 px-4 sm:px-5 rounded-xl bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-bold text-xs sm:text-sm shadow-md shadow-cyan-500/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 <Video className="w-4 h-4" />
                 <span>{isEs ? 'Explorar Audiovisuales' : 'Audiovisual Hub'}</span>
@@ -327,7 +327,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigate('autocuidado')}
-                className="h-11 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-emerald-800 dark:text-emerald-300 font-bold text-xs sm:text-sm border border-slate-300 dark:border-slate-700 hover:border-emerald-500/40 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
+                className="w-full sm:w-auto h-11 px-4 sm:px-5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-emerald-800 dark:text-emerald-300 font-bold text-xs sm:text-sm border border-slate-300 dark:border-slate-700 hover:border-emerald-500/40 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 <Heart className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{isEs ? 'Centro de Autocuidado' : 'Self-Care Center'}</span>
@@ -336,7 +336,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigate('orientacion')}
-                className="h-11 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-teal-800 dark:text-cyan-300 font-bold text-xs sm:text-sm border border-slate-300 dark:border-slate-700 hover:border-cyan-500/40 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
+                className="w-full sm:w-auto h-11 px-4 sm:px-5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-teal-800 dark:text-cyan-300 font-bold text-xs sm:text-sm border border-slate-300 dark:border-slate-700 hover:border-cyan-500/40 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 <HeartHandshake className="w-4 h-4 text-teal-600 dark:text-cyan-400" />
                 <span>{t.requestGuidance}</span>

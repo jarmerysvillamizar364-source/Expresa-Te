@@ -314,18 +314,18 @@ export default function App() {
     <div className="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-body-md min-h-screen flex flex-col antialiased selection:bg-cyan-500/20 selection:text-cyan-900 dark:selection:text-cyan-200 transition-colors duration-200">
       {/* Top Web Navigation Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl shadow-xs dark:shadow-[0_4px_24px_-4px_rgba(6,182,212,0.12)] border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-200">
-        <div className="max-w-7xl mx-auto h-16 sm:h-18 px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 lg:gap-3">
+        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto h-16 sm:h-18 px-2.5 sm:px-4 lg:px-6 flex items-center justify-between gap-1.5 sm:gap-2.5 lg:gap-3">
           {/* Brand Zone: Project Name "Expresa Te" with its respective logo */}
           <button
             type="button"
             onClick={() => handleNavigate(!isLoggedIn ? 'login' : isStaff ? 'panel-orientador' : 'inicio')}
-            className="flex items-center gap-2.5 sm:gap-3 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-w-0"
+            className="flex items-center gap-2 sm:gap-2.5 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-w-0"
             title="Expresa Te"
           >
-            <span className="text-xl sm:text-2xl font-black bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent tracking-tight leading-none group-hover:opacity-90 transition-opacity">
+            <span className="text-lg sm:text-xl lg:text-2xl font-black bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent tracking-tight leading-none group-hover:opacity-90 transition-opacity">
               Expresa Te
             </span>
-            <div className="w-10 h-10 sm:w-11 sm:h-11 p-1 rounded-xl bg-white dark:bg-slate-900 shadow-2xs border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 p-1 rounded-xl bg-white dark:bg-slate-900 shadow-2xs border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <img
                 alt="Expresa Te Logo"
                 className="w-full h-full object-contain"
@@ -364,16 +364,17 @@ export default function App() {
           ) : null}
 
           {/* Controls Zone: Línea 106 (destacado en rojo/rosa) + Tema (Claro/Oscuro) + Idioma (ES / EN) */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 shrink-0">
             {/* Botón de ayuda/emergencia: "Línea 106" destacado en tono rojo/rosa suave */}
             <button
               type="button"
               onClick={() => setShowEmergencyModal(true)}
               title={lang === 'es' ? 'Línea 106 de Crisis y Ayuda Inmediata' : 'Line 106 Crisis & Immediate Support'}
-              className="inline-flex items-center gap-1.5 h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(244,63,94,0.15)] group"
+              className="inline-flex items-center gap-1 sm:gap-1.5 h-8.5 sm:h-9 md:h-10 px-2 sm:px-2.5 md:px-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-500 dark:text-rose-400 border border-rose-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(244,63,94,0.15)] group min-w-[36px]"
             >
-              <PhoneCall className="w-3.5 h-3.5 text-rose-400 group-hover:scale-110 transition-transform" />
-              <span>{lang === 'es' ? 'Línea 106' : 'Line 106'}</span>
+              <PhoneCall className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 group-hover:scale-110 transition-transform" />
+              <span className="hidden sm:inline">{lang === 'es' ? 'Línea 106' : 'Line 106'}</span>
+              <span className="sm:hidden font-mono">106</span>
             </button>
 
             {/* Botón de acceso directo: "Audiovisuales" */}
@@ -381,10 +382,11 @@ export default function App() {
               type="button"
               onClick={() => handleNavigate('audiovisuales')}
               title={lang === 'es' ? 'Abrir Centro de Videos y Audiovisuales' : 'Open Audiovisual Media Hub'}
-              className="inline-flex items-center gap-1.5 h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-teal-800 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(6,182,212,0.15)] group"
+              className="inline-flex items-center gap-1 sm:gap-1.5 h-8.5 sm:h-9 md:h-10 px-2 sm:px-2.5 md:px-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-teal-800 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(6,182,212,0.15)] group min-w-[36px]"
             >
               <Film className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform" />
-              <span>{lang === 'es' ? 'Audiovisuales' : 'Media Hub'}</span>
+              <span className="hidden sm:inline">{lang === 'es' ? 'Audiovisuales' : 'Media Hub'}</span>
+              <span className="sm:hidden hidden min-[360px]:inline text-xs">{lang === 'es' ? 'Videos' : 'Media'}</span>
             </button>
 
             {/* In-App PWA Install Trigger (Header variant shown on 2xl+ screens) */}
@@ -426,7 +428,7 @@ export default function App() {
                   ? 'Cambiar a Modo Oscuro'
                   : 'Switch to Dark Mode'
               }
-              className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 border border-slate-300 dark:border-slate-700/80 hover:border-cyan-500/40 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
+              className="w-8.5 h-8.5 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 border border-slate-300 dark:border-slate-700/80 hover:border-cyan-500/40 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
             >
               {darkMode ? (
                 <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
@@ -441,7 +443,7 @@ export default function App() {
               onClick={handleToggleLanguage}
               title={lang === 'es' ? 'Cambiar a inglés (Switch to English)' : 'Cambiar a español (Switch to Spanish)'}
               aria-label={lang === 'es' ? 'Cambiar idioma a inglés' : 'Switch language to Spanish'}
-              className="h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700/60 hover:border-cyan-500/40 transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 shrink-0 font-bold text-xs group shadow-xs"
+              className="h-8.5 sm:h-9 md:h-10 px-2 sm:px-2.5 md:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700/60 hover:border-cyan-500/40 transition-all active:scale-95 cursor-pointer flex items-center gap-1 sm:gap-1.5 shrink-0 font-bold text-xs group shadow-xs"
             >
               <Globe className="w-3.5 h-3.5 text-teal-700 dark:text-cyan-400 group-hover:rotate-12 transition-transform" />
               <span className="uppercase font-extrabold text-teal-800 dark:text-cyan-300">
@@ -476,7 +478,7 @@ export default function App() {
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Abrir menú de navegación"
-              className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors active:scale-95 cursor-pointer shrink-0"
+              className="lg:hidden w-8.5 h-8.5 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors active:scale-95 cursor-pointer shrink-0"
             >
               <span className="material-symbols-outlined text-[20px]">
                 {menuOpen ? 'close' : 'menu'}
@@ -486,15 +488,15 @@ export default function App() {
         </div>
       </header>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu (Visible on < lg, covering phones and portrait tablets) */}
       {menuOpen && (
         <div
           onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-xs flex justify-end md:hidden animate-fade-in"
+          className="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-xs flex justify-end lg:hidden animate-fade-in"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-72 sm:w-80 max-w-[85vw] h-full bg-surface-container-lowest p-5 sm:p-6 shadow-2xl border-l border-outline-variant/30 flex flex-col justify-between overflow-y-auto"
+            className="w-72 sm:w-80 max-w-[85vw] h-full bg-surface-container-lowest p-5 sm:p-6 shadow-2xl border-l border-outline-variant/30 flex flex-col justify-between overflow-y-auto pb-safe"
           >
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between pb-4 border-b border-outline-variant/20">
@@ -690,10 +692,10 @@ export default function App() {
 
       {/* Main Container: Centered vertically and horizontally before login, standard dashboard padding when logged in */}
       <main
-        className={`w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col min-w-0 transition-all ${
+        className={`w-full mx-auto px-3 sm:px-6 lg:px-8 flex flex-col min-w-0 transition-all ${
           !isLoggedIn && activeScreen === 'login'
-            ? 'flex-1 min-h-[calc(100vh-4.5rem)] pt-20 pb-8 sm:pt-24 sm:pb-12 max-w-7xl items-center justify-center'
-            : 'flex-1 max-w-7xl pt-24 sm:pt-28 pb-16'
+            ? 'flex-1 min-h-[calc(100vh-4.5rem)] pt-20 pb-8 sm:pt-24 sm:pb-12 max-w-7xl 2xl:max-w-[1440px] items-center justify-center'
+            : 'flex-1 max-w-7xl 2xl:max-w-[1440px] pt-20 sm:pt-26 lg:pt-28 pb-24 md:pb-16'
         }`}
       >
         {!isLoggedIn ? (
@@ -1153,7 +1155,7 @@ export default function App() {
       {isLoggedIn && (
         <nav
           aria-label="Navegación móvil"
-          className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/90 backdrop-blur-xl shadow-[0_-8px_24px_rgba(0,0,0,0.06)] border-t border-outline-variant/20"
+          className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-xl shadow-[0_-8px_24px_rgba(0,0,0,0.06)] border-t border-outline-variant/20 pb-safe"
         >
           <div className="flex items-center justify-around h-16 px-1 max-w-lg mx-auto">
             {(isStaff

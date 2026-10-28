@@ -295,12 +295,24 @@
   min-width: 44px;
 }
 
-::-webkit-scrollbar {
-  display: none;
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Prevent unwanted iOS Safari zooming on form inputs by ensuring minimum 16px font-size */
+@media screen and (max-width: 640px) {
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="number"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 
