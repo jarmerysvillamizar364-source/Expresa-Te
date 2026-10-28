@@ -57,16 +57,16 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
   const resources: ResourceItem[] = [
     {
       id: 'video-stop',
-      title: isEs ? 'Técnica STOP para la Regulación Emocional' : 'STOP Technique for Emotional Regulation',
+      title: isEs ? 'Técnica STOP y Regulación Emocional (Marian Rojas-Estapé)' : 'STOP Technique for Emotional Regulation',
       format: 'video',
       category: 'emociones',
-      duration: '4:15 min',
+      duration: '6:40 min',
       image: ASSETS.videoStop,
-      embedUrl: 'https://www.youtube-nocookie.com/embed/fD3lC_d8s6c',
+      embedUrl: 'https://www.youtube-nocookie.com/embed/Dm9Wcfqa220',
       desc: isEs
-        ? 'Aprende los cuatro pasos de la técnica STOP para detener impulsos, calmar tu sistema nervioso y responder con claridad.'
+        ? 'Aprende los cuatro pasos de la técnica STOP con la psiquiatra Marian Rojas para frenar impulsos, regular el cortisol y responder con claridad.'
         : 'Master the 4 steps of the STOP technique to pause impulsive reactions, soothe your nervous system, and respond calmly.',
-      author: isEs ? 'Psicología Escolar' : 'School Psychology',
+      author: isEs ? 'Dra. Marian Rojas-Estapé · Aprendemos Juntos' : 'Dr. Marian Rojas-Estapé',
       takeaways: isEs
         ? [
             'S (Stop / Para): Haz un alto inmediato antes de responder con enojo o miedo.',
@@ -81,27 +81,27 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
             'P (Proceed): Choose your next step with composure and intention.',
           ],
       transcript: isEs
-        ? 'Hola. En este video aprenderemos la técnica STOP. Cuando sentimos que una discusión o un momento de estrés nos sobrepasa, el cerebro activa la amígdala. Parar durante 30 segundos permite que la corteza prefrontal retome el control. Inhala despacio en 4 tiempos y siente cómo tus hombros caen. Ahora observa: ¿es frustración, cansancio o tristeza? Ponerle nombre a la emoción reduce su intensidad biológica en un 50%.'
-        : 'Welcome. In this video, we explore the STOP technique. When stress escalates, our amygdala takes charge. Pausing for 30 seconds enables the prefrontal cortex to regain equilibrium. Inhale slowly and relax your shoulders. Labeling your emotion reduces its biological arousal significantly.',
+        ? 'Cuando vivimos una situación que percibimos como amenaza —un examen difícil, una discusión o el miedo al rechazo—, nuestro cerebro activa el sistema simpático y libera cortisol y adrenalina. La clave para desactivar esta cascada no es pelearnos con la emoción, sino observarla, respirar despacio y entender que ninguna emoción dura para siempre si no la alimentamos con pensamientos catastróficos.'
+        : 'When stress escalates, our amygdala takes charge. Pausing for 30 seconds enables the prefrontal cortex to regain equilibrium. Inhale slowly and relax your shoulders. Labeling your emotion reduces its biological arousal significantly.',
     },
     {
       id: 'video-exam',
-      title: isEs ? 'Manejo de la Ansiedad ante Evaluaciones y Exámenes' : 'Managing Exam Anxiety & Cognitive Overload',
+      title: isEs ? 'Manejo de la Ansiedad ante Evaluaciones y Bloqueo Mental' : 'Managing Exam Anxiety & Cognitive Overload',
       format: 'video',
       category: 'academico',
-      duration: '6:30 min',
+      duration: '7:15 min',
       image: ASSETS.videoExam,
-      embedUrl: 'https://www.youtube-nocookie.com/embed/1ZYbU88VzII',
+      embedUrl: 'https://www.youtube-nocookie.com/embed/f69n5VQLIQw',
       desc: isEs
-        ? 'Estrategias basadas en neurociencia para vencer el bloqueo mental, organizar sesiones de estudio y mantener la calma el día de la prueba.'
+        ? 'Estrategias de neurociencia con el Dr. Mario Alonso Puig para vencer el bloqueo mental, transformar el miedo al error y rendir al máximo.'
         : 'Neuroscience-backed strategies to overcome mental blocks, structure study sessions, and stay grounded during test day.',
-      author: isEs ? 'Orientación Académica' : 'Academic Guidance',
+      author: isEs ? 'Dr. Mario Alonso Puig · Aprendemos Juntos' : 'Dr. Mario Alonso Puig',
       takeaways: isEs
         ? [
-            'Estudia en bloques de 25 minutos (Técnica Pomodoro) con 5 minutos de descanso activo.',
-            'Desensibilización: Simula el entorno del examen en casa sin distractores.',
-            'Anclaje previo: 2 minutos de respiración diafragmática antes de leer las preguntas.',
+            'Tener la mente en blanco no es falta de capacidad, sino una sobrecarga temporal de cortisol.',
+            'Exhalaciones prolongadas de 60 segundos antes de comenzar la prueba bajan la frecuencia cardíaca.',
             'Lectura panorámica: Responde primero lo que sabes con certeza para afianzar confianza.',
+            'Sustituye mentalmente el "no soy capaz" por "estoy preparado para responder paso a paso".',
           ]
         : [
             'Study in 25-minute Pomodoro intervals with 5-minute movement pauses.',
@@ -110,26 +110,26 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
             'Answer high-confidence questions first to build momentum and calm dopamine.',
           ],
       transcript: isEs
-        ? 'La mente en blanco durante una evaluación no significa falta de estudio, sino una respuesta de estrés agudo. Cuando sientas aceleración cardíaca, apoya ambos pies en el piso, suelta el lápiz por 15 segundos y exhala el doble de lo que inhalas. Este cambio respiratorio le informa a tu sistema nervioso que estás a salvo.'
+        ? 'El miedo al error paraliza la creatividad y la memoria de trabajo. Cuando sientas que la ansiedad te abruma antes de una prueba, suelta el bolígrafo, apoya ambos pies en el suelo y recuerda que una calificación es solo una medida de un momento puntual, jamás un límite de tu potencial de aprendizaje.'
         : 'A blank mind during exams is an acute stress reaction, not a lack of knowledge. If your heart races, plant both feet firmly on the ground, set your pen down for 15 seconds, and exhale longer than you inhale.',
     },
     {
       id: 'video-coexistence',
-      title: isEs ? 'Comunicación Asertiva y Convivencia Escolar Pacífica' : 'Assertive Communication & Peaceful Coexistence',
+      title: isEs ? 'Prevención del Acoso Escolar: Romper la Ley del Silencio (Ley 1620)' : 'Assertive Communication & Peaceful Coexistence',
       format: 'video',
       category: 'convivencia',
-      duration: '5:45 min',
+      duration: '5:25 min',
       image: ASSETS.videoCoexistence,
-      embedUrl: 'https://www.youtube-nocookie.com/embed/jZkq_7ZrnY8',
+      embedUrl: 'https://www.youtube-nocookie.com/embed/gODzdiZ4Gj8',
       desc: isEs
-        ? 'Aprende a poner límites firmes y respetuosos, resolver malentendidos entre compañeros y actuar de forma segura ante situaciones de acoso.'
+        ? 'Testimonio y pautas de acción sobre el rol vital de los compañeros observadores para frenar el acoso escolar y acudir a Orientación Escolar.'
         : 'Learn how to set firm, respectful boundaries, resolve peer conflicts, and stand as an active positive ally against bullying.',
-      author: isEs ? 'Comité de Convivencia' : 'Coexistence Committee',
+      author: isEs ? 'Iñaki Zubizarreta · Actuamos Contra el Bullying' : 'Anti-Bullying Campaign',
       takeaways: isEs
         ? [
-            'Fórmula de comunicación asertiva: "Cuando ocurre [hecho], yo me siento [emoción] y necesito [petición]".',
-            'Diferenciar entre desacuerdo puntual y acoso repetitivo (Ley 1620).',
-            'El poder del observador: No celebrar burlas y reportar confidencialmente.',
+            'El acoso escolar vive del silencio de los testigos; no celebrar burlas desactiva al intimidador.',
+            'Diferenciar entre desacuerdo puntual y acoso escolar repetitivo (Ley 1620).',
+            'Reportar a Orientación Escolar no es delatar: es salvar la dignidad y vida de un compañero.',
             'Ruta institucional segura: Orientación escolar escucha sin exponer a quien consulta.',
           ]
         : [
@@ -139,7 +139,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
             'Institutional safety route: Counselors handle all conversations confidentially.',
           ],
       transcript: isEs
-        ? 'La asertividad no es agresión ni debilidad. Es la capacidad de expresar tus derechos sin pisotear los de los demás. Cuando alguien haga un comentario hiriente, mantén contacto visual neutro y di con tono sereno: "No me agrada ese trato. Prefiero que hablemos con respeto".'
+        ? 'El acoso se alimenta del miedo del que lo sufre y del silencio cómplice de los que miran. Si eres testigo de un maltrato o burla continua hacia alguien de tu salón, tu voz puede salvarle. No te quedes callado: acude a un orientador o usa el canal seguro de Expresa Te.'
         : 'Assertiveness is neither aggression nor passivity. It is standing up for yourself while maintaining respect for others. State clearly and serenely: "I do not appreciate that tone. Let us speak with respect."',
     },
     {
@@ -550,7 +550,7 @@ export const ResourcesScreen: React.FC<ScreenProps> = ({
                   <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-md flex items-center justify-center">
                     {videoPlayerMode === 'embed' && activeMedia.embedUrl ? (
                       <iframe
-                        src={`${activeMedia.embedUrl}?autoplay=1&rel=0`}
+                        src={`${activeMedia.embedUrl}?hl=es&cc_lang_pref=es&cc_load_policy=1&rel=0&playsinline=1&autoplay=1`}
                         title={activeMedia.title}
                         className="w-full h-full border-0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
