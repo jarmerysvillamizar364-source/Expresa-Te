@@ -22,7 +22,7 @@ import { AudiovisualModal } from './components/AudiovisualModal';
 import { AudiovisualsView } from './components/AudiovisualsView';
 import { EmergencyHelplineModal } from './components/EmergencyHelplineModal';
 import { UserProfileDropdown } from './components/UserProfileDropdown';
-import { PhoneCall, Sun, Moon, Globe, Film } from 'lucide-react';
+import { PhoneCall, Sun, Moon, Globe, Film, LogIn } from 'lucide-react';
 
 export type ActiveScreen =
   | 'inicio'
@@ -314,18 +314,16 @@ export default function App() {
     <div className="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-body-md min-h-screen flex flex-col antialiased selection:bg-cyan-500/20 selection:text-cyan-900 dark:selection:text-cyan-200 transition-colors duration-200">
       {/* Top Web Navigation Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl shadow-xs dark:shadow-[0_4px_24px_-4px_rgba(6,182,212,0.12)] border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-200">
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto h-16 sm:h-18 px-2.5 sm:px-4 lg:px-6 flex items-center justify-between gap-1.5 sm:gap-2.5 lg:gap-3">
-          {/* Brand Zone: Project Name "Expresa Te" with its respective logo */}
+        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto h-16 sm:h-18 px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 lg:gap-4">
+          {/* Brand Zone: Logo + "Expresa Te" title, centered vertically */}
           <button
             type="button"
             onClick={() => handleNavigate(!isLoggedIn ? 'login' : isStaff ? 'panel-orientador' : 'inicio')}
-            className="flex items-center gap-2 sm:gap-2.5 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-w-0"
+            className="flex items-center gap-2 sm:gap-2.5 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 rounded-xl"
             title="Expresa Te"
+            aria-label="Expresa Te — Inicio"
           >
-            <span className="text-lg sm:text-xl lg:text-2xl font-black bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent tracking-tight leading-none group-hover:opacity-90 transition-opacity">
-              Expresa Te
-            </span>
-            <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 p-1 rounded-xl bg-white dark:bg-slate-900 shadow-2xs border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 p-1 rounded-xl bg-white dark:bg-slate-900 shadow-2xs border border-slate-200 dark:border-slate-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <img
                 alt="Expresa Te Logo"
                 className="w-full h-full object-contain"
@@ -333,60 +331,51 @@ export default function App() {
                 loading="eager"
               />
             </div>
+            <span className="text-lg sm:text-xl font-black bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-500 dark:from-cyan-400 dark:via-teal-300 dark:to-emerald-400 bg-clip-text text-transparent tracking-tight leading-none group-hover:opacity-90 transition-opacity whitespace-nowrap">
+              Expresa Te
+            </span>
           </button>
 
-          {/* Center Navigation Zone: Shown on lg+ ONLY after user logs in */}
-          {isLoggedIn ? (
-            /* Desktop Web Navigation Links (Rendered ONLY after user logs in) */
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 min-w-0" aria-label="Navegación principal">
-              {navItems.map((item) => {
-                const active = isNavActive(item.id);
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleNavigate(item.id)}
-                    className={`flex items-center gap-1 xl:gap-1.5 h-8.5 xl:h-9.5 px-2 xl:px-3 rounded-xl text-xs xl:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-[0.98] shrink-0 ${
-                      active
-                        ? 'bg-primary-fixed/40 text-primary shadow-2xs font-bold'
-                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-[17px] xl:text-[18px]">
-                      {item.icon}
-                    </span>
-                    <span className="hidden xl:inline">{item.label}</span>
-                    <span className="xl:hidden text-xs">{item.shortLabel || item.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          ) : null}
+          {/* Center Navigation Zone: Horizontal options ordered and aligned cleanly */}
+          <nav
+            className="hidden lg:flex items-center justify-center gap-1 xl:gap-1.5 flex-1 max-w-2xl px-2 min-w-0"
+            aria-label="Navegación principal"
+          >
+            {navItems.map((item) => {
+              const active = isNavActive(item.id);
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => handleNavigate(item.id)}
+                  className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-9.5 px-2.5 xl:px-3 rounded-xl text-xs xl:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap active:scale-[0.98] shrink-0 ${
+                    active
+                      ? 'bg-teal-500/15 dark:bg-teal-500/20 text-teal-800 dark:text-teal-200 border border-teal-500/30 shadow-2xs font-bold'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/70 border border-transparent'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[18px] xl:text-[19px] shrink-0">
+                    {item.icon}
+                  </span>
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
 
-          {/* Controls Zone: Línea 106 (destacado en rojo/rosa) + Tema (Claro/Oscuro) + Idioma (ES / EN) */}
-          <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 shrink-0">
-            {/* Botón de ayuda/emergencia: "Línea 106" destacado en tono rojo/rosa suave */}
+          {/* Controls Zone: Línea 106 + Tema + Idioma + Perfil / Iniciar Sesión + Menú móvil */}
+          <div className="flex items-center justify-end gap-1.5 sm:gap-2 shrink-0">
+            {/* Botón de ayuda/emergencia: "Línea 106" destacado en tono rojo/rosa */}
             <button
               type="button"
               onClick={() => setShowEmergencyModal(true)}
               title={lang === 'es' ? 'Línea 106 de Crisis y Ayuda Inmediata' : 'Line 106 Crisis & Immediate Support'}
-              className="inline-flex items-center gap-1 sm:gap-1.5 h-8.5 sm:h-9 md:h-10 px-2 sm:px-2.5 md:px-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-500 dark:text-rose-400 border border-rose-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(244,63,94,0.15)] group min-w-[36px]"
+              aria-label={lang === 'es' ? 'Línea 106 de Ayuda Inmediata' : 'Line 106 Immediate Support'}
+              className="inline-flex items-center justify-center gap-1.5 h-9 sm:h-9.5 px-2.5 sm:px-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(244,63,94,0.12)] group"
             >
-              <PhoneCall className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 group-hover:scale-110 transition-transform" />
+              <PhoneCall className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 group-hover:scale-110 transition-transform shrink-0" />
               <span className="hidden sm:inline">{lang === 'es' ? 'Línea 106' : 'Line 106'}</span>
-              <span className="sm:hidden font-mono">106</span>
-            </button>
-
-            {/* Botón de acceso directo: "Audiovisuales" */}
-            <button
-              type="button"
-              onClick={() => handleNavigate('audiovisuales')}
-              title={lang === 'es' ? 'Abrir Centro de Videos y Audiovisuales' : 'Open Audiovisual Media Hub'}
-              className="inline-flex items-center gap-1 sm:gap-1.5 h-8.5 sm:h-9 md:h-10 px-2 sm:px-2.5 md:px-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-teal-800 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(6,182,212,0.15)] group min-w-[36px]"
-            >
-              <Film className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform" />
-              <span className="hidden sm:inline">{lang === 'es' ? 'Audiovisuales' : 'Media Hub'}</span>
-              <span className="sm:hidden hidden min-[360px]:inline text-xs">{lang === 'es' ? 'Videos' : 'Media'}</span>
+              <span className="sm:hidden font-mono font-bold">106</span>
             </button>
 
             {/* In-App PWA Install Trigger (Header variant shown on 2xl+ screens) */}
@@ -428,7 +417,7 @@ export default function App() {
                   ? 'Cambiar a Modo Oscuro'
                   : 'Switch to Dark Mode'
               }
-              className="w-8.5 h-8.5 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 border border-slate-300 dark:border-slate-700/80 hover:border-cyan-500/40 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center shrink-0 shadow-xs"
+              className="w-9 h-9 sm:w-9.5 sm:h-9.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 border border-slate-300 dark:border-slate-700/80 hover:border-teal-500/40 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
             >
               {darkMode ? (
                 <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 hover:rotate-45" />
@@ -443,16 +432,16 @@ export default function App() {
               onClick={handleToggleLanguage}
               title={lang === 'es' ? 'Cambiar a inglés (Switch to English)' : 'Cambiar a español (Switch to Spanish)'}
               aria-label={lang === 'es' ? 'Cambiar idioma a inglés' : 'Switch language to Spanish'}
-              className="h-8.5 sm:h-9 md:h-10 px-2 sm:px-2.5 md:px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700/60 hover:border-cyan-500/40 transition-all active:scale-95 cursor-pointer flex items-center gap-1 sm:gap-1.5 shrink-0 font-bold text-xs group shadow-xs"
+              className="h-9 sm:h-9.5 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700/60 hover:border-teal-500/40 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 shrink-0 font-bold text-xs group shadow-2xs"
             >
-              <Globe className="w-3.5 h-3.5 text-teal-700 dark:text-cyan-400 group-hover:rotate-12 transition-transform" />
+              <Globe className="w-3.5 h-3.5 text-teal-700 dark:text-cyan-400 group-hover:rotate-12 transition-transform shrink-0" />
               <span className="uppercase font-extrabold text-teal-800 dark:text-cyan-300">
                 {lang.toUpperCase()}
               </span>
             </button>
 
-            {/* User Profile Dropdown Menu (Shown ONLY when logged in) */}
-            {isLoggedIn && (
+            {/* User Profile Dropdown Menu (Shown when logged in) or Login button (when not logged in) */}
+            {isLoggedIn ? (
               <UserProfileDropdown
                 lang={lang}
                 userName={userName}
@@ -471,14 +460,29 @@ export default function App() {
                 onOpenEmergencyModal={() => setShowEmergencyModal(true)}
                 activeScreen={activeScreen}
               />
+            ) : (
+              <button
+                type="button"
+                onClick={() => handleNavigate('login')}
+                title={lang === 'es' ? 'Iniciar Sesión Institucional' : 'Sign In'}
+                aria-label={lang === 'es' ? 'Iniciar Sesión' : 'Sign In'}
+                className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-9.5 px-2.5 sm:px-3 rounded-xl font-bold text-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap shrink-0 shadow-2xs ${
+                  activeScreen === 'login'
+                    ? 'bg-primary text-on-primary ring-2 ring-primary/30 shadow-xs'
+                    : 'bg-primary-container text-on-primary hover:opacity-95'
+                }`}
+              >
+                <LogIn className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline">{lang === 'es' ? 'Iniciar Sesión' : 'Sign In'}</span>
+              </button>
             )}
 
             {/* Hamburger button for mobile / tablet drawer */}
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Abrir menú de navegación"
-              className="lg:hidden w-8.5 h-8.5 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 transition-colors active:scale-95 cursor-pointer shrink-0"
+              aria-label={menuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+              className="lg:hidden w-9 h-9 sm:w-9.5 sm:h-9.5 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 transition-colors active:scale-95 cursor-pointer shrink-0"
             >
               <span className="material-symbols-outlined text-[20px]">
                 {menuOpen ? 'close' : 'menu'}
@@ -612,23 +616,48 @@ export default function App() {
                   </div>
                 </>
               ) : (
-                <div className="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/30 space-y-2">
-                  <span className="font-label-sm font-bold text-primary uppercase tracking-wider block">
-                    Acceso Requerido
-                  </span>
-                  <p className="font-body-sm text-on-surface-variant">
-                    {lang === 'es'
-                      ? 'Inicia sesión con tu cuenta institucional para acceder a todos los contenidos, biblioteca de recursos y acompañamiento.'
-                      : 'Please sign in with your institutional account to access platform content and guidance.'}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('audiovisuales')}
-                    className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-teal-800 dark:text-cyan-300 font-bold text-xs border border-cyan-500/30 cursor-pointer transition-all active:scale-98"
-                  >
-                    <Film className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-                    <span>{lang === 'es' ? 'Explorar Centro Audiovisual' : 'Explore Audiovisual Media'}</span>
-                  </button>
+                <div className="space-y-3">
+                  <div className="p-4 bg-surface-container-low rounded-2xl border border-outline-variant/30 space-y-2">
+                    <span className="font-label-sm font-bold text-primary uppercase tracking-wider block">
+                      {lang === 'es' ? 'Acceso Institucional' : 'Institutional Access'}
+                    </span>
+                    <p className="font-body-sm text-on-surface-variant">
+                      {lang === 'es'
+                        ? 'Inicia sesión con tu cuenta institucional para acceder a todos los contenidos, biblioteca de recursos y acompañamiento.'
+                        : 'Please sign in with your institutional account to access platform content and guidance.'}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('login')}
+                      className="w-full mt-2 flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs cursor-pointer shadow-xs active:scale-98 transition-all"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      <span>{lang === 'es' ? 'Iniciar Sesión' : 'Sign In'}</span>
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col gap-1 pt-1">
+                    <span className="font-label-sm font-bold text-on-surface-variant uppercase tracking-wider px-3 mb-1">
+                      {lang === 'es' ? 'Navegación' : 'Navigation'}
+                    </span>
+                    {navItems.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleNavigate(item.id)}
+                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-label-md text-left transition-colors cursor-pointer ${
+                          activeScreen === item.id
+                            ? 'bg-primary text-on-primary font-bold shadow-xs'
+                            : 'text-on-surface hover:bg-surface-container-low'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[20px]">
+                          {item.icon}
+                        </span>
+                        <span>{item.label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 

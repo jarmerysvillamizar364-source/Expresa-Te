@@ -114,16 +114,16 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label={lang === 'es' ? 'Menú de opciones de usuario' : 'User profile options menu'}
-        className={`h-9 sm:h-10 pl-1.5 pr-2 sm:pl-2 sm:pr-3 rounded-xl font-label-sm font-bold shadow-xs hover:shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center gap-1.5 sm:gap-2 shrink-0 border border-outline-variant/30 ${
+        className={`h-9 sm:h-9.5 pl-1.5 pr-2 sm:pl-2 sm:pr-3 rounded-xl font-label-sm font-bold shadow-xs hover:shadow-sm active:scale-[0.98] transition-all cursor-pointer flex items-center gap-1.5 sm:gap-2 shrink-0 border border-outline-variant/30 ${
           isOpen
             ? 'bg-primary text-on-primary ring-2 ring-primary/30'
             : 'bg-primary-container text-on-primary hover:opacity-95'
         }`}
       >
-        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white/20 flex items-center justify-center font-bold text-xs uppercase shadow-2xs">
+        <div className="w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-lg bg-white/20 flex items-center justify-center font-bold text-xs uppercase shadow-2xs shrink-0">
           {getInitials(userName, userEmail)}
         </div>
-        <span className="hidden sm:inline max-w-[110px] md:max-w-[130px] truncate text-left text-xs sm:text-sm">
+        <span className="hidden md:inline max-w-[100px] xl:max-w-[130px] truncate text-left text-xs sm:text-sm">
           {userName || (userEmail ? userEmail.split('@')[0] : 'Usuario')}
         </span>
         <span
