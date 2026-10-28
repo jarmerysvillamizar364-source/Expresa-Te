@@ -139,6 +139,25 @@ async function runTests() {
   const allHaveSafeUrls = INITIAL_AUDIOVISUAL_RESOURCES.every((r) => r.mediaUrl && r.title && r.categoryLabel);
   assert('Todos los recursos cuentan con enlaces seguros y títulos estructurados', allHaveSafeUrls);
 
+  // Verificación específica del recurso Infografía Dinámica: Termómetro Emocional
+  const infographicItem = INITIAL_AUDIOVISUAL_RESOURCES.find((r) => r.id === 'av-infografia-emociones');
+  assert('Recurso «av-infografia-emociones» existe en el catálogo', !!infographicItem);
+  assert('Formato del recurso es estrictamente «infografia»', infographicItem?.format === 'infografia');
+  assert('Recurso cuenta con locución/contenido verificado en español', infographicItem?.audioLanguage?.includes('Español') === true);
+  assert('Título estructurado del recurso contiene «Termómetro Emocional»', infographicItem?.title?.includes('Termómetro Emocional') === true);
+
+  const { THERMOMETER_ZONES } = await import('../src/components/EmotionalThermometerViewer.tsx');
+  const zoneKeys = Object.keys(THERMOMETER_ZONES);
+  assert('Termómetro Emocional contiene las 4 zonas requeridas (verde, amarillo, naranja, rojo)', zoneKeys.length === 4 && ['verde', 'amarillo', 'naranja', 'rojo'].every((k) => zoneKeys.includes(k)));
+  assert('Cada zona del termómetro contiene señales somáticas (cabeza, respiración, corazón, músculos, estómago)', zoneKeys.every((k) => {
+    const signs = (THERMOMETER_ZONES as any)[k].somaticSigns;
+    return signs.head && signs.breath && signs.heart && signs.muscles && signs.stomach;
+  }));
+  assert('Cada zona del termómetro contiene acciones pedagógicas inmediatas en español', zoneKeys.every((k) => {
+    const steps = (THERMOMETER_ZONES as any)[k].actionSteps;
+    return Array.isArray(steps) && steps.length > 0 && typeof steps[0].title === 'string';
+  }));
+
   // Caso 9: Verificación de la técnica de Respiración 4-7-8 (Autocuidado)
   console.log('\n🌬️ Comprobando Ejercicio Asistido de Respiración 4-7-8:');
   const {
