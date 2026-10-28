@@ -5,16 +5,19 @@
 
 export type AudiovisualCategory =
   | 'salud_mental'
+  | 'bienestar_emocional'
   | 'autocuidado'
   | 'autoestima'
   | 'emociones'
+  | 'ansiedad_estres'
+  | 'estres'
   | 'relaciones'
   | 'convivencia'
   | 'acoso'
+  | 'comunicacion'
+  | 'comunicacion_asertiva'
   | 'orientacion'
-  | 'estres'
-  | 'conflictos'
-  | 'comunicacion';
+  | 'conflictos';
 
 export type AudiovisualFormat = 'video' | 'presentacion' | 'infografia' | 'audio';
 

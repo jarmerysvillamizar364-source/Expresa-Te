@@ -50,7 +50,21 @@ class AudiovisualService {
         filtered = filtered.filter((r) => r.format === filters.format);
       }
       if (filters?.category && filters.category !== 'all') {
-        filtered = filtered.filter((r) => r.category === filters.category);
+        const cat = filters.category.toLowerCase().trim();
+        filtered = filtered.filter((r) => {
+          if (r.category === cat) return true;
+          if (r.tags && r.tags.some((t) => t.toLowerCase() === cat)) return true;
+
+          // Smart category aliases
+          if (cat === 'bienestar_emocional' && (r.category === 'emociones' || r.tags.includes('bienestar_emocional') || r.tags.includes('bienestar'))) return true;
+          if ((cat === 'ansiedad_estres' || cat === 'estres') && (r.category === 'estres' || r.category === 'ansiedad_estres' || r.tags.includes('estres') || r.tags.includes('ansiedad_estres'))) return true;
+          if ((cat === 'comunicacion' || cat === 'comunicacion_asertiva') && (r.category === 'comunicacion' || r.category === 'comunicacion_asertiva' || r.tags.includes('comunicacion') || r.tags.includes('asertividad'))) return true;
+          if (cat === 'convivencia' && (r.category === 'convivencia' || r.tags.includes('convivencia') || r.tags.includes('amistad'))) return true;
+          if (cat === 'autoestima' && (r.category === 'autoestima' || r.tags.includes('autoestima') || r.tags.includes('amor_propio'))) return true;
+          if (cat === 'relaciones' && (r.category === 'relaciones' || r.tags.includes('relaciones') || r.tags.includes('amistad'))) return true;
+
+          return false;
+        });
       }
       if (filters?.search && filters.search.trim()) {
         const q = filters.search.toLowerCase().trim();
@@ -59,7 +73,9 @@ class AudiovisualService {
             r.title.toLowerCase().includes(q) ||
             r.description.toLowerCase().includes(q) ||
             r.author.toLowerCase().includes(q) ||
-            r.tags.some((t) => t.toLowerCase().includes(q))
+            r.categoryLabel.toLowerCase().includes(q) ||
+            (r.institutionSource && r.institutionSource.toLowerCase().includes(q)) ||
+            (r.tags && r.tags.some((t) => t.toLowerCase().includes(q)))
         );
       }
       return { resources: filtered, fromNetwork: false };

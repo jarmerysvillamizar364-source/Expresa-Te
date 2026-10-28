@@ -34,11 +34,14 @@ import {
   Sprout,
   Smile,
   MessageCircle,
-  ShieldCheck,
   Check,
   Languages,
   Subtitles,
   Share2,
+  Bookmark,
+  ExternalLink,
+  Flame,
+  Zap,
 } from 'lucide-react';
 import type {
   AudiovisualResource,
@@ -77,6 +80,20 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<AudiovisualCategory | 'all'>('all');
   const [selectedFormat, setSelectedFormat] = useState<AudiovisualFormat | 'all'>('all');
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState<boolean>(false);
+
+  // Favorites state (Persisted in localStorage)
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('expresa_te_fav_videos');
+        if (stored) return JSON.parse(stored);
+      } catch (e) {
+        console.warn('Error reading favorites from localStorage', e);
+      }
+    }
+    return ['av-salud-mental-adolescente', 'av-autoestima-mario-alonso'];
+  });
 
   // Active viewing window
   const [activeResource, setActiveResource] = useState<AudiovisualResource | null>(null);
@@ -84,7 +101,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
-  const [progress, setProgress] = useState<number>(20);
+  const [progress, setProgress] = useState<number>(25);
   const [activeTab, setActiveTab] = useState<'takeaways' | 'transcript' | 'pedagogy' | 'slides'>('takeaways');
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
   const [mediaPlaybackError, setMediaPlaybackError] = useState<boolean>(false);
@@ -104,6 +121,31 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
 
   const viewerRef = useRef<HTMLDivElement>(null);
 
+  // Sync favorites with localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('expresa_te_fav_videos', JSON.stringify(favorites));
+      } catch (e) {
+        console.warn('Error saving favorites to localStorage', e);
+      }
+    }
+  }, [favorites]);
+
+  const toggleFavorite = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setFavorites((prev) => {
+      const exists = prev.includes(id);
+      const next = exists ? prev.filter((favId) => favId !== id) : [...prev, id];
+      onShowToast(
+        exists
+          ? (isEs ? 'Video eliminado de favoritos' : 'Video removed from favorites')
+          : (isEs ? 'Video guardado en favoritos ❤️' : 'Video added to favorites ❤️')
+      );
+      return next;
+    });
+  };
+
   // Fetch resources from service
   const fetchResources = async () => {
     setLoading(true);
@@ -118,7 +160,6 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
 
       // Default active resource if none selected
       if (!activeResource && result.resources.length > 0) {
-        // Prioritize recommended video
         const recommended = result.resources.find((r) => r.isRecommended) || result.resources[0];
         setActiveResource(recommended);
       }
@@ -184,6 +225,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
     setSearchQuery('');
     setSelectedCategory('all');
     setSelectedFormat('all');
+    setShowOnlyFavorites(false);
   };
 
   const handleShareResource = (res: AudiovisualResource) => {
@@ -230,7 +272,6 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
 
       onShowToast(isEs ? '¡Recurso audiovisual agregado exitosamente!' : 'Audiovisual resource added successfully!');
       setShowAdminModal(false);
-      // Reset form
       setNewTitle('');
       setNewMediaUrl('');
       setNewInstitution('');
@@ -245,16 +286,19 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
     }
   };
 
-  // Official Categories (8 Exact Categories Requested by the User)
+  // The complete list of categories requested by the user
   const categoriesList: Array<{ id: AudiovisualCategory | 'all'; label: string; icon: any }> = [
-    { id: 'all', label: isEs ? 'Todos los Temas' : 'All Topics', icon: Compass },
+    { id: 'all', label: isEs ? 'Todos los Videos' : 'All Videos', icon: Compass },
     { id: 'salud_mental', label: isEs ? 'Salud Mental' : 'Mental Health', icon: Brain },
+    { id: 'bienestar_emocional', label: isEs ? 'Bienestar Emocional' : 'Emotional Wellness', icon: Sparkles },
     { id: 'autocuidado', label: isEs ? 'Autocuidado' : 'Self-Care', icon: Sprout },
     { id: 'autoestima', label: isEs ? 'Autoestima' : 'Self-Esteem', icon: Heart },
     { id: 'emociones', label: isEs ? 'Manejo de Emociones' : 'Emotion Management', icon: Smile },
+    { id: 'ansiedad_estres', label: isEs ? 'Ansiedad y Estrés' : 'Anxiety & Stress', icon: Zap },
     { id: 'relaciones', label: isEs ? 'Relaciones Saludables' : 'Healthy Relationships', icon: MessageCircle },
-    { id: 'convivencia', label: isEs ? 'Convivencia Escolar' : 'School Coexistence', icon: Users },
+    { id: 'convivencia', label: isEs ? 'Amistad & Convivencia' : 'Friendship & Coexistence', icon: Users },
     { id: 'acoso', label: isEs ? 'Prevención del Acoso' : 'Bullying Prevention', icon: ShieldAlert },
+    { id: 'comunicacion', label: isEs ? 'Comunicación Asertiva' : 'Assertive Communication', icon: FileText },
     { id: 'orientacion', label: isEs ? 'Orientación Estudiantil' : 'Student Guidance', icon: GraduationCap },
   ];
 
@@ -266,6 +310,11 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
     { id: 'infografia', label: isEs ? 'Infografías' : 'Infographics', icon: Info },
     { id: 'audio', label: isEs ? 'Audios Guiados' : 'Guided Audio', icon: Headphones },
   ];
+
+  // Filtered displayed resources (taking into account showOnlyFavorites)
+  const displayedResources = showOnlyFavorites
+    ? resources.filter((r) => favorites.includes(r.id))
+    : resources;
 
   // List of recommended videos for the featured carousel section
   const recommendedVideos = resources.filter((r) => r.isRecommended || r.youtubeId);
@@ -310,7 +359,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                   </span>
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
                     <Check className="w-3 h-3 text-emerald-500" />
-                    <span>{isEs ? 'Audio en Español Verificado' : 'Verified Spanish Audio'}</span>
+                    <span>{isEs ? 'Audio en Español 100% Verificado' : '100% Verified Spanish Audio'}</span>
                   </span>
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-teal-800 dark:text-cyan-300 border border-cyan-500/30 text-[10px] font-bold">
                     <Subtitles className="w-3 h-3 text-teal-600 dark:text-cyan-400" />
@@ -325,13 +374,32 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
 
             <p className="text-sm text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
               {isEs
-                ? 'Videos educativos reales en español de instituciones y profesionales de la salud mental. Explora recursos sobre autoestima, autocuidado, manejo del estrés, relaciones saludables, convivencia escolar y prevención del acoso.'
+                ? 'Videos educativos reales en español de instituciones y profesionales de la salud mental. Explora recursos sobre salud mental, autoestima, autocuidado, manejo de emociones, relaciones saludables, convivencia escolar y prevención del acoso escolar.'
                 : 'Verified educational videos in Spanish on mental health, self-care, self-esteem, healthy relationships, school coexistence, and bullying prevention.'}
             </p>
           </div>
 
           {/* Action buttons */}
           <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center shrink-0">
+            {/* Favorites filter toggle */}
+            <button
+              type="button"
+              onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 border ${
+                showOnlyFavorites
+                  ? 'bg-rose-500 text-white border-rose-500 shadow-rose-500/20'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-rose-400'
+              }`}
+            >
+              <Heart className={`w-3.5 h-3.5 ${showOnlyFavorites ? 'fill-current text-white' : 'text-rose-500'}`} />
+              <span>{isEs ? 'Mis Favoritos' : 'My Favorites'}</span>
+              <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
+                showOnlyFavorites ? 'bg-white/20 text-white' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+              }`}>
+                {favorites.length}
+              </span>
+            </button>
+
             {/* Add Resource Button */}
             <button
               type="button"
@@ -390,7 +458,23 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              {/* Audio badge */}
+              {/* Favorite button in player */}
+              <button
+                type="button"
+                onClick={() => toggleFavorite(activeResource.id)}
+                title={favorites.includes(activeResource.id) ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+                className="w-8 h-8 rounded-lg bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <Heart
+                  className={`w-4 h-4 ${
+                    favorites.includes(activeResource.id)
+                      ? 'fill-rose-500 text-rose-500'
+                      : 'text-slate-600 dark:text-slate-300'
+                  }`}
+                />
+              </button>
+
+              {/* Audio language badge */}
               <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
                 <Languages className="w-3 h-3 text-emerald-500" />
                 <span>{activeResource.audioLanguage || 'Español'}</span>
@@ -432,6 +516,16 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                 className="w-8 h-8 rounded-lg bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <Share2 className="w-4 h-4" />
+              </button>
+
+              {/* Close viewer button */}
+              <button
+                type="button"
+                onClick={() => setActiveResource(null)}
+                title={isEs ? 'Cerrar reproductor' : 'Close player'}
+                className="w-8 h-8 rounded-lg bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -487,6 +581,9 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                   <img
                     src={activeResource.thumbnail}
                     alt={activeResource.title}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = '/src/assets/images/video_stop_technique_1792612453981.jpg';
+                    }}
                     className={`w-full h-full object-cover transition-opacity duration-300 ${
                       isPlaying ? 'opacity-85' : 'opacity-65'
                     }`}
@@ -860,23 +957,25 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
       {/* ==================================================================== */}
       {/* 3. VIDEOS RECOMENDADOS (Featured Recommendations Carousel)          */}
       {/* ==================================================================== */}
-      {recommendedVideos.length > 0 && (
+      {!showOnlyFavorites && recommendedVideos.length > 0 && (
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-amber-500 dark:text-amber-400" />
               <h3 className="text-lg font-black text-slate-900 dark:text-white">
-                {isEs ? 'Videos Recomendados para Estudiantes' : 'Recommended Videos for Students'}
+                {isEs ? 'Videos Recomendados de Orientación Escolar' : 'Recommended Guidance Videos'}
               </h3>
             </div>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              {isEs ? 'Selección del equipo de orientación' : 'Selected by counseling team'}
+              {isEs ? 'Selección del equipo de orientación' : 'Curated by counseling team'}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {recommendedVideos.slice(0, 4).map((rec) => {
               const isSelected = activeResource?.id === rec.id;
+              const isFav = favorites.includes(rec.id);
+
               return (
                 <div
                   key={rec.id}
@@ -892,6 +991,9 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                       <img
                         src={rec.thumbnail}
                         alt={rec.title}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = '/src/assets/images/video_stop_technique_1792612453981.jpg';
+                        }}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
@@ -900,6 +1002,16 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                       <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-white text-[10px] font-bold">
                         {rec.duration}
                       </div>
+
+                      {/* Favorite button */}
+                      <button
+                        type="button"
+                        onClick={(e) => toggleFavorite(rec.id, e)}
+                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors cursor-pointer"
+                        title={isFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+                      >
+                        <Heart className={`w-3.5 h-3.5 ${isFav ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
+                      </button>
 
                       <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-emerald-600/90 text-white text-[10px] font-bold flex items-center gap-1">
                         <Check className="w-2.5 h-2.5" />
@@ -944,7 +1056,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
       )}
 
       {/* ==================================================================== */}
-      {/* 4. SEARCH & THE 8 CATEGORY FILTERS                                  */}
+      {/* 4. SEARCH, FORMATS & THE CATEGORY FILTERS                           */}
       {/* ==================================================================== */}
       <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
@@ -955,7 +1067,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isEs ? 'Buscar por tema, autoestima, estrés, acoso escolar o autor...' : 'Search by topic, keyword, or author...'}
+              placeholder={isEs ? 'Buscar por título, tema, estrés, autoestima, acoso...' : 'Search by title, topic, stress, self-esteem, bullying...'}
               className="w-full h-10 pl-10 pr-9 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
             />
             {searchQuery && (
@@ -993,7 +1105,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
           </div>
         </div>
 
-        {/* 8 Categories Filter Buttons */}
+        {/* Categories Filter Buttons */}
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs scrollbar-none">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
@@ -1007,8 +1119,11 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                 <button
                   key={cat.id}
                   type="button"
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-semibold transition-all cursor-pointer whitespace-nowrap text-xs active:scale-95 ${
+                  onClick={() => {
+                    setSelectedCategory(cat.id);
+                    if (showOnlyFavorites) setShowOnlyFavorites(false);
+                  }}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer whitespace-nowrap text-xs active:scale-95 ${
                     active
                       ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs font-bold'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -1030,14 +1145,16 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-black text-slate-900 dark:text-white">
-              {isEs ? 'Catálogo de Videos y Recursos Educativos' : 'Educational Videos & Media Catalog'}
+              {showOnlyFavorites
+                ? isEs ? 'Mis Videos Guardados en Favoritos' : 'My Saved Favorite Videos'
+                : isEs ? 'Catálogo de Videos y Recursos Educativos' : 'Educational Videos & Media Catalog'}
             </h3>
             <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold">
-              {resources.length}
+              {displayedResources.length}
             </span>
           </div>
 
-          {(searchQuery || selectedCategory !== 'all' || selectedFormat !== 'all') && (
+          {(searchQuery || selectedCategory !== 'all' || selectedFormat !== 'all' || showOnlyFavorites) && (
             <button
               type="button"
               onClick={handleResetFilters}
@@ -1064,18 +1181,24 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
               </div>
             ))}
           </div>
-        ) : resources.length === 0 ? (
+        ) : displayedResources.length === 0 ? (
           /* Informative Empty State */
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 text-center space-y-4">
             <div className="w-16 h-16 rounded-3xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center mx-auto">
-              <Search className="w-8 h-8" />
+              {showOnlyFavorites ? <Heart className="w-8 h-8 text-rose-500" /> : <Search className="w-8 h-8" />}
             </div>
             <div className="space-y-1">
               <h4 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isEs ? 'No se encontraron videos para tu búsqueda' : 'No videos found'}
+                {showOnlyFavorites
+                  ? isEs ? 'Aún no tienes videos guardados en favoritos' : 'No favorites saved yet'
+                  : isEs ? 'No se encontraron videos para tu búsqueda' : 'No videos found'}
               </h4>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-                {isEs
+                {showOnlyFavorites
+                  ? isEs
+                    ? 'Haz clic en el icono del corazón ❤️ en cualquier video para guardarlo aquí y consultarlo cuando lo necesites.'
+                    : 'Click the heart icon on any video to bookmark it here for later.'
+                  : isEs
                   ? 'No hay materiales que coincidan con los filtros seleccionados. Prueba con otros términos o limpia la búsqueda para ver todo el catálogo.'
                   : 'No media matches your search criteria. Try adjusting keywords or clear filters.'}
               </p>
@@ -1091,9 +1214,10 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
         ) : (
           /* Grid of Video Cards */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {resources.map((item) => {
+            {displayedResources.map((item) => {
               const isSelected = activeResource?.id === item.id;
               const isItemPlaying = isSelected && isPlaying;
+              const isFav = favorites.includes(item.id);
 
               return (
                 <article
@@ -1111,10 +1235,23 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                       <img
                         src={item.thumbnail}
                         alt={item.title}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = '/src/assets/images/video_stop_technique_1792612453981.jpg';
+                        }}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                      {/* Favorite Button on Card */}
+                      <button
+                        type="button"
+                        onClick={(e) => toggleFavorite(item.id, e)}
+                        className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-all cursor-pointer z-10"
+                        title={isFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+                      >
+                        <Heart className={`w-4 h-4 transition-transform active:scale-125 ${isFav ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
+                      </button>
 
                       {/* Play / Pause button overlay */}
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -1275,12 +1412,15 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                     className="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-medium"
                   >
                     <option value="salud_mental">Salud Mental</option>
+                    <option value="bienestar_emocional">Bienestar Emocional</option>
                     <option value="autocuidado">Autocuidado</option>
                     <option value="autoestima">Autoestima</option>
                     <option value="emociones">Manejo de Emociones</option>
+                    <option value="ansiedad_estres">Ansiedad y Estrés</option>
                     <option value="relaciones">Relaciones Saludables</option>
-                    <option value="convivencia">Convivencia Escolar</option>
+                    <option value="convivencia">Amistad & Convivencia Escolar</option>
                     <option value="acoso">Prevención del Acoso</option>
+                    <option value="comunicacion">Comunicación Asertiva</option>
                     <option value="orientacion">Orientación Estudiantil</option>
                   </select>
                 </div>

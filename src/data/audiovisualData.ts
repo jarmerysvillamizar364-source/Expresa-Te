@@ -13,12 +13,13 @@ import type { AudiovisualResource } from '../types/audiovisual.ts';
  * 2. Cero videos en inglés o idiomas foráneos sin doblaje.
  * 3. Enlaces verificados a videos educativos reales de canales e instituciones oficiales
  *    (BBVA Aprendemos Juntos, campañas oficiales ACB Bullying, especialistas en psicología y neuroeducación).
- * 4. Clasificación estructurada en las 8 categorías oficiales de bienestar y orientación escolar.
- * 5. Variedad de formatos pedagógicos: videos, presentaciones con diapositivas, infografías y audios guiados.
+ * 4. Miniaturas reales y directas desde YouTube (https://img.youtube.com/vi/<id>/hqdefault.jpg).
+ * 5. Clasificación estructurada y enriquecida para las categorías de bienestar y orientación escolar.
+ * 6. Variedad de formatos pedagógicos: videos, presentaciones con diapositivas, infografías y audios guiados.
  */
 export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
   // ==========================================================================
-  // 1. SALUD MENTAL
+  // 1. SALUD MENTAL & BIENESTAR EMOCIONAL
   // ==========================================================================
   {
     id: 'av-salud-mental-adolescente',
@@ -27,7 +28,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Salud Mental & Bienestar',
     format: 'video',
     duration: '8:45 min',
-    thumbnail: '/src/assets/images/video_stop_technique_1792612453981.jpg',
+    thumbnail: 'https://img.youtube.com/vi/gpqIZRj7dyQ/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/gpqIZRj7dyQ',
     youtubeId: 'gpqIZRj7dyQ',
     author: 'Dra. Lucía Galán & Ricky Rubio',
@@ -48,7 +49,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: true,
     isDemo: false,
     publishedAt: '2026-03-01T09:00:00.000Z',
-    tags: ['salud_mental', 'adolescencia', 'psicologia', 'bienestar', 'apoyo'],
+    tags: ['salud_mental', 'bienestar_emocional', 'adolescencia', 'psicologia', 'bienestar', 'apoyo'],
   },
   {
     id: 'av-estres-cuerpo-marian',
@@ -57,7 +58,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Salud Mental & Neurobiología',
     format: 'video',
     duration: '7:30 min',
-    thumbnail: '/src/assets/images/video_exam_anxiety_1792612455262.jpg',
+    thumbnail: 'https://img.youtube.com/vi/TjqrualxgkI/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/TjqrualxgkI',
     youtubeId: 'TjqrualxgkI',
     author: 'Dra. Marian Rojas-Estapé (Psiquiatra y Escritora)',
@@ -78,11 +79,11 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: true,
     isDemo: false,
     publishedAt: '2026-03-03T11:00:00.000Z',
-    tags: ['salud_mental', 'estres', 'cortisol', 'mente_cuerpo', 'neurociencia'],
+    tags: ['salud_mental', 'ansiedad_estres', 'estres', 'cortisol', 'mente_cuerpo', 'neurociencia', 'emociones'],
   },
 
   // ==========================================================================
-  // 2. AUTOCUIDADO
+  // 2. AUTOCUIDADO & RELAJACIÓN
   // ==========================================================================
   {
     id: 'av-autocuidado-respiracion-guiada',
@@ -91,7 +92,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Autocuidado Personal & Relajación',
     format: 'video',
     duration: '5:10 min',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAul5PfvJhJ-jUl_Bd1eUiGuFYdMyBAq2Rbs_KMSfXUXFYOfpPzQWYy51gkoqtvI0F86uQCJCIoohyzSAkdQjheOldHd6UExWEmIr3Sid21u8Qpt8_TborD6kxUbdnNnedxTaYIoWj4V5jkyrMkAHjBLwsZ7tQ_WATiiDHa3-T_5xsC4n4QN8Q466bxjtgLPoQN0EeiLXge2n3-lDfvR8GA88qcJrrJN9OJqQmE6OkE6Rb555D-VQ0z0w',
+    thumbnail: 'https://img.youtube.com/vi/jbPSKiS6AaE/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/jbPSKiS6AaE',
     youtubeId: 'jbPSKiS6AaE',
     author: 'Elena Malova (Especialista en Bienestar y Respiración)',
@@ -112,11 +113,11 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: true,
     isDemo: false,
     publishedAt: '2026-03-05T14:00:00.000Z',
-    tags: ['autocuidado', 'respiracion', 'calma', 'ansiedad', 'habitos'],
+    tags: ['autocuidado', 'respiracion', 'ansiedad_estres', 'estres', 'calma', 'ansiedad', 'habitos'],
   },
 
   // ==========================================================================
-  // 3. AUTOESTIMA
+  // 3. AUTOESTIMA & AMOR PROPIO
   // ==========================================================================
   {
     id: 'av-autoestima-mario-alonso',
@@ -125,7 +126,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Autoestima & Amor Propio',
     format: 'video',
     duration: '7:40 min',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBDdDzLNgGpLtHKSSTuoOFGQRX-GMcf24WOKrZFCwbyFhypz_Zi9C0nEYtyHPIzMHA30DwSk-fIAJXbMlqcV5J2Ud_3Rdbya6WimrZiB8kFNTt_unxO301mEK6r8AAErEAoEDB8xGK3MmWRxE54GKp2O8JZyMZ1B1n2c5jq2RLkJEdMvNGtk3iGmssbzCPoe1Z9EMGR-fq9LutAfV43aZFI5zpCYMRfTZcLXm8PGb2q1yNUkyFiepTsng',
+    thumbnail: 'https://img.youtube.com/vi/f69n5VQLIQw/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/f69n5VQLIQw',
     youtubeId: 'f69n5VQLIQw',
     author: 'Dr. Mario Alonso Puig (Médico y Conferencista)',
@@ -146,11 +147,11 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: true,
     isDemo: false,
     publishedAt: '2026-03-08T10:00:00.000Z',
-    tags: ['autoestima', 'amor_propio', 'resiliencia', 'motivacion', 'superacion'],
+    tags: ['autoestima', 'amor_propio', 'bienestar_emocional', 'resiliencia', 'motivacion', 'superacion'],
   },
 
   // ==========================================================================
-  // 4. MANEJO DE EMOCIONES
+  // 4. MANEJO DE EMOCIONES & BIENESTAR EMOCIONAL
   // ==========================================================================
   {
     id: 'av-emociones-elsa-punset',
@@ -159,7 +160,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Manejo de Emociones & Calma',
     format: 'video',
     duration: '6:20 min',
-    thumbnail: '/src/assets/images/video_stop_technique_1792612453981.jpg',
+    thumbnail: 'https://img.youtube.com/vi/KUTh9fBg_nQ/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/KUTh9fBg_nQ',
     youtubeId: 'KUTh9fBg_nQ',
     author: 'Elsa Punset (Escritora y Divulgadora de Inteligencia Emocional)',
@@ -180,11 +181,11 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: true,
     isDemo: false,
     publishedAt: '2026-03-10T12:00:00.000Z',
-    tags: ['emociones', 'inteligencia_emocional', 'calma', 'frustracion', 'autocontrol'],
+    tags: ['emociones', 'bienestar_emocional', 'inteligencia_emocional', 'calma', 'frustracion', 'autocontrol'],
   },
 
   // ==========================================================================
-  // 5. RELACIONES SALUDABLES
+  // 5. RELACIONES SALUDABLES & AMISTAD
   // ==========================================================================
   {
     id: 'av-relaciones-silvia-congost',
@@ -193,7 +194,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Relaciones Saludables & Amistad',
     format: 'video',
     duration: '8:15 min',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAGIcoPfvGy9utMaFfoF5Pti0OebMRUq-93tHRJhc8TJbgFz-5810Xmf7cpEscJrBeLzReNwP7piCbAm29SL1yb8q_9eRK2CWseQWt0W1OGe9PTenBeJJziW9qa0yM5zO94TOOKDJPzA-TSwH4Kt7bXaql3Fsn8ydtA4srqRhosUPV5oLl55QbgvJlhAxPlG9GAaWAKHpsiVVb1Gr-Uk1ciz7lFPhRiU1zdakGBnwuFaNKPsUTgBdfv9Q',
+    thumbnail: 'https://img.youtube.com/vi/PYp582OObNM/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/PYp582OObNM',
     youtubeId: 'PYp582OObNM',
     author: 'Silvia Congost (Psicóloga Especialista en Relaciones)',
@@ -214,11 +215,11 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: true,
     isDemo: false,
     publishedAt: '2026-03-12T15:30:00.000Z',
-    tags: ['relaciones', 'amistad', 'respeto', 'limites', 'asertividad'],
+    tags: ['relaciones', 'amistad', 'respeto', 'limites', 'autoestima', 'comunicacion'],
   },
 
   // ==========================================================================
-  // 6. CONVIVENCIA ESCOLAR
+  // 6. CONVIVENCIA ESCOLAR & RESOLUCIÓN DE CONFLICTOS
   // ==========================================================================
   {
     id: 'av-convivencia-nelida-zaitegi',
@@ -227,7 +228,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Convivencia Escolar & Mediación',
     format: 'video',
     duration: '7:50 min',
-    thumbnail: '/src/assets/images/video_peaceful_coexistence_1792612455559.jpg',
+    thumbnail: 'https://img.youtube.com/vi/nNOdDtwY1uM/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/nNOdDtwY1uM',
     youtubeId: 'nNOdDtwY1uM',
     author: 'Nélida Zaitegi (Maestra y Especialista en Convivencia)',
@@ -248,7 +249,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: true,
     isDemo: false,
     publishedAt: '2026-03-14T08:30:00.000Z',
-    tags: ['convivencia', 'mediacion', 'dialogo', 'respeto', 'comunidad'],
+    tags: ['convivencia', 'conflictos', 'mediacion', 'dialogo', 'respeto', 'comunidad', 'amistad'],
   },
   {
     id: 'av-convivencia-cesar-bona',
@@ -257,7 +258,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Convivencia & Inclusión',
     format: 'video',
     duration: '6:55 min',
-    thumbnail: '/src/assets/images/video_peaceful_coexistence_1792612455559.jpg',
+    thumbnail: 'https://img.youtube.com/vi/p7MKTo7Rcf0/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/p7MKTo7Rcf0',
     youtubeId: 'p7MKTo7Rcf0',
     author: 'César Bona (Maestro, Finalista Global Teacher Prize)',
@@ -278,7 +279,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: false,
     isDemo: false,
     publishedAt: '2026-03-15T10:15:00.000Z',
-    tags: ['inclusion', 'empatia', 'convivencia', 'diversidad', 'respeto'],
+    tags: ['inclusion', 'empatia', 'convivencia', 'diversidad', 'respeto', 'amistad'],
   },
 
   // ==========================================================================
@@ -291,7 +292,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Prevención del Acoso Escolar',
     format: 'video',
     duration: '6:45 min',
-    thumbnail: '/src/assets/images/video_peaceful_coexistence_1792612455559.jpg',
+    thumbnail: 'https://img.youtube.com/vi/gODzdiZ4Gj8/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/gODzdiZ4Gj8',
     youtubeId: 'gODzdiZ4Gj8',
     author: 'Iñaki Zubizarreta (Campaña Actuamos Contra el Bullying ACB)',
@@ -312,11 +313,11 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: true,
     isDemo: false,
     publishedAt: '2026-03-16T16:00:00.000Z',
-    tags: ['acoso', 'bullying', 'ciberacoso', 'solidaridad', 'ley1620'],
+    tags: ['acoso', 'bullying', 'ciberacoso', 'solidaridad', 'ley1620', 'convivencia'],
   },
 
   // ==========================================================================
-  // 8. ORIENTACIÓN ESTUDIANTIL
+  // 8. ORIENTACIÓN ESTUDIANTIL & CONSEJOS PARA ADOLESCENTES
   // ==========================================================================
   {
     id: 'av-orientacion-david-bueno',
@@ -325,7 +326,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Orientación Estudiantil & Consejos',
     format: 'video',
     duration: '7:15 min',
-    thumbnail: '/src/assets/images/video_exam_anxiety_1792612455262.jpg',
+    thumbnail: 'https://img.youtube.com/vi/v4KplEgXI9c/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/v4KplEgXI9c',
     youtubeId: 'v4KplEgXI9c',
     author: 'Dr. David Bueno (Biólogo, Genetista y Neuroeducador)',
@@ -346,16 +347,16 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: true,
     isDemo: false,
     publishedAt: '2026-03-18T10:00:00.000Z',
-    tags: ['orientacion', 'adolescencia', 'cerebro', 'estudio', 'vocacion'],
+    tags: ['orientacion', 'adolescencia', 'cerebro', 'estudio', 'vocacion', 'salud_mental'],
   },
   {
     id: 'av-orientacion-asertividad-begona',
     title: 'Ocho Lecciones de Convivencia, Empatía y Asertividad Escolar',
-    category: 'orientacion',
-    categoryLabel: 'Orientación & Habilidades Sociales',
+    category: 'comunicacion',
+    categoryLabel: 'Comunicación Asertiva & Habilidades Sociales',
     format: 'video',
     duration: '6:35 min',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAGIcoPfvGy9utMaFfoF5Pti0OebMRUq-93tHRJhc8TJbgFz-5810Xmf7cpEscJrBeLzReNwP7piCbAm29SL1yb8q_9eRK2CWseQWt0W1OGe9PTenBeJJziW9qa0yM5zO94TOOKDJPzA-TSwH4Kt7bXaql3Fsn8ydtA4srqRhosUPV5oLl55QbgvJlhAxPlG9GAaWAKHpsiVVb1Gr-Uk1ciz7lFPhRiU1zdakGBnwuFaNKPsUTgBdfv9Q',
+    thumbnail: 'https://img.youtube.com/vi/-9GnFyrLAHA/hqdefault.jpg',
     mediaUrl: 'https://www.youtube-nocookie.com/embed/-9GnFyrLAHA',
     youtubeId: '-9GnFyrLAHA',
     author: 'Begoña Ibarrola (Psicóloga y Pedagoga)',
@@ -376,7 +377,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     isRecommended: false,
     isDemo: false,
     publishedAt: '2026-03-20T14:00:00.000Z',
-    tags: ['orientacion', 'asertividad', 'comunicacion', 'habilidades', 'empatia'],
+    tags: ['comunicacion', 'comunicacion_asertiva', 'orientacion', 'asertividad', 'habilidades', 'empatia', 'convivencia'],
   },
 
   // ==========================================================================
@@ -390,7 +391,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Material Educativo — Diapositivas',
     format: 'presentacion',
     duration: '8 láminas',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAGIcoPfvGy9utMaFfoF5Pti0OebMRUq-93tHRJhc8TJbgFz-5810Xmf7cpEscJrBeLzReNwP7piCbAm29SL1yb8q_9eRK2CWseQWt0W1OGe9PTenBeJJziW9qa0yM5zO94TOOKDJPzA-TSwH4Kt7bXaql3Fsn8ydtA4srqRhosUPV5oLl55QbgvJlhAxPlG9GAaWAKHpsiVVb1Gr-Uk1ciz7lFPhRiU1zdakGBnwuFaNKPsUTgBdfv9Q',
+    thumbnail: 'https://img.youtube.com/vi/v4KplEgXI9c/hqdefault.jpg',
     mediaUrl: '#diapositivas-habitos',
     author: 'Coordinación Académica & Orientación',
     audioLanguage: 'Español (Nativo)',
@@ -431,7 +432,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     ],
     isDemo: false,
     publishedAt: '2026-03-22T10:00:00.000Z',
-    tags: ['presentacion', 'habitos', 'estudio', 'organizacion', 'tiempo'],
+    tags: ['orientacion', 'presentacion', 'habitos', 'estudio', 'organizacion', 'tiempo'],
   },
   {
     id: 'av-infografia-emociones',
@@ -454,7 +455,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     ],
     isDemo: false,
     publishedAt: '2026-03-24T08:30:00.000Z',
-    tags: ['infografia', 'escala', 'termometro', 'emociones', 'prevencion'],
+    tags: ['emociones', 'bienestar_emocional', 'infografia', 'escala', 'termometro', 'prevencion'],
   },
   {
     id: 'av-audio-mindfulness',
@@ -463,7 +464,7 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
     categoryLabel: 'Material Educativo — Audio Relajante',
     format: 'audio',
     duration: '3:20 min',
-    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAul5PfvJhJ-jUl_Bd1eUiGuFYdMyBAq2Rbs_KMSfXUXFYOfpPzQWYy51gkoqtvI0F86uQCJCIoohyzSAkdQjheOldHd6UExWEmIr3Sid21u8Qpt8_TborD6kxUbdnNnedxTaYIoWj4V5jkyrMkAHjBLwsZ7tQ_WATiiDHa3-T_5xsC4n4QN8Q466bxjtgLPoQN0EeiLXge2n3-lDfvR8GA88qcJrrJN9OJqQmE6OkE6Rb555D-VQ0z0w',
+    thumbnail: 'https://img.youtube.com/vi/jbPSKiS6AaE/hqdefault.jpg',
     mediaUrl: 'https://actions.google.com/sounds/v1/ambiences/rain_heavy.ogg',
     author: 'Gabinete de Bienestar Juvenil',
     audioLanguage: 'Español (Nativo)',
@@ -479,6 +480,6 @@ export const INITIAL_AUDIOVISUAL_RESOURCES: AudiovisualResource[] = [
       'Cierra suavemente los ojos. Inhala por la nariz sintiendo el aire fresco... y exhala liberando el peso del día. Escucha el suave ritmo de la lluvia de fondo. Nota cómo tus hombros caen un centímetro más. No hay nada urgente que resolver en este instante; este momento te pertenece.',
     isDemo: false,
     publishedAt: '2026-03-25T17:00:00.000Z',
-    tags: ['audio', 'mindfulness', 'relajacion', 'lluvia', 'bienestar'],
+    tags: ['autocuidado', 'bienestar_emocional', 'audio', 'mindfulness', 'relajacion', 'lluvia', 'bienestar'],
   },
 ];

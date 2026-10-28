@@ -438,7 +438,21 @@ app.get('/api/audiovisuales', (req: Request, res: Response) => {
   }
 
   if (category && typeof category === 'string' && category !== 'all') {
-    results = results.filter((item) => item.category === category);
+    const cat = category.toLowerCase().trim();
+    results = results.filter((item) => {
+      if (item.category === cat) return true;
+      if (item.tags && item.tags.some((t) => t.toLowerCase() === cat)) return true;
+
+      // Smart category aliases
+      if (cat === 'bienestar_emocional' && (item.category === 'emociones' || item.tags.includes('bienestar_emocional') || item.tags.includes('bienestar'))) return true;
+      if ((cat === 'ansiedad_estres' || cat === 'estres') && (item.category === 'estres' || item.category === 'ansiedad_estres' || item.tags.includes('estres') || item.tags.includes('ansiedad_estres'))) return true;
+      if ((cat === 'comunicacion' || cat === 'comunicacion_asertiva') && (item.category === 'comunicacion' || item.category === 'comunicacion_asertiva' || item.tags.includes('comunicacion') || item.tags.includes('asertividad'))) return true;
+      if (cat === 'convivencia' && (item.category === 'convivencia' || item.tags.includes('convivencia') || item.tags.includes('amistad'))) return true;
+      if (cat === 'autoestima' && (item.category === 'autoestima' || item.tags.includes('autoestima') || item.tags.includes('amor_propio'))) return true;
+      if (cat === 'relaciones' && (item.category === 'relaciones' || item.tags.includes('relaciones') || item.tags.includes('amistad'))) return true;
+
+      return false;
+    });
   }
 
   if (search && typeof search === 'string' && search.trim()) {
@@ -448,6 +462,8 @@ app.get('/api/audiovisuales', (req: Request, res: Response) => {
         item.title.toLowerCase().includes(q) ||
         item.description.toLowerCase().includes(q) ||
         item.author.toLowerCase().includes(q) ||
+        item.categoryLabel.toLowerCase().includes(q) ||
+        (item.institutionSource && item.institutionSource.toLowerCase().includes(q)) ||
         (item.tags && item.tags.some((t) => t.toLowerCase().includes(q)))
     );
   }
