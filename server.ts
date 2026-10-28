@@ -15,6 +15,7 @@ import {
 import type { User, SessionMetadata } from './src/types/auth.ts';
 import type { AudiovisualResource } from './src/types/audiovisual.ts';
 import { INITIAL_AUDIOVISUAL_RESOURCES } from './src/data/audiovisualData.ts';
+import type { OrientationRequest, CaseNote } from './src/services/orientationService.ts';
 
 dotenv.config();
 
@@ -588,6 +589,222 @@ app.delete('/api/audiovisuales/:id', (req: Request, res: Response) => {
   return res.json({
     success: true,
     message: 'Recurso eliminado correctamente.',
+  });
+});
+
+// ============================================================================
+// ORIENTATION CASES API ENDPOINTS (Acompañamiento Escolar & Psicología)
+// ============================================================================
+const inMemoryCases: OrientationRequest[] = [
+  {
+    id: '#CASO-4829',
+    studentEmail: 'alejandro.torres@correo.com',
+    studentName: 'Alejandro Torres Morales',
+    studentDoc: '1001234001',
+    studentGrade: 'Grado 10° - Secundaria A',
+    isAnonymous: false,
+    targetArea: 'Orientación Escolar',
+    status: 'nueva',
+    priority: 'alta',
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    timeFormatted: 'Hoy, 10:30 AM',
+    topic: 'Estrés académico y exámenes finales',
+    message: 'Me siento abrumado con las entregas grupales de esta semana y me cuesta concentrarme para descansar adecuadamente. Quisiera apoyo para organizar mi tiempo.',
+    contactPref: 'presencial',
+    notes: [],
+  },
+  {
+    id: '#CASO-3912',
+    studentEmail: 'mateo.gomez@correo.com',
+    studentName: 'Mateo Gómez Silva',
+    studentDoc: '1001234003',
+    studentGrade: 'Grado 11° - Secundaria A',
+    isAnonymous: false,
+    targetArea: 'Psicología',
+    status: 'revision',
+    priority: 'moderada',
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    timeFormatted: 'Ayer, 04:15 PM',
+    topic: 'Apoyo socioemocional y expectativas futuras',
+    message: 'Solicito un espacio presencial o virtual para revisar el manejo de ansiedad respecto a la graduación y presión de expectativas familiares.',
+    contactPref: 'plataforma',
+    responseNote: 'En revisión por el Departamento de Psicología para acordar espacio en consultorio.',
+    notes: [
+      {
+        id: 'note_1',
+        authorName: 'Dra. Marcela Rincón Duarte',
+        authorRole: 'Psicología',
+        createdAt: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(),
+        note: 'Se revisa perfil del estudiante. Caso priorizado para sesión de escucha activa este jueves.',
+      },
+    ],
+  },
+  {
+    id: '#CASO-5104',
+    studentEmail: 'anonimo_5104@expresate.seguro',
+    studentName: 'Estudiante Anónimo (Identidad Protegida)',
+    studentGrade: 'Grado 9° - Secundaria B',
+    isAnonymous: true,
+    targetArea: 'Orientación Escolar',
+    status: 'nueva',
+    priority: 'urgente',
+    createdAt: new Date(Date.now() - 28 * 60 * 60 * 1000).toISOString(),
+    timeFormatted: 'Ayer, 11:20 AM',
+    topic: 'Convivencia y relaciones en el aula de clase',
+    message: 'Quisiera mediar en un malentendido surgido con compañeros en el recreo. Me siento aislado y prefiero mantener la consulta anónima por ahora.',
+    contactPref: 'plataforma',
+    notes: [],
+  },
+  {
+    id: '#CASO-2980',
+    studentEmail: 'valeria.castro@correo.com',
+    studentName: 'Valeria Castro Ríos',
+    studentDoc: '1001234004',
+    studentGrade: 'Grado 11° - Secundaria B',
+    isAnonymous: false,
+    targetArea: 'Psicología',
+    status: 'resuelta',
+    priority: 'preventiva',
+    createdAt: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(),
+    timeFormatted: '16 Feb, 09:00 AM',
+    topic: 'Manejo de ansiedad ante presentaciones orales',
+    message: 'Tenía mucho pánico escénico para la exposición de biología.',
+    contactPref: 'presencial',
+    responseNote: 'Sesión de respiración completada con éxito. Estudiante reportó mejoría notable en su presentación.',
+    notes: [
+      {
+        id: 'note_2',
+        authorName: 'Dra. Marcela Rincón Duarte',
+        authorRole: 'Psicología',
+        createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
+        note: 'Sesión presencial de 30 minutos realizada en Consultorio de Psicología. Se enseñó técnica 4-7-8.',
+      },
+    ],
+  },
+];
+
+/**
+ * GET /api/orientation/cases
+ * Query params: role, studentEmail
+ */
+app.get('/api/orientation/cases', (req: Request, res: Response) => {
+  const { role, studentEmail } = req.query;
+  const isStaff = role === 'orientador' || role === 'psicologo' || role === 'administrativo';
+
+  if (isStaff) {
+    return res.json({ success: true, data: inMemoryCases });
+  }
+
+  // Student role: only see own requests
+  const filtered = studentEmail
+    ? inMemoryCases.filter((c) => c.studentEmail.toLowerCase() === String(studentEmail).toLowerCase())
+    : [];
+  return res.json({ success: true, data: filtered });
+});
+
+/**
+ * POST /api/orientation/cases
+ */
+app.post('/api/orientation/cases', (req: Request, res: Response) => {
+  const {
+    studentEmail,
+    studentName,
+    studentDoc,
+    studentGrade,
+    isAnonymous,
+    targetArea,
+    topic,
+    message,
+    contactPref,
+  } = req.body;
+
+  if (!message || !topic) {
+    return res.status(400).json({
+      success: false,
+      error: 'El tema y el mensaje son requeridos.',
+    });
+  }
+
+  const randomNum = Math.floor(1000 + Math.random() * 9000);
+  const now = new Date();
+  const timeFormatted = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  const newCase: OrientationRequest = {
+    id: `#CASO-${randomNum}`,
+    studentEmail: isAnonymous ? `anonimo_${randomNum}@expresate.seguro` : (studentEmail || 'estudiante@colegio.edu.co'),
+    studentName: isAnonymous ? 'Estudiante Anónimo (Identidad Protegida)' : (studentName || 'Estudiante'),
+    studentDoc,
+    studentGrade: studentGrade || 'Grado 10° - Secundaria',
+    isAnonymous: Boolean(isAnonymous),
+    targetArea: targetArea || 'Orientación Escolar',
+    status: 'nueva',
+    priority: 'moderada',
+    createdAt: now.toISOString(),
+    timeFormatted: `Hoy, ${timeFormatted}`,
+    topic: String(topic).trim(),
+    message: String(message).trim(),
+    contactPref: contactPref || 'presencial',
+    notes: [],
+  };
+
+  inMemoryCases.unshift(newCase);
+
+  return res.status(201).json({
+    success: true,
+    message: 'Solicitud de orientación registrada exitosamente.',
+    data: newCase,
+  });
+});
+
+/**
+ * PUT /api/orientation/cases/:id/status
+ */
+app.put('/api/orientation/cases/:id/status', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status, responseNote } = req.body;
+
+  const target = inMemoryCases.find((c) => c.id === id);
+  if (!target) {
+    return res.status(404).json({ success: false, error: 'Caso no encontrado.' });
+  }
+
+  if (status) target.status = status;
+  if (responseNote !== undefined) target.responseNote = responseNote;
+
+  return res.json({
+    success: true,
+    message: 'Estado del caso actualizado.',
+    data: target,
+  });
+});
+
+/**
+ * POST /api/orientation/cases/:id/notes
+ */
+app.post('/api/orientation/cases/:id/notes', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { note, authorName, authorRole } = req.body;
+
+  const target = inMemoryCases.find((c) => c.id === id);
+  if (!target) {
+    return res.status(404).json({ success: false, error: 'Caso no encontrado.' });
+  }
+
+  const newNote: CaseNote = {
+    id: `note_${Date.now()}`,
+    authorName: authorName || 'Personal Oficial',
+    authorRole: authorRole || 'Orientación Escolar',
+    createdAt: new Date().toISOString(),
+    note: String(note).trim(),
+  };
+
+  if (!target.notes) target.notes = [];
+  target.notes.push(newNote);
+
+  return res.status(201).json({
+    success: true,
+    message: 'Nota interna agregada con éxito.',
+    data: newNote,
   });
 });
 

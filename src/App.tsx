@@ -18,9 +18,10 @@ import { ASSETS, Language, translations } from './data/translations';
 import { authService } from './services/authService';
 import { PWAInstallButton } from './components/PWAInstallButton';
 import { OfflineIndicator } from './components/OfflineIndicator';
-import { UserProfileDropdown } from './components/UserProfileDropdown';
 import { AudiovisualModal } from './components/AudiovisualModal';
 import { AudiovisualsView } from './components/AudiovisualsView';
+import { EmergencyHelplineModal } from './components/EmergencyHelplineModal';
+import { UserProfileDropdown } from './components/UserProfileDropdown';
 import { PhoneCall, Sun, Moon, Globe, Film } from 'lucide-react';
 
 export type ActiveScreen =
@@ -37,9 +38,20 @@ export type ActiveScreen =
   | 'audiovisuales';
 
 export default function App() {
-  const [lang, setLang] = useState<Language>('es');
-  // Initial state: ALWAYS Light Mode by default upon entering
-  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [lang, setLang] = useState<Language>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('expresa_te_lang');
+      if (stored === 'en' || stored === 'es') return stored;
+    }
+    return 'es';
+  });
+  // Initial state: Persisted theme from localStorage (defaults to false / Light Mode)
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('expresa_te_theme') === 'dark';
+    }
+    return false;
+  });
   // Default first interface is strictly 'login' until authenticated
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>('login');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -55,6 +67,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showAudiovisualModal, setShowAudiovisualModal] = useState<boolean>(false);
+  const [showEmergencyModal, setShowEmergencyModal] = useState<boolean>(false);
   const [selectedModalVideoId, setSelectedModalVideoId] = useState<string | undefined>(undefined);
 
   const handleOpenAudiovisualModal = (videoId?: string) => {
@@ -106,7 +119,7 @@ export default function App() {
     }
   }, []);
 
-  // Theme effect: cleanly add or remove 'dark' on <html> and <body>
+  // Theme effect: cleanly add or remove 'dark' on <html> and <body> and persist
   useEffect(() => {
     const root = document.documentElement;
     const body = document.body;
@@ -116,6 +129,9 @@ export default function App() {
     } else {
       root.classList.remove('dark');
       body.classList.remove('dark');
+    }
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('expresa_te_theme', darkMode ? 'dark' : 'light');
     }
   }, [darkMode]);
 
@@ -148,6 +164,9 @@ export default function App() {
   const handleToggleLanguage = () => {
     const nextLang: Language = lang === 'es' ? 'en' : 'es';
     setLang(nextLang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('expresa_te_lang', nextLang);
+    }
     showToast(
       nextLang === 'es'
         ? 'Idioma cambiado a Español'
@@ -299,7 +318,7 @@ export default function App() {
           {/* Brand Zone: Project Name "Expresa Te" with its respective logo */}
           <button
             type="button"
-            onClick={() => handleNavigate(isLoggedIn ? 'inicio' : 'login')}
+            onClick={() => handleNavigate(!isLoggedIn ? 'login' : isStaff ? 'panel-orientador' : 'inicio')}
             className="flex items-center gap-2.5 sm:gap-3 text-left cursor-pointer shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl min-w-0"
             title="Expresa Te"
           >
@@ -349,13 +368,7 @@ export default function App() {
             {/* Botón de ayuda/emergencia: "Línea 106" destacado en tono rojo/rosa suave */}
             <button
               type="button"
-              onClick={() => {
-                showToast(
-                  lang === 'es'
-                    ? 'Línea 106 de contención y apoyo emocional 24/7 disponible gratuitamente'
-                    : 'Line 106 24/7 emotional support available toll-free'
-                );
-              }}
+              onClick={() => setShowEmergencyModal(true)}
               title={lang === 'es' ? 'Línea 106 de Crisis y Ayuda Inmediata' : 'Line 106 Crisis & Immediate Support'}
               className="inline-flex items-center gap-1.5 h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(244,63,94,0.15)] group"
             >
@@ -453,6 +466,7 @@ export default function App() {
                 onNavigate={handleNavigate}
                 onLogout={handleLogout}
                 onShowToast={showToast}
+                onOpenEmergencyModal={() => setShowEmergencyModal(true)}
                 activeScreen={activeScreen}
               />
             )}
@@ -630,11 +644,12 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => {
-                    showToast('Línea 106 disponible las 24 horas');
+                    setMenuOpen(false);
+                    setShowEmergencyModal(true);
                   }}
-                  className="px-2.5 py-1 bg-error text-on-error rounded-lg font-label-sm font-semibold cursor-pointer"
+                  className="px-2.5 py-1 bg-error text-on-error rounded-lg font-label-sm font-semibold cursor-pointer hover:bg-error/90 active:scale-95 transition-all"
                 >
-                  Ayuda
+                  {lang === 'es' ? 'Ayuda' : 'Help'}
                 </button>
               </div>
               {/* PWA Mobile Drawer Install Action */}
@@ -757,6 +772,7 @@ export default function App() {
               onNavigate={handleNavigate}
               onShowToast={showToast}
               onOpenAudiovisualModal={handleOpenAudiovisualModal}
+              onOpenEmergencyModal={() => setShowEmergencyModal(true)}
             />
           )
         ) : (
@@ -810,6 +826,7 @@ export default function App() {
                 userName={userName}
                 onShowToast={showToast}
                 onOpenAudiovisualModal={handleOpenAudiovisualModal}
+                onOpenEmergencyModal={() => setShowEmergencyModal(true)}
               />
             )}
 
@@ -821,6 +838,7 @@ export default function App() {
                 userName={userName}
                 onShowToast={showToast}
                 onOpenAudiovisualModal={handleOpenAudiovisualModal}
+                onOpenEmergencyModal={() => setShowEmergencyModal(true)}
               />
             )}
 
@@ -1054,21 +1072,33 @@ export default function App() {
                 <span>{tFooter.colHotlinesTitle}</span>
               </span>
               <ul className="flex flex-col gap-2 font-body-sm text-slate-700 dark:text-slate-300">
-                <li className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
-                  <span className="font-semibold text-teal-700 dark:text-teal-400">{tFooter.line106Label}</span>
-                  <span className="font-label-sm px-2 py-0.5 rounded bg-teal-100 dark:bg-teal-500/20 text-teal-800 dark:text-teal-300 font-bold">24/7</span>
+                <li
+                  onClick={() => setShowEmergencyModal(true)}
+                  className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 hover:border-rose-400 dark:hover:border-rose-500/50 cursor-pointer transition-colors group"
+                >
+                  <span className="font-semibold text-teal-700 dark:text-teal-400 group-hover:text-rose-500 transition-colors">{tFooter.line106Label}</span>
+                  <span className="font-label-sm px-2 py-0.5 rounded bg-teal-100 dark:bg-teal-500/20 text-teal-800 dark:text-teal-300 group-hover:bg-rose-500 group-hover:text-white font-bold transition-colors">24/7</span>
                 </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
-                  <span className="font-semibold text-cyan-700 dark:text-cyan-400">{tFooter.line192Label}</span>
-                  <span className="font-label-sm px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 font-bold">Gratis</span>
+                <li
+                  onClick={() => { window.location.href = 'tel:192'; }}
+                  className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-cyan-500/50 cursor-pointer transition-colors group"
+                >
+                  <span className="font-semibold text-cyan-700 dark:text-cyan-400 group-hover:text-cyan-500 transition-colors">{tFooter.line192Label}</span>
+                  <span className="font-label-sm px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 group-hover:bg-cyan-500 group-hover:text-white font-bold transition-colors">Gratis</span>
                 </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
-                  <span className="font-semibold text-emerald-700 dark:text-emerald-400">{tFooter.line141Label}</span>
-                  <span className="font-label-sm px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 font-bold">ICBF</span>
+                <li
+                  onClick={() => { window.location.href = 'tel:141'; }}
+                  className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-500/50 cursor-pointer transition-colors group"
+                >
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-400 group-hover:text-emerald-500 transition-colors">{tFooter.line141Label}</span>
+                  <span className="font-label-sm px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 group-hover:bg-emerald-500 group-hover:text-white font-bold transition-colors">ICBF</span>
                 </li>
-                <li className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
-                  <span className="font-semibold text-slate-900 dark:text-white">{tFooter.line123Label}</span>
-                  <span className="font-label-sm px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-bold">Urgencias</span>
+                <li
+                  onClick={() => { window.location.href = 'tel:123'; }}
+                  className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 hover:border-rose-400 dark:hover:border-rose-500/50 cursor-pointer transition-colors group"
+                >
+                  <span className="font-semibold text-slate-900 dark:text-white group-hover:text-rose-500 transition-colors">{tFooter.line123Label}</span>
+                  <span className="font-label-sm px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white group-hover:bg-rose-500 group-hover:text-white font-bold transition-colors">Urgencias</span>
                 </li>
               </ul>
             </div>
@@ -1173,8 +1203,19 @@ export default function App() {
         onClose={() => setShowAudiovisualModal(false)}
         lang={lang}
         initialVideoId={selectedModalVideoId}
-        onNavigateToFullLibrary={() => handleNavigate('recursos')}
-        onOpenGuidance={() => handleNavigate('orientacion')}
+        onNavigateToFullLibrary={() => handleNavigate('audiovisuales')}
+        onOpenGuidance={() => handleNavigate(isLoggedIn ? 'orientacion' : 'login')}
+      />
+
+      {/* Verified Official Línea 106 & Emergency Helpline Modal */}
+      <EmergencyHelplineModal
+        isOpen={showEmergencyModal}
+        onClose={() => setShowEmergencyModal(false)}
+        lang={lang}
+        onOpenGuidance={() => {
+          setShowEmergencyModal(false);
+          handleNavigate(isLoggedIn ? 'orientacion' : 'login');
+        }}
       />
     </div>
   );

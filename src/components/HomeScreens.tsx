@@ -28,6 +28,7 @@ interface HomeProps {
   userName: string;
   onShowToast: (msg: string) => void;
   onOpenAudiovisualModal?: (videoId?: string) => void;
+  onOpenEmergencyModal?: () => void;
 }
 
 export const WelcomeScreen: React.FC<HomeProps> = ({
@@ -37,6 +38,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
   userName,
   onShowToast,
   onOpenAudiovisualModal,
+  onOpenEmergencyModal,
 }) => {
   const t = translations[lang].welcome;
   const isEs = lang === 'es';
@@ -315,13 +317,7 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
             <div className="w-full flex flex-wrap items-center gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => {
-                  if (onOpenAudiovisualModal) {
-                    onOpenAudiovisualModal();
-                  } else {
-                    onNavigate('recursos');
-                  }
-                }}
+                onClick={() => onNavigate('audiovisuales')}
                 className="h-11 px-5 rounded-xl bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-bold text-xs sm:text-sm shadow-md shadow-cyan-500/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
               >
                 <Video className="w-4 h-4" />
@@ -388,14 +384,14 @@ export const WelcomeScreen: React.FC<HomeProps> = ({
               </div>
               <button
                 type="button"
-                onClick={() =>
-                  onShowToast(
-                    isEs
-                      ? 'Línea 106 disponible las 24 horas marcando gratis desde celular'
-                      : 'Line 106 toll-free 24/7'
-                  )
-                }
-                className="h-8 px-3 rounded-lg bg-rose-500 text-white font-bold text-xs active:scale-[0.98] transition-transform cursor-pointer shrink-0 shadow-sm shadow-rose-500/20"
+                onClick={() => {
+                  if (onOpenEmergencyModal) {
+                    onOpenEmergencyModal();
+                  } else {
+                    window.location.href = 'tel:106';
+                  }
+                }}
+                className="h-8 px-3 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs active:scale-[0.98] transition-transform cursor-pointer shrink-0 shadow-sm shadow-rose-500/20"
               >
                 106
               </button>
@@ -505,13 +501,7 @@ export const StudentDashboardScreen: React.FC<HomeProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             type="button"
-            onClick={() => {
-              if (onOpenAudiovisualModal) {
-                onOpenAudiovisualModal();
-              } else {
-                onNavigate('recursos');
-              }
-            }}
+            onClick={() => onNavigate('audiovisuales')}
             className="p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/60 dark:hover:bg-slate-950/90 border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/30 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 group"
           >
             <div className="flex items-center gap-2 text-teal-700 dark:text-cyan-400 font-bold text-xs sm:text-sm">

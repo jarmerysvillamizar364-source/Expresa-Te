@@ -16,6 +16,7 @@ interface UserProfileDropdownProps {
   onNavigate: (screen: string) => void;
   onLogout: () => void;
   onShowToast: (msg: string) => void;
+  onOpenEmergencyModal?: () => void;
   activeScreen: string;
 }
 
@@ -34,6 +35,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
   onNavigate,
   onLogout,
   onShowToast,
+  onOpenEmergencyModal,
   activeScreen,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -310,9 +312,9 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
             <button
               type="button"
               role="menuitem"
-              onClick={() => handleAction(() => onNavigate('recursos'))}
+              onClick={() => handleAction(() => onNavigate('audiovisuales'))}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-label-md text-sm text-left transition-colors cursor-pointer group ${
-                activeScreen === 'recursos'
+                activeScreen === 'audiovisuales' || activeScreen === 'recursos'
                   ? 'bg-primary-fixed/30 text-primary font-bold'
                   : 'text-on-surface hover:bg-surface-container'
               }`}
@@ -322,9 +324,12 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                   smart_display
                 </span>
                 <span className="font-medium">
-                  {lang === 'es' ? 'Biblioteca Audiovisual' : 'Media Resources'}
+                  {lang === 'es' ? 'Centro de Audiovisuales' : 'Audiovisual Media Hub'}
                 </span>
               </div>
+              <span className="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:translate-x-0.5 transition-transform">
+                chevron_right
+              </span>
             </button>
 
             <button
@@ -415,12 +420,12 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
             <button
               type="button"
               onClick={() => {
-                onShowToast(
-                  lang === 'es'
-                    ? 'Línea 106 de atención emocional activa 24/7 de forma confidencial y gratuita'
-                    : 'Confidential 24/7 crisis support hotline 106 is active toll-free'
-                );
                 setIsOpen(false);
+                if (onOpenEmergencyModal) {
+                  onOpenEmergencyModal();
+                } else {
+                  window.location.href = 'tel:106';
+                }
               }}
               className="w-full flex items-center justify-between p-2 rounded-xl bg-surface-container-lowest/70 hover:bg-surface-container-lowest border border-error/20 text-error transition-all cursor-pointer"
             >

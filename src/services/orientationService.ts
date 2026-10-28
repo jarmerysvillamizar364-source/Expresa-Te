@@ -168,6 +168,35 @@ class OrientationService {
   }
 
   /**
+   * Sincroniza con el backend si está disponible
+   */
+  public async syncWithServer(role: string = 'estudiante', studentEmail?: string): Promise<OrientationRequest[]> {
+    try {
+      const params = new URLSearchParams({ role });
+      if (studentEmail) params.append('studentEmail', studentEmail);
+      const res = await fetch(`/api/orientation/cases?${params.toString()}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          // Merge or update local cache
+          const serverMap = new Map<string, OrientationRequest>(json.data.map((c: OrientationRequest) => [c.id, c]));
+          // Keep new local cases that may not be on server yet
+          this.requests.forEach((local) => {
+            if (!serverMap.has(local.id)) {
+              serverMap.set(local.id, local);
+            }
+          });
+          this.requests = Array.from(serverMap.values());
+          this.persist();
+        }
+      }
+    } catch (e) {
+      console.warn('[OrientationService] Server sync skipped, using local cache:', e);
+    }
+    return this.getRequests(role, studentEmail);
+  }
+
+  /**
    * Envía una nueva solicitud de orientación desde el portal del estudiante.
    */
   public createRequest(params: {
@@ -206,6 +235,14 @@ class OrientationService {
 
     this.requests.unshift(newReq);
     this.persist();
+
+    // Async push to backend
+    fetch('/api/orientation/cases', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+    }).catch((err) => console.warn('[OrientationService] POST to backend failed:', err));
+
     return newReq;
   }
 
@@ -225,6 +262,14 @@ class OrientationService {
       target.responseNote = responseNote;
     }
     this.persist();
+
+    // Async push to backend
+    fetch(`/api/orientation/cases/${encodeURIComponent(id)}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, responseNote }),
+    }).catch((err) => console.warn('[OrientationService] PUT status failed:', err));
+
     return true;
   }
 
@@ -240,15 +285,25 @@ class OrientationService {
     const target = this.requests.find((r) => r.id === caseId);
     if (!target) return false;
 
-    if (!target.notes) target.notes = [];
-    target.notes.push({
+    const newNote: CaseNote = {
       id: `note_${Date.now()}`,
       authorName,
       authorRole,
       createdAt: new Date().toISOString(),
       note: noteText,
-    });
+    };
+
+    if (!target.notes) target.notes = [];
+    target.notes.push(newNote);
     this.persist();
+
+    // Async push to backend
+    fetch(`/api/orientation/cases/${encodeURIComponent(caseId)}/notes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note: noteText, authorName, authorRole }),
+    }).catch((err) => console.warn('[OrientationService] POST note failed:', err));
+
     return true;
   }
 }
