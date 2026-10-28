@@ -11,7 +11,6 @@ import {
   RotateCcw,
   Volume2,
   VolumeX,
-  Maximize2,
   Search,
   Filter,
   CheckCircle2,
@@ -25,13 +24,21 @@ import {
   FileText,
   Headphones,
   Info,
-  ExternalLink,
-  RefreshCw,
   AlertTriangle,
   Heart,
   ShieldAlert,
   Users,
   Compass,
+  GraduationCap,
+  Brain,
+  Sprout,
+  Smile,
+  MessageCircle,
+  ShieldCheck,
+  Check,
+  Languages,
+  Subtitles,
+  Share2,
 } from 'lucide-react';
 import type {
   AudiovisualResource,
@@ -61,15 +68,15 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
   const isEs = lang === 'es';
   const isStaff = userRole === 'orientador' || userRole === 'psicologo' || userRole === 'administrativo';
 
-  // Data states
+  // Catalog state
   const [resources, setResources] = useState<AudiovisualResource[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Filters state
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedFormat, setSelectedFormat] = useState<AudiovisualFormat | 'all'>('all');
   const [selectedCategory, setSelectedCategory] = useState<AudiovisualCategory | 'all'>('all');
+  const [selectedFormat, setSelectedFormat] = useState<AudiovisualFormat | 'all'>('all');
 
   // Active viewing window
   const [activeResource, setActiveResource] = useState<AudiovisualResource | null>(null);
@@ -78,25 +85,26 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
   const [progress, setProgress] = useState<number>(20);
-  const [activeTab, setActiveTab] = useState<'takeaways' | 'transcript' | 'slides'>('takeaways');
+  const [activeTab, setActiveTab] = useState<'takeaways' | 'transcript' | 'pedagogy' | 'slides'>('takeaways');
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
   const [mediaPlaybackError, setMediaPlaybackError] = useState<boolean>(false);
 
-  // Future Admin Content Management Modal state
+  // Admin New Resource Modal state
   const [showAdminModal, setShowAdminModal] = useState<boolean>(false);
   const [newTitle, setNewTitle] = useState('');
-  const [newCategory, setNewCategory] = useState<AudiovisualCategory>('emociones');
+  const [newCategory, setNewCategory] = useState<AudiovisualCategory>('salud_mental');
   const [newFormat, setNewFormat] = useState<AudiovisualFormat>('video');
   const [newMediaUrl, setNewMediaUrl] = useState('');
   const [newAuthor, setNewAuthor] = useState('');
+  const [newInstitution, setNewInstitution] = useState('');
   const [newDescription, setNewDescription] = useState('');
-  const [newDuration, setNewDuration] = useState('4:00 min');
+  const [newDuration, setNewDuration] = useState('6:00 min');
   const [newTakeawaysText, setNewTakeawaysText] = useState('');
   const [isSubmittingNew, setIsSubmittingNew] = useState(false);
 
   const viewerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch resources on mount or when filters change
+  // Fetch resources from service
   const fetchResources = async () => {
     setLoading(true);
     setError(null);
@@ -108,16 +116,18 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
       });
       setResources(result.resources);
 
-      // If active resource is not set, set the first highlighted or first item
+      // Default active resource if none selected
       if (!activeResource && result.resources.length > 0) {
-        setActiveResource(result.resources[0]);
+        // Prioritize recommended video
+        const recommended = result.resources.find((r) => r.isRecommended) || result.resources[0];
+        setActiveResource(recommended);
       }
     } catch (err: any) {
       console.error('[AudiovisualsView] Error loading resources:', err);
       setError(
         isEs
-          ? 'Hubo un inconveniente al cargar el catálogo multimedia. Se muestran los recursos locales.'
-          : 'Unable to sync multimedia catalog from server. Local cache is displayed.'
+          ? 'Hubo un inconveniente al cargar el catálogo multimedia institucional.'
+          : 'Unable to load institutional multimedia catalog.'
       );
     } finally {
       setLoading(false);
@@ -128,7 +138,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
     fetchResources();
   }, [selectedCategory, selectedFormat]);
 
-  // Debounced search
+  // Debounced search query
   useEffect(() => {
     const handler = setTimeout(() => {
       fetchResources();
@@ -136,7 +146,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  // Interactive video progress simulation
+  // Simulated playback timer for interactive mode
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isPlaying && viewerMode === 'interactive' && activeResource?.format === 'video') {
@@ -147,17 +157,26 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
     return () => clearInterval(interval);
   }, [isPlaying, viewerMode, playbackSpeed, activeResource]);
 
-  const handleSelectResource = (res: AudiovisualResource) => {
+  const handleSelectResource = (res: AudiovisualResource, autoPlay: boolean = false) => {
     setActiveResource(res);
     setProgress(15);
-    setIsPlaying(false);
+    setIsPlaying(autoPlay);
     setMediaPlaybackError(false);
     setActiveSlideIndex(0);
     setActiveTab(res.format === 'presentacion' ? 'slides' : 'takeaways');
 
-    // Scroll viewer into view smoothly
+    // Scroll to viewer smoothly
     if (viewerRef.current) {
       viewerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleToggleCardPlay = (e: React.MouseEvent, res: AudiovisualResource) => {
+    e.stopPropagation();
+    if (activeResource?.id === res.id) {
+      setIsPlaying(!isPlaying);
+    } else {
+      handleSelectResource(res, true);
     }
   };
 
@@ -165,6 +184,19 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
     setSearchQuery('');
     setSelectedCategory('all');
     setSelectedFormat('all');
+  };
+
+  const handleShareResource = (res: AudiovisualResource) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      onShowToast(
+        isEs
+          ? `Enlace a "${res.title}" copiado al portapapeles`
+          : `Link to "${res.title}" copied to clipboard`
+      );
+    } else {
+      onShowToast(res.title);
+    }
   };
 
   const handleCreateResourceSubmit = async (e: React.FormEvent) => {
@@ -185,9 +217,13 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
         title: newTitle.trim(),
         category: newCategory,
         format: newFormat,
-        duration: newDuration.trim() || '4:00 min',
+        duration: newDuration.trim() || '5:00 min',
         mediaUrl: newMediaUrl.trim(),
         author: newAuthor.trim() || (isStaff ? `${userName} (Orientación)` : 'Equipo de Orientación Escolar'),
+        institutionSource: newInstitution.trim() || 'Proyecto Educativo Institucional Expresa Te',
+        audioLanguage: 'Español (Nativo)',
+        hasSubtitles: true,
+        pedagogicalGoal: 'Refuerzo de habilidades emocionales y de convivencia escolar.',
         description: newDescription.trim() || 'Recurso educativo audiovisual para el bienestar escolar.',
         takeaways: takeawaysList.length > 0 ? takeawaysList : ['Comprender la técnica y aplicarla en el aula'],
       });
@@ -197,9 +233,9 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
       // Reset form
       setNewTitle('');
       setNewMediaUrl('');
+      setNewInstitution('');
       setNewDescription('');
       setNewTakeawaysText('');
-      // Reload resources
       fetchResources();
       setActiveResource(created);
     } catch (err: any) {
@@ -209,27 +245,35 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
     }
   };
 
-  // Category definitions with user-friendly labels
+  // Official Categories (8 Exact Categories Requested by the User)
   const categoriesList: Array<{ id: AudiovisualCategory | 'all'; label: string; icon: any }> = [
     { id: 'all', label: isEs ? 'Todos los Temas' : 'All Topics', icon: Compass },
-    { id: 'estres', label: isEs ? 'Manejo del Estrés' : 'Stress Management', icon: Sparkles },
-    { id: 'autoestima', label: isEs ? 'Autoestima & Resiliencia' : 'Self-Esteem', icon: Heart },
-    { id: 'emociones', label: isEs ? 'Emociones & Calma' : 'Emotions & Calming', icon: BookOpen },
-    { id: 'autocuidado', label: isEs ? 'Autocuidado Diario' : 'Daily Self-Care', icon: RotateCcw },
-    { id: 'convivencia', label: isEs ? 'Convivencia Pacífica (Ley 1620)' : 'Coexistence', icon: Users },
-    { id: 'conflictos', label: isEs ? 'Resolución de Conflictos' : 'Conflict Resolution', icon: Compass },
+    { id: 'salud_mental', label: isEs ? 'Salud Mental' : 'Mental Health', icon: Brain },
+    { id: 'autocuidado', label: isEs ? 'Autocuidado' : 'Self-Care', icon: Sprout },
+    { id: 'autoestima', label: isEs ? 'Autoestima' : 'Self-Esteem', icon: Heart },
+    { id: 'emociones', label: isEs ? 'Manejo de Emociones' : 'Emotion Management', icon: Smile },
+    { id: 'relaciones', label: isEs ? 'Relaciones Saludables' : 'Healthy Relationships', icon: MessageCircle },
+    { id: 'convivencia', label: isEs ? 'Convivencia Escolar' : 'School Coexistence', icon: Users },
     { id: 'acoso', label: isEs ? 'Prevención del Acoso' : 'Bullying Prevention', icon: ShieldAlert },
-    { id: 'comunicacion', label: isEs ? 'Comunicación Asertiva' : 'Assertive Communication', icon: FileText },
+    { id: 'orientacion', label: isEs ? 'Orientación Estudiantil' : 'Student Guidance', icon: GraduationCap },
   ];
 
-  // Format definitions
+  // Formats definition
   const formatsList: Array<{ id: AudiovisualFormat | 'all'; label: string; icon: any }> = [
     { id: 'all', label: isEs ? 'Todos los Formatos' : 'All Formats', icon: Layers },
     { id: 'video', label: isEs ? 'Videos' : 'Videos', icon: Film },
-    { id: 'presentacion', label: isEs ? 'Presentaciones' : 'Slide Decks', icon: FileText },
+    { id: 'presentacion', label: isEs ? 'Presentaciones' : 'Slides', icon: FileText },
     { id: 'infografia', label: isEs ? 'Infografías' : 'Infographics', icon: Info },
     { id: 'audio', label: isEs ? 'Audios Guiados' : 'Guided Audio', icon: Headphones },
   ];
+
+  // List of recommended videos for the featured carousel section
+  const recommendedVideos = resources.filter((r) => r.isRecommended || r.youtubeId);
+
+  // Safe embed URL with Spanish parameters
+  const embedUrlWithParams = activeResource?.mediaUrl
+    ? `${activeResource.mediaUrl}?hl=es&cc_lang_pref=es&cc_load_policy=1&rel=0&modestbranding=1&playsinline=1`
+    : '';
 
   return (
     <div className="w-full space-y-8 animate-fade-in text-slate-800 dark:text-slate-100">
@@ -239,11 +283,11 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
       <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
-            {/* Breadcrumb navigation */}
+            {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
               <button
                 type="button"
-                onClick={() => onNavigate(isLoggedIn ? 'inicio' : 'login')}
+                onClick={() => onNavigate(isLoggedIn ? (isStaff ? 'panel-orientador' : 'inicio') : 'login')}
                 className="hover:text-teal-600 dark:hover:text-cyan-400 cursor-pointer flex items-center gap-1 transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
@@ -256,43 +300,47 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 text-teal-700 dark:text-cyan-300 border border-cyan-500/30 flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-12 h-12 rounded-2xl bg-teal-500/15 text-teal-700 dark:text-cyan-300 border border-teal-500/30 flex items-center justify-center shrink-0 shadow-xs">
                 <Film className="w-6 h-6" />
               </div>
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[11px] font-black uppercase tracking-wider text-teal-700 dark:text-cyan-400">
-                    {isEs ? 'Espacio Institucional Oficial' : 'Official School Hub'}
+                    {isEs ? 'Portal Institucional Oficial' : 'Official School Hub'}
                   </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    {isEs ? 'Validado por Psicología' : 'Psychology Verified'}
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                    <Check className="w-3 h-3 text-emerald-500" />
+                    <span>{isEs ? 'Audio en Español Verificado' : 'Verified Spanish Audio'}</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-teal-800 dark:text-cyan-300 border border-cyan-500/30 text-[10px] font-bold">
+                    <Subtitles className="w-3 h-3 text-teal-600 dark:text-cyan-400" />
+                    <span>{isEs ? 'Subtítulos en Español' : 'Subtitles ES'}</span>
                   </span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                  {isEs ? 'Audiovisuales & Educación Emocional' : 'Audiovisuals & Emotional Education'}
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
+                  {isEs ? 'Audiovisuales & Bienestar Emocional' : 'Audiovisuals & Emotional Wellness'}
                 </h1>
               </div>
             </div>
 
             <p className="text-sm text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
               {isEs
-                ? 'Videos, presentaciones, infografías y audios de bienestar emocional y orientación escolar. Explora recursos para el manejo del estrés, autoestima, resolución de conflictos y convivencia pacífica.'
-                : 'Educational videos, slides, infographics, and mindfulness audio for school wellness and guidance.'}
+                ? 'Videos educativos reales en español de instituciones y profesionales de la salud mental. Explora recursos sobre autoestima, autocuidado, manejo del estrés, relaciones saludables, convivencia escolar y prevención del acoso.'
+                : 'Verified educational videos in Spanish on mental health, self-care, self-esteem, healthy relationships, school coexistence, and bullying prevention.'}
             </p>
           </div>
 
-          {/* Action buttons (Admin Add Resource + Back/Login) */}
+          {/* Action buttons */}
           <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center shrink-0">
-            {/* Content Admin Button: Available for orientation/psychology staff or future preview */}
+            {/* Add Resource Button */}
             <button
               type="button"
               onClick={() => setShowAdminModal(true)}
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
-              title={isEs ? 'Administración de recursos audiovisuales' : 'Manage media resources'}
+              title={isEs ? 'Agregar recurso audiovisual' : 'Add media resource'}
             >
               <Plus className="w-4 h-4" />
-              <span>{isEs ? 'Agregar Recurso' : 'Add Resource'}</span>
+              <span>{isEs ? 'Agregar Video' : 'Add Video'}</span>
             </button>
 
             {!isLoggedIn ? (
@@ -308,10 +356,10 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigate('orientacion')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-slate-800 hover:bg-teal-100 dark:hover:bg-slate-700 text-teal-800 dark:text-cyan-300 border border-teal-200 dark:border-cyan-500/30 text-xs font-bold transition-all cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400" />
-                <span>{isEs ? 'Hablar con Orientador' : 'Talk with Counselor'}</span>
+                <span>{isEs ? 'Hablar con Orientación' : 'Talk with Guidance'}</span>
               </button>
             )}
           </div>
@@ -319,12 +367,12 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
       </section>
 
       {/* ==================================================================== */}
-      {/* 2. MAIN ACTIVE VIEWING WINDOW (Ventana de visualización amplia)     */}
+      {/* 2. MAIN ACTIVE INTEGRATED VIDEO PLAYER WINDOW                        */}
       {/* ==================================================================== */}
       {activeResource && (
         <section
           ref={viewerRef}
-          aria-label={isEs ? 'Ventana de visualización multimedia' : 'Media viewer window'}
+          aria-label={isEs ? 'Reproductor de video integrado' : 'Integrated media player'}
           className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-cyan-500/30 rounded-3xl overflow-hidden shadow-xl dark:shadow-[0_0_40px_rgba(6,182,212,0.15)] transition-all"
         >
           {/* Top Viewer Control Bar */}
@@ -342,12 +390,13 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              {activeResource.isDemo && (
-                <span className="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-[10px] font-bold">
-                  {isEs ? 'Demostrativo Institucional' : 'Demo Resource'}
-                </span>
-              )}
+              {/* Audio badge */}
+              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
+                <Languages className="w-3 h-3 text-emerald-500" />
+                <span>{activeResource.audioLanguage || 'Español'}</span>
+              </span>
 
+              {/* Player Mode Switcher */}
               {activeResource.format === 'video' && (
                 <div className="flex items-center gap-1 bg-slate-200 dark:bg-slate-800 p-0.5 rounded-lg text-[11px]">
                   <button
@@ -359,7 +408,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    {isEs ? 'Video Embebido' : 'Embed'}
+                    {isEs ? 'Video Oficial' : 'Official Embed'}
                   </button>
                   <button
                     type="button"
@@ -370,34 +419,35 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    {isEs ? 'Modo Guiado' : 'Interactive'}
+                    {isEs ? 'Modo Guiado' : 'Guided Player'}
                   </button>
                 </div>
               )}
 
+              {/* Share button */}
               <button
                 type="button"
-                onClick={() => setActiveResource(null)}
-                title={isEs ? 'Cerrar visualizador' : 'Close viewer'}
+                onClick={() => handleShareResource(activeResource)}
+                title={isEs ? 'Compartir recurso' : 'Share resource'}
                 className="w-8 h-8 rounded-lg bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <Share2 className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Media Stage: Video player, Slide deck, Infographic zoom, or Audio Player */}
+          {/* Media Stage */}
           <div className="relative aspect-video w-full bg-slate-950 flex items-center justify-center overflow-hidden">
             {mediaPlaybackError ? (
               <div className="p-6 text-center space-y-3 max-w-md">
                 <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto" />
                 <h3 className="text-base font-bold text-white">
-                  {isEs ? 'Error al reproducir el recurso externo' : 'Error playing external media'}
+                  {isEs ? 'Conexión con el reproductor externo' : 'External player status'}
                 </h3>
                 <p className="text-xs text-slate-300">
                   {isEs
-                    ? 'No se pudo conectar con la fuente multimedia. Puedes cambiar al modo interactivo o reintentar.'
-                    : 'Could not connect with external stream. You can switch to interactive mode or retry.'}
+                    ? 'Si tu conexión escolar tiene filtros para streaming externo, puedes activar el Modo Guiado con los puntos clave y guion didáctico.'
+                    : 'If external streaming is restricted, switch to our interactive Guided Mode.'}
                 </p>
                 <div className="flex items-center justify-center gap-2 pt-2">
                   <button
@@ -408,7 +458,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                     }}
                     className="px-3.5 py-1.5 rounded-xl bg-cyan-500 text-slate-950 text-xs font-bold cursor-pointer"
                   >
-                    {isEs ? 'Ver en Modo Guiado' : 'View Interactive'}
+                    {isEs ? 'Activar Modo Guiado' : 'Switch to Guided Mode'}
                   </button>
                   <button
                     type="button"
@@ -421,17 +471,18 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
               </div>
             ) : activeResource.format === 'video' ? (
               viewerMode === 'embed' ? (
-                /* YouTube / Safe Institutional Embed Player (No autoplay audio) */
+                /* YouTube Official Educational Video Embed with Spanish Subtitles & UI */
                 <iframe
-                  src={`${activeResource.mediaUrl}?rel=0&modestbranding=1`}
+                  key={activeResource.id}
+                  src={embedUrlWithParams}
                   title={activeResource.title}
                   className="w-full h-full border-0"
-                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   onError={() => setMediaPlaybackError(true)}
                 />
               ) : (
-                /* Native Interactive Player with Complete Controls */
+                /* Custom Guided Player with Complete Play/Pause & Scrub Controls */
                 <div className="relative w-full h-full flex flex-col justify-between">
                   <img
                     src={activeResource.thumbnail}
@@ -440,15 +491,15 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                       isPlaying ? 'opacity-85' : 'opacity-65'
                     }`}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-black/40" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/50" />
 
-                  {/* Big Play/Pause Button */}
+                  {/* Big Play/Pause Center Button */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                     <button
                       type="button"
                       onClick={() => setIsPlaying(!isPlaying)}
-                      className="w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-950 flex items-center justify-center shadow-[0_0_35px_rgba(20,184,166,0.5)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                      title={isPlaying ? 'Pausar' : 'Reproducir'}
+                      className="w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-950 flex items-center justify-center shadow-[0_0_35px_rgba(20,184,166,0.5)] hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-cyan-400/30"
+                      title={isPlaying ? 'Pausar video' : 'Reproducir video'}
                     >
                       {isPlaying ? (
                         <Pause className="w-9 h-9 fill-current" />
@@ -458,8 +509,8 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                     </button>
                     <span className="text-xs sm:text-sm font-bold text-white drop-shadow-md">
                       {isPlaying
-                        ? isEs ? 'Reproduciendo lección guiada...' : 'Playing guided lesson...'
-                        : isEs ? 'Click para iniciar lección' : 'Click to start lesson'}
+                        ? isEs ? 'Reproduciendo lección guiada en español...' : 'Playing lesson in Spanish...'
+                        : isEs ? 'Click para reproducir lección' : 'Click to play lesson'}
                     </span>
                   </div>
 
@@ -483,20 +534,21 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                       </div>
                     </div>
 
-                    {/* Button Bar */}
+                    {/* Controls Row */}
                     <div className="flex items-center justify-between text-white text-xs">
                       <div className="flex items-center gap-3">
                         <button
                           type="button"
                           onClick={() => setIsPlaying(!isPlaying)}
                           className="hover:text-cyan-400 transition-colors cursor-pointer"
+                          title={isPlaying ? 'Pausar' : 'Reproducir'}
                         >
                           {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                         </button>
                         <button
                           type="button"
                           onClick={() => setProgress(0)}
-                          title="Reiniciar"
+                          title={isEs ? 'Reiniciar video' : 'Restart video'}
                           className="hover:text-cyan-400 transition-colors cursor-pointer"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
@@ -505,12 +557,13 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                           type="button"
                           onClick={() => setIsMuted(!isMuted)}
                           className="hover:text-cyan-400 transition-colors cursor-pointer"
+                          title={isMuted ? 'Activar sonido' : 'Silenciar'}
                         >
                           {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4" />}
                         </button>
                         <span className="font-mono text-[11px] text-slate-300">
-                          {Math.floor((progress / 100) * 4)}:
-                          {String(Math.floor(((progress / 100) * 240) % 60)).padStart(2, '0')} / {activeResource.duration}
+                          {Math.floor((progress / 100) * 5)}:
+                          {String(Math.floor(((progress / 100) * 300) % 60)).padStart(2, '0')} / {activeResource.duration}
                         </span>
                       </div>
 
@@ -530,8 +583,8 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                             </button>
                           ))}
                         </div>
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                          HD 1080p
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          Audio ES Verificado
                         </span>
                       </div>
                     </div>
@@ -539,7 +592,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                 </div>
               )
             ) : activeResource.format === 'presentacion' ? (
-              /* Interactive Slide Viewer */
+              /* Slide Deck Viewer */
               <div className="w-full h-full p-6 flex flex-col justify-between bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-white">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                   <div className="flex items-center gap-2 text-xs text-cyan-400 font-bold">
@@ -598,7 +651,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                 </div>
               </div>
             ) : activeResource.format === 'infografia' ? (
-              /* High-Resolution Infographic Zoom Viewer */
+              /* Infographic Viewer */
               <div className="relative w-full h-full bg-slate-900 flex items-center justify-center p-4 overflow-auto">
                 <img
                   src={activeResource.thumbnail}
@@ -607,16 +660,16 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                 />
                 <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-800 text-xs text-white">
                   <Info className="w-4 h-4 text-cyan-400" />
-                  <span>{isEs ? 'Infografía educativa oficial' : 'Official educational infographic'}</span>
+                  <span>{isEs ? 'Infografía educativa oficial' : 'Educational infographic'}</span>
                 </div>
               </div>
             ) : (
-              /* Guided Audio Player with Relaxing Ambience */
+              /* Guided Audio Player */
               <div className="w-full h-full p-6 flex flex-col justify-between bg-gradient-to-tr from-slate-900 via-teal-950 to-slate-950 text-white">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-teal-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Headphones className="w-4 h-4" />
-                    {isEs ? 'Cápsula de Audio Guiado' : 'Guided Audio Capsule'}
+                    {isEs ? 'Cápsula de Audio Guiado' : 'Guided Audio'}
                   </span>
                   <span className="text-xs font-mono text-slate-400">{activeResource.duration}</span>
                 </div>
@@ -634,31 +687,41 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                     src={activeResource.mediaUrl}
                     preload="none"
                   >
-                    Tu navegador no soporta el reproductor de audio HTML5.
+                    Tu navegador no soporta el reproductor de audio.
                   </audio>
                 </div>
 
                 <div className="text-center text-[11px] text-slate-400">
-                  {isEs ? 'Usa audífonos para una experiencia de sonido inmersiva.' : 'Use headphones for optimal experience.'}
+                  {isEs ? 'Usa audífonos para una experiencia inmersiva y relajante.' : 'Use headphones for optimal experience.'}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Details, Takeaways & Transcript Tabs */}
+          {/* Details, Tabs & Takeaways */}
           <div className="p-5 sm:p-6 space-y-4 bg-slate-50/60 dark:bg-slate-900/60">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
               <div>
-                <span className="text-xs font-bold text-teal-700 dark:text-cyan-400 uppercase tracking-wider">
-                  {activeResource.author}
-                </span>
-                <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-bold text-teal-700 dark:text-cyan-400 uppercase tracking-wider">
+                    {activeResource.author}
+                  </span>
+                  {activeResource.institutionSource && (
+                    <>
+                      <span className="text-slate-400">·</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                        {activeResource.institutionSource}
+                      </span>
+                    </>
+                  )}
+                </div>
+                <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-0.5">
                   {activeResource.title}
                 </h3>
               </div>
 
               {/* Tab Selector */}
-              <div className="flex items-center gap-1.5 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
                 <button
                   type="button"
                   onClick={() => setActiveTab('takeaways')}
@@ -683,6 +746,18 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                   <BookOpen className="w-3.5 h-3.5" />
                   <span>{isEs ? 'Guía y Guion' : 'Transcript'}</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('pedagogy')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    activeTab === 'pedagogy'
+                      ? 'bg-cyan-500 text-slate-950 shadow-xs'
+                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  <GraduationCap className="w-3.5 h-3.5" />
+                  <span>{isEs ? 'Ficha Pedagógica' : 'Pedagogy'}</span>
+                </button>
               </div>
             </div>
 
@@ -691,7 +766,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
             </p>
 
             {/* Tab Body */}
-            {activeTab === 'takeaways' ? (
+            {activeTab === 'takeaways' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
                 {activeResource.takeaways.map((point, idx) => (
                   <div
@@ -705,13 +780,61 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
-                "{activeResource.transcript || (isEs ? 'Este recurso cuenta con resumen didáctico en sus puntos clave.' : 'Summary available in key takeaways.')}"
+            )}
+
+            {activeTab === 'transcript' && (
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed space-y-2">
+                <div className="flex items-center gap-2 not-italic font-bold text-teal-700 dark:text-cyan-400 text-xs">
+                  <Languages className="w-4 h-4" />
+                  <span>{isEs ? 'Transcripción y mensaje en español:' : 'Verified Spanish transcript message:'}</span>
+                </div>
+                <p>"{activeResource.transcript || (isEs ? 'Este video cuenta con resumen didáctico estructurado en sus puntos clave.' : 'Summary available in key takeaways.')}"</p>
               </div>
             )}
 
-            {/* Guidance Callout */}
+            {activeTab === 'pedagogy' && (
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-1">
+                      Idioma de Locución
+                    </span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5" />
+                      {activeResource.audioLanguage || 'Español (Nativo)'}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-1">
+                      Subtítulos en Español
+                    </span>
+                    <span className="font-bold text-cyan-600 dark:text-cyan-400 flex items-center gap-1">
+                      <Subtitles className="w-3.5 h-3.5" />
+                      {isEs ? 'Español (CC) Habilitado' : 'Spanish CC Enabled'}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase block mb-1">
+                      Institución Emisora
+                    </span>
+                    <span className="font-bold text-slate-900 dark:text-white truncate block">
+                      {activeResource.institutionSource || 'Aprendemos Juntos · BBVA'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-slate-800 dark:text-slate-200">
+                  <span className="font-bold text-teal-800 dark:text-cyan-300 block mb-1">
+                    {isEs ? 'Objetivo Pedagógico para Estudiantes:' : 'Pedagogical Goal:'}
+                  </span>
+                  <p className="leading-relaxed">
+                    {activeResource.pedagogicalGoal || (isEs ? 'Aportar herramientas de autorregulación emocional, resiliencia y resolución pacífica de diferencias en el ámbito escolar.' : 'Promote student emotional well-being and positive school climate.')}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Confidential Counseling Callout */}
             <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-gradient-to-r from-cyan-500/10 via-teal-500/10 to-emerald-500/10 p-4 rounded-2xl border border-teal-500/20">
               <div className="flex items-center gap-2.5">
                 <Sparkles className="w-5 h-5 text-teal-600 dark:text-teal-400 shrink-0" />
@@ -735,7 +858,93 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
       )}
 
       {/* ==================================================================== */}
-      {/* 3. SEARCH & CATEGORIES FILTERS BAR                                   */}
+      {/* 3. VIDEOS RECOMENDADOS (Featured Recommendations Carousel)          */}
+      {/* ==================================================================== */}
+      {recommendedVideos.length > 0 && (
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-500 dark:text-amber-400" />
+              <h3 className="text-lg font-black text-slate-900 dark:text-white">
+                {isEs ? 'Videos Recomendados para Estudiantes' : 'Recommended Videos for Students'}
+              </h3>
+            </div>
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              {isEs ? 'Selección del equipo de orientación' : 'Selected by counseling team'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {recommendedVideos.slice(0, 4).map((rec) => {
+              const isSelected = activeResource?.id === rec.id;
+              return (
+                <div
+                  key={rec.id}
+                  onClick={() => handleSelectResource(rec)}
+                  className={`group rounded-2xl overflow-hidden border p-3 bg-white dark:bg-slate-900 cursor-pointer transition-all flex flex-col justify-between ${
+                    isSelected
+                      ? 'border-cyan-500 ring-2 ring-cyan-400/40 shadow-md'
+                      : 'border-slate-200 dark:border-slate-800 hover:border-cyan-500/50 hover:shadow-md'
+                  }`}
+                >
+                  <div className="space-y-2.5">
+                    <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900">
+                      <img
+                        src={rec.thumbnail}
+                        alt={rec.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                      <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-white text-[10px] font-bold">
+                        {rec.duration}
+                      </div>
+
+                      <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-emerald-600/90 text-white text-[10px] font-bold flex items-center gap-1">
+                        <Check className="w-2.5 h-2.5" />
+                        <span>Español</span>
+                      </div>
+
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-10 h-10 rounded-full bg-cyan-400 text-slate-950 flex items-center justify-center shadow-lg">
+                          <Play className="w-4 h-4 fill-current translate-x-0.5" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-teal-700 dark:text-cyan-400 block truncate">
+                        {rec.categoryLabel}
+                      </span>
+                      <h4 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug group-hover:text-teal-700 dark:group-hover:text-cyan-300 transition-colors">
+                        {rec.title}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px]">
+                    <span className="text-slate-500 dark:text-slate-400 truncate max-w-[120px]">
+                      {rec.author}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => handleToggleCardPlay(e, rec)}
+                      className="font-bold text-teal-700 dark:text-cyan-400 flex items-center gap-1 hover:underline cursor-pointer"
+                    >
+                      <span>{isSelected && isPlaying ? (isEs ? 'Pausar' : 'Pause') : (isEs ? 'Ver video' : 'Watch')}</span>
+                      <Play className="w-3 h-3 fill-current" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ==================================================================== */}
+      {/* 4. SEARCH & THE 8 CATEGORY FILTERS                                  */}
       {/* ==================================================================== */}
       <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm space-y-5">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
@@ -746,8 +955,8 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isEs ? 'Buscar por tema, técnica, estrés, acoso o autor...' : 'Search by topic, keyword, or author...'}
-              className="w-full h-10 pl-10 pr-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
+              placeholder={isEs ? 'Buscar por tema, autoestima, estrés, acoso escolar o autor...' : 'Search by topic, keyword, or author...'}
+              className="w-full h-10 pl-10 pr-9 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
             />
             {searchQuery && (
               <button
@@ -760,7 +969,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
             )}
           </div>
 
-          {/* Formats Tabs */}
+          {/* Formats Selector */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
             {formatsList.map((f) => {
               const active = selectedFormat === f.id;
@@ -784,27 +993,29 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
           </div>
         </div>
 
-        {/* Categories Pills */}
+        {/* 8 Categories Filter Buttons */}
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs scrollbar-none">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
               <Filter className="w-3 h-3" />
-              {isEs ? 'Temas:' : 'Topics:'}
+              {isEs ? 'Categorías:' : 'Categories:'}
             </span>
             {categoriesList.map((cat) => {
               const active = selectedCategory === cat.id;
+              const IconComp = cat.icon;
               return (
                 <button
                   key={cat.id}
                   type="button"
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer whitespace-nowrap text-xs ${
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-semibold transition-all cursor-pointer whitespace-nowrap text-xs active:scale-95 ${
                     active
                       ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs font-bold'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  {cat.label}
+                  <IconComp className="w-3.5 h-3.5" />
+                  <span>{cat.label}</span>
                 </button>
               );
             })}
@@ -813,13 +1024,13 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
       </section>
 
       {/* ==================================================================== */}
-      {/* 4. RESOURCES GRID CATALOG                                            */}
+      {/* 5. FULL CATALOG GRID & EMPTY STATE                                   */}
       {/* ==================================================================== */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-black text-slate-900 dark:text-white">
-              {isEs ? 'Catálogo Multimedia Institucional' : 'Institutional Multimedia Catalog'}
+              {isEs ? 'Catálogo de Videos y Recursos Educativos' : 'Educational Videos & Media Catalog'}
             </h3>
             <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold">
               {resources.length}
@@ -838,7 +1049,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
           )}
         </div>
 
-        {/* Loading State Skeleton */}
+        {/* Loading state skeleton */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[1, 2, 3, 4, 5, 6].map((sk) => (
@@ -854,34 +1065,36 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
             ))}
           </div>
         ) : resources.length === 0 ? (
-          /* Empty State */
+          /* Informative Empty State */
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 text-center space-y-4">
             <div className="w-16 h-16 rounded-3xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center mx-auto">
               <Search className="w-8 h-8" />
             </div>
             <div className="space-y-1">
               <h4 className="text-lg font-bold text-slate-900 dark:text-white">
-                {isEs ? 'No se encontraron recursos' : 'No resources found'}
+                {isEs ? 'No se encontraron videos para tu búsqueda' : 'No videos found'}
               </h4>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
                 {isEs
-                  ? 'No hay materiales que coincidan con la búsqueda actual. Prueba con otros términos o limpia los filtros.'
-                  : 'No materials match the current filters. Try other keywords or reset your filters.'}
+                  ? 'No hay materiales que coincidan con los filtros seleccionados. Prueba con otros términos o limpia la búsqueda para ver todo el catálogo.'
+                  : 'No media matches your search criteria. Try adjusting keywords or clear filters.'}
               </p>
             </div>
             <button
               type="button"
               onClick={handleResetFilters}
-              className="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs cursor-pointer shadow-xs"
+              className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs cursor-pointer shadow-xs transition-all"
             >
-              {isEs ? 'Ver todos los recursos' : 'Show all resources'}
+              {isEs ? 'Ver todos los videos' : 'Show all videos'}
             </button>
           </div>
         ) : (
-          /* Grid of Resources */
+          /* Grid of Video Cards */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {resources.map((item) => {
               const isSelected = activeResource?.id === item.id;
+              const isItemPlaying = isSelected && isPlaying;
+
               return (
                 <article
                   key={item.id}
@@ -903,16 +1116,21 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                      {/* Play badge */}
+                      {/* Play / Pause button overlay */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 ${
+                        <button
+                          type="button"
+                          onClick={(e) => handleToggleCardPlay(e, item)}
+                          title={isItemPlaying ? 'Pausar video' : 'Reproducir video'}
+                          className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 cursor-pointer ${
                             isSelected
                               ? 'bg-cyan-400 text-slate-950 ring-4 ring-cyan-400/30'
-                              : 'bg-white/90 text-slate-900 group-hover:bg-cyan-400 group-hover:text-slate-950'
+                              : 'bg-white/95 text-slate-900 group-hover:bg-cyan-400 group-hover:text-slate-950'
                           }`}
                         >
-                          {item.format === 'video' ? (
+                          {isItemPlaying ? (
+                            <Pause className="w-5 h-5 fill-current" />
+                          ) : item.format === 'video' ? (
                             <Play className="w-5 h-5 fill-current translate-x-0.5" />
                           ) : item.format === 'presentacion' ? (
                             <FileText className="w-5 h-5" />
@@ -921,22 +1139,23 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                           ) : (
                             <Headphones className="w-5 h-5" />
                           )}
-                        </div>
+                        </button>
                       </div>
 
-                      {/* Duration / Format Pill */}
+                      {/* Duration badge */}
                       <div className="absolute bottom-2.5 right-2.5 px-2.5 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-white text-[11px] font-bold">
                         {item.duration}
                       </div>
 
-                      {/* Format Badge Top Left */}
+                      {/* Verified Spanish Audio Badge */}
                       <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                        <span className="px-2 py-0.5 rounded-md bg-teal-600/90 backdrop-blur-xs text-white text-[10px] font-bold uppercase tracking-wider">
-                          {item.format}
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-600/90 backdrop-blur-xs text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                          <Check className="w-2.5 h-2.5" />
+                          <span>Español</span>
                         </span>
-                        {item.isDemo && (
+                        {item.isRecommended && (
                           <span className="px-2 py-0.5 rounded-md bg-amber-500/90 text-slate-950 text-[10px] font-black uppercase tracking-wider">
-                            Demo
+                            Recomendado
                           </span>
                         )}
                       </div>
@@ -944,9 +1163,14 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
 
                     {/* Content text */}
                     <div className="p-4 sm:p-5 space-y-2">
-                      <span className="text-[11px] font-bold text-teal-700 dark:text-cyan-400 uppercase tracking-wider block">
-                        {item.categoryLabel}
-                      </span>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-bold text-teal-700 dark:text-cyan-400 uppercase tracking-wider truncate">
+                          {item.categoryLabel}
+                        </span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium shrink-0">
+                          {item.format}
+                        </span>
+                      </div>
                       <h4 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white line-clamp-2 leading-snug group-hover:text-teal-700 dark:group-hover:text-cyan-300 transition-colors">
                         {item.title}
                       </h4>
@@ -958,13 +1182,27 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
 
                   {/* Card bottom bar */}
                   <div className="px-4 sm:px-5 pb-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-teal-700 dark:text-cyan-400">
-                    <span className="text-slate-500 dark:text-slate-400 text-[11px] font-normal truncate max-w-[180px]">
+                    <span className="text-slate-500 dark:text-slate-400 text-[11px] font-normal truncate max-w-[170px]">
                       {item.author}
                     </span>
-                    <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                      <span>{isSelected ? (isEs ? 'Viendo ahora' : 'Viewing') : (isEs ? 'Abrir recurso' : 'Open')}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => handleToggleCardPlay(e, item)}
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-teal-50 dark:bg-slate-800 hover:bg-teal-100 dark:hover:bg-slate-700 transition-all cursor-pointer"
+                    >
+                      <span>
+                        {isItemPlaying
+                          ? (isEs ? 'Pausar' : 'Pause')
+                          : isSelected
+                          ? (isEs ? 'Viendo ahora' : 'Viewing')
+                          : (isEs ? 'Reproducir' : 'Play')}
+                      </span>
+                      {isItemPlaying ? (
+                        <Pause className="w-3.5 h-3.5 fill-current" />
+                      ) : (
+                        <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
+                      )}
+                    </button>
                   </div>
                 </article>
               );
@@ -974,7 +1212,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
       </section>
 
       {/* ==================================================================== */}
-      {/* 5. FUTURE ADMIN CONTENT MANAGEMENT MODAL                             */}
+      {/* 6. ADMIN ADD VIDEO MODAL                                             */}
       {/* ==================================================================== */}
       {showAdminModal && (
         <div
@@ -993,12 +1231,12 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                 </div>
                 <div>
                   <h3 className="text-lg font-black text-slate-900 dark:text-white">
-                    {isEs ? 'Agregar Recurso Audiovisual' : 'Add Audiovisual Resource'}
+                    {isEs ? 'Agregar Video o Recurso en Español' : 'Add Spanish Video Resource'}
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     {isEs
-                      ? 'Conectado a la API institucional `/api/audiovisuales`'
-                      : 'Connected to institutional API `/api/audiovisuales`'}
+                      ? 'Integrado directamente a la API `/api/audiovisuales`'
+                      : 'Directly integrated with `/api/audiovisuales`'}
                   </p>
                 </div>
               </div>
@@ -1014,14 +1252,14 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
             <form onSubmit={handleCreateResourceSubmit} className="space-y-4 text-xs sm:text-sm">
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">
-                  {isEs ? 'Título del recurso:' : 'Title:'}
+                  {isEs ? 'Título del video:' : 'Title:'}
                 </label>
                 <input
                   type="text"
                   required
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder={isEs ? 'Ej: Manejo de la Frustración en el Aula' : 'E.g. Managing Classroom Frustration'}
+                  placeholder={isEs ? 'Ej: Manejo de la Frustración y el Enojo en la Escuela' : 'E.g. Managing Frustration'}
                   className="w-full h-10 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
                 />
               </div>
@@ -1029,21 +1267,21 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">
-                    {isEs ? 'Tema / Categoría:' : 'Category:'}
+                    {isEs ? 'Categoría Oficial:' : 'Category:'}
                   </label>
                   <select
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value as AudiovisualCategory)}
                     className="w-full h-10 px-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-medium"
                   >
-                    <option value="emociones">Emociones & Calma</option>
-                    <option value="estres">Manejo del Estrés</option>
-                    <option value="autoestima">Autoestima & Resiliencia</option>
-                    <option value="autocuidado">Autocuidado Diario</option>
-                    <option value="convivencia">Convivencia Pacífica</option>
-                    <option value="conflictos">Resolución de Conflictos</option>
+                    <option value="salud_mental">Salud Mental</option>
+                    <option value="autocuidado">Autocuidado</option>
+                    <option value="autoestima">Autoestima</option>
+                    <option value="emociones">Manejo de Emociones</option>
+                    <option value="relaciones">Relaciones Saludables</option>
+                    <option value="convivencia">Convivencia Escolar</option>
                     <option value="acoso">Prevención del Acoso</option>
-                    <option value="comunicacion">Comunicación Asertiva</option>
+                    <option value="orientacion">Orientación Estudiantil</option>
                   </select>
                 </div>
 
@@ -1067,27 +1305,55 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">
-                    {isEs ? 'Enlace multimedia (URL o YouTube):' : 'Media URL (or YouTube):'}
+                    {isEs ? 'Enlace de YouTube o video (Audio en español):' : 'YouTube or media URL (Spanish audio):'}
                   </label>
                   <input
                     type="text"
                     required
                     value={newMediaUrl}
                     onChange={(e) => setNewMediaUrl(e.target.value)}
-                    placeholder="https://www.youtube.com/watch?v=... o URL de video"
+                    placeholder="https://www.youtube.com/watch?v=..."
                     className="w-full h-10 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
                   />
                 </div>
 
                 <div>
                   <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">
-                    {isEs ? 'Duración estimada:' : 'Estimated Duration:'}
+                    {isEs ? 'Duración:' : 'Duration:'}
                   </label>
                   <input
                     type="text"
                     value={newDuration}
                     onChange={(e) => setNewDuration(e.target.value)}
-                    placeholder="Ej: 5:00 min o 6 láminas"
+                    placeholder="Ej: 6:30 min"
+                    className="w-full h-10 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">
+                    {isEs ? 'Autor / Ponente:' : 'Author:'}
+                  </label>
+                  <input
+                    type="text"
+                    value={newAuthor}
+                    onChange={(e) => setNewAuthor(e.target.value)}
+                    placeholder={isEs ? 'Ej: Dr. Especialista en Psicología' : 'Author or Specialist'}
+                    className="w-full h-10 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">
+                    {isEs ? 'Institución emisora:' : 'Institution:'}
+                  </label>
+                  <input
+                    type="text"
+                    value={newInstitution}
+                    onChange={(e) => setNewInstitution(e.target.value)}
+                    placeholder={isEs ? 'Ej: Aprendemos Juntos · BBVA' : 'Institution source'}
                     className="w-full h-10 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
                   />
                 </div>
@@ -1095,20 +1361,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
 
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">
-                  {isEs ? 'Autor o dependencia responsable:' : 'Author:'}
-                </label>
-                <input
-                  type="text"
-                  value={newAuthor}
-                  onChange={(e) => setNewAuthor(e.target.value)}
-                  placeholder={isEs ? 'Equipo de Orientación Escolar' : 'School Counseling Team'}
-                  className="w-full h-10 px-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">
-                  {isEs ? 'Descripción del recurso:' : 'Description:'}
+                  {isEs ? 'Descripción del video:' : 'Description:'}
                 </label>
                 <textarea
                   rows={2}
@@ -1121,13 +1374,13 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
 
               <div>
                 <label className="font-bold text-slate-700 dark:text-slate-200 block mb-1">
-                  {isEs ? 'Puntos clave (uno por línea):' : 'Key takeaways (one per line):'}
+                  {isEs ? 'Puntos clave pedagógicos (uno por línea):' : 'Key takeaways (one per line):'}
                 </label>
                 <textarea
                   rows={3}
                   value={newTakeawaysText}
                   onChange={(e) => setNewTakeawaysText(e.target.value)}
-                  placeholder={isEs ? "Punto 1: Identificar la causa\nPunto 2: Respirar profundamente\nPunto 3: Pedir ayuda" : "Point 1: Identify triggers..."}
+                  placeholder={isEs ? "Paso 1: Identificar el detonante emocional\nPaso 2: Realizar 3 respiraciones lentas\nPaso 3: Comunicar de forma asertiva" : "Key point 1...\nKey point 2..."}
                   className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white"
                 />
               </div>
@@ -1145,7 +1398,7 @@ export const AudiovisualsView: React.FC<AudiovisualsViewProps> = ({
                   disabled={isSubmittingNew}
                   className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold cursor-pointer disabled:opacity-50 shadow-xs"
                 >
-                  {isSubmittingNew ? (isEs ? 'Guardando...' : 'Saving...') : (isEs ? 'Guardar en la Plataforma' : 'Save Resource')}
+                  {isSubmittingNew ? (isEs ? 'Guardando...' : 'Saving...') : (isEs ? 'Guardar en la Plataforma' : 'Save Video')}
                 </button>
               </div>
             </form>

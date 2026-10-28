@@ -62,7 +62,7 @@ export const WELLNESS_VIDEOS: VideoResource[] = [
     categoryLabel: 'Inteligencia Emocional & Calma',
     duration: '6:40 min',
     image: ASSETS.videoStop,
-    embedUrl: 'https://www.youtube-nocookie.com/embed/Dm9Wcfqa220',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/TjqrualxgkI',
     author: 'Dra. Marian Rojas-Estapé (Psiquiatra y Divulgadora)',
     institutionSource: 'Canal Oficial Aprendemos Juntos · BBVA Educación',
     audioLanguage: 'Español (Nativo)',

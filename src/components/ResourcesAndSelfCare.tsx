@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ASSETS, Language, translations } from '../data/translations';
 
 interface ScreenProps {
@@ -756,153 +756,54 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
   // Active tool tab: 'breathing' | 'grounding' | 'pomodoro' | 'journal'
   const [activeTool, setActiveTool] = useState<'breathing' | 'grounding' | 'pomodoro' | 'journal'>('breathing');
 
-  // 1. BREATHING TRAINER STATE (Exact 19s single-cycle 4-7-8 sequence, no infinite loop)
+  // 1. BREATHING TRAINER STATE
   const [breathingMode, setBreathingMode] = useState<'478' | 'box'>('478');
   const [breathingActive, setBreathingActive] = useState(false);
-  const [breathingCompleted, setBreathingCompleted] = useState(false);
-  const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale' | 'pause' | 'completed'>('inhale');
+  const [breathingPhase, setBreathingPhase] = useState<'inhale' | 'hold' | 'exhale' | 'pause'>('inhale');
   const [timerSeconds, setTimerSeconds] = useState(4);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Stop and clean up any running timer safely
-  const stopBreathing = useCallback(() => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    setBreathingActive(false);
-  }, []);
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (breathingActive) {
+      timer = setInterval(() => {
+        setTimerSeconds((prev) => {
+          if (prev > 1) return prev - 1;
 
-  // Reset breathing exercise to initial state
-  const resetBreathing = useCallback(() => {
-    stopBreathing();
-    setBreathingCompleted(false);
-    setBreathingPhase('inhale');
-    setTimerSeconds(4);
-  }, [stopBreathing]);
-
-  // Start breathing exercise (single execution, 19s total: 4s inhale + 7s hold + 8s exhale)
-  const startBreathing = useCallback(() => {
-    // Clear any previous timer to prevent accumulation
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-
-    setBreathingCompleted(false);
-    setBreathingActive(true);
-
-    if (breathingMode === '478') {
-      setBreathingPhase('inhale');
-      setTimerSeconds(4);
-
-      let phase: 'inhale' | 'hold' | 'exhale' = 'inhale';
-      let secondsLeft = 4;
-
-      timerRef.current = setInterval(() => {
-        secondsLeft -= 1;
-
-        if (secondsLeft > 0) {
-          setTimerSeconds(secondsLeft);
-        } else {
-          // Transition phase or finish
-          if (phase === 'inhale') {
-            phase = 'hold';
-            secondsLeft = 7;
-            setBreathingPhase('hold');
-            setTimerSeconds(7);
-          } else if (phase === 'hold') {
-            phase = 'exhale';
-            secondsLeft = 8;
-            setBreathingPhase('exhale');
-            setTimerSeconds(8);
-          } else if (phase === 'exhale') {
-            // AUTOMATIC COMPLETION: Stop after 8 seconds of exhale (19s total: 4 + 7 + 8)
-            if (timerRef.current) {
-              clearInterval(timerRef.current);
-              timerRef.current = null;
+          if (breathingMode === '478') {
+            if (breathingPhase === 'inhale') {
+              setBreathingPhase('hold');
+              return 7;
+            } else if (breathingPhase === 'hold') {
+              setBreathingPhase('exhale');
+              return 8;
+            } else {
+              setBreathingPhase('inhale');
+              return 4;
             }
-            setBreathingActive(false);
-            setBreathingCompleted(true);
-            setBreathingPhase('completed');
-            setTimerSeconds(0);
-            onShowToast(
-              isEs
-                ? 'Ejercicio de respiración completado. ¡Muy bien!'
-                : 'Breathing exercise completed. Well done!'
-            );
+          } else {
+            // Box 4-4-4-4
+            if (breathingPhase === 'inhale') {
+              setBreathingPhase('hold');
+              return 4;
+            } else if (breathingPhase === 'hold') {
+              setBreathingPhase('exhale');
+              return 4;
+            } else if (breathingPhase === 'exhale') {
+              setBreathingPhase('pause');
+              return 4;
+            } else {
+              setBreathingPhase('inhale');
+              return 4;
+            }
           }
-        }
+        });
       }, 1000);
     } else {
-      // Box breathing: 4s inhale + 4s hold + 4s exhale + 4s pause = 16s total (single cycle)
-      setBreathingPhase('inhale');
-      setTimerSeconds(4);
-
-      let phase: 'inhale' | 'hold' | 'exhale' | 'pause' = 'inhale';
-      let secondsLeft = 4;
-
-      timerRef.current = setInterval(() => {
-        secondsLeft -= 1;
-
-        if (secondsLeft > 0) {
-          setTimerSeconds(secondsLeft);
-        } else {
-          if (phase === 'inhale') {
-            phase = 'hold';
-            secondsLeft = 4;
-            setBreathingPhase('hold');
-            setTimerSeconds(4);
-          } else if (phase === 'hold') {
-            phase = 'exhale';
-            secondsLeft = 4;
-            setBreathingPhase('exhale');
-            setTimerSeconds(4);
-          } else if (phase === 'exhale') {
-            phase = 'pause';
-            secondsLeft = 4;
-            setBreathingPhase('pause');
-            setTimerSeconds(4);
-          } else if (phase === 'pause') {
-            // AUTOMATIC COMPLETION
-            if (timerRef.current) {
-              clearInterval(timerRef.current);
-              timerRef.current = null;
-            }
-            setBreathingActive(false);
-            setBreathingCompleted(true);
-            setBreathingPhase('completed');
-            setTimerSeconds(0);
-            onShowToast(
-              isEs
-                ? 'Ejercicio de respiración completado. ¡Muy bien!'
-                : 'Breathing exercise completed. Well done!'
-            );
-          }
-        }
-      }, 1000);
-    }
-  }, [breathingMode, isEs, onShowToast]);
-
-  // Clean up timer on component unmount
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, []);
-
-  // Clean up timer if activeTool changes away from breathing
-  useEffect(() => {
-    if (activeTool !== 'breathing') {
-      stopBreathing();
-      setBreathingCompleted(false);
       setBreathingPhase('inhale');
       setTimerSeconds(4);
     }
-  }, [activeTool, stopBreathing]);
+    return () => clearInterval(timer);
+  }, [breathingActive, breathingPhase, breathingMode]);
 
   // 2. 5-4-3-2-1 GROUNDING STATE
   const [groundingChecks, setGroundingChecks] = useState<Record<number, boolean>>({});
@@ -1015,21 +916,18 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
       </div>
 
       {/* ================================================================== */}
-      {/* TOOL 1: RESPIRACIÓN RÍTMICA GUIADA EN VIVO (4-7-8 / 4-4-4-4) */}
+      {/* TOOL 1: RESPIRACIÓN RÍTMICA GUIADA EN VIVO */}
       {/* ================================================================== */}
       {activeTool === 'breathing' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-surface-container-lowest p-6 sm:p-10 rounded-3xl border border-outline-variant/30 shadow-xs">
           <div className="lg:col-span-7 space-y-5">
             {/* Mode selection buttons */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => {
-                  stopBreathing();
-                  setBreathingCompleted(false);
                   setBreathingMode('478');
-                  setBreathingPhase('inhale');
-                  setTimerSeconds(4);
+                  setBreathingActive(false);
                 }}
                 className={`h-9 px-4 rounded-xl font-label-sm font-bold transition-all cursor-pointer ${
                   breathingMode === '478'
@@ -1037,16 +935,13 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
                 }`}
               >
-                {isEs ? 'Técnica 4-7-8 (Calma profunda • 19s)' : '4-7-8 Method (Deep Calm • 19s)'}
+                {isEs ? 'Técnica 4-7-8 (Calma profunda)' : '4-7-8 Method (Deep Calm)'}
               </button>
               <button
                 type="button"
                 onClick={() => {
-                  stopBreathing();
-                  setBreathingCompleted(false);
                   setBreathingMode('box');
-                  setBreathingPhase('inhale');
-                  setTimerSeconds(4);
+                  setBreathingActive(false);
                 }}
                 className={`h-9 px-4 rounded-xl font-label-sm font-bold transition-all cursor-pointer ${
                   breathingMode === 'box'
@@ -1054,289 +949,79 @@ export const SelfCareScreen: React.FC<ScreenProps> = ({
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
                 }`}
               >
-                {isEs ? 'Respiración en Caja (4-4-4-4 • 16s)' : 'Box Breathing (4-4-4-4 • 16s)'}
+                {isEs ? 'Respiración en Caja 4-4-4-4 (Foco)' : 'Box Breathing 4-4-4-4 (Focus)'}
               </button>
             </div>
 
-            <div>
-              <h2 className="text-2xl font-bold text-on-surface">
-                {breathingMode === '478'
-                  ? (isEs ? 'Relajación y Descompresión Rápida (4-7-8)' : 'Deep Rhythmic Relaxation (4-7-8)')
-                  : (isEs ? 'Enfoque y Regulación del Estrés (4-4-4-4)' : 'Stress Stabilization (Box 4-4-4-4)')}
-              </h2>
-              <p className="font-body-md text-on-surface-variant leading-relaxed mt-1">
-                {breathingMode === '478'
-                  ? (isEs
-                      ? 'Inhala por la nariz durante 4 segundos, mantén el aire durante 7 segundos y exhala suavemente por la boca durante 8 segundos (19 segundos en total). La secuencia se ejecuta una sola vez y se detiene automáticamente.'
-                      : 'Inhale through your nose for 4s, hold for 7s, and exhale gently for 8s (19s total). The sequence runs once and stops automatically.')
-                  : (isEs
-                      ? 'Inhala en 4s, sostén en 4s, exhala en 4s y pausa en 4s (16 segundos en total). Ideal para despejar la mente antes de rendir evaluaciones o hablar en público.'
-                      : 'Inhale 4s, hold 4s, exhale 4s, pause 4s (16s total). Used to stabilize composure before exams.')}
-              </p>
-            </div>
+            <h2 className="text-2xl font-bold text-on-surface">
+              {breathingMode === '478'
+                ? (isEs ? 'Relajación y Descompresión Rápida (4-7-8)' : 'Deep Rhythmic Relaxation (4-7-8)')
+                : (isEs ? 'Enfoque y Regulación del Estrés (4-4-4-4)' : 'Stress Stabilization (Box 4-4-4-4)')}
+            </h2>
 
-            {/* Sequence Phase Indicators */}
-            {breathingMode === '478' ? (
-              <div className="grid grid-cols-3 gap-2 py-1">
-                <div
-                  className={`p-3 rounded-2xl border text-center transition-all ${
-                    breathingActive && breathingPhase === 'inhale'
-                      ? 'bg-primary/10 border-primary text-primary font-bold shadow-xs ring-1 ring-primary/40'
-                      : breathingCompleted || (breathingActive && (breathingPhase === 'hold' || breathingPhase === 'exhale'))
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-semibold'
-                      : 'bg-surface-container-low border-outline-variant/30 text-on-surface-variant'
-                  }`}
-                >
-                  <div className="text-[11px] uppercase tracking-wider font-bold opacity-80">
-                    {isEs ? 'Paso 1' : 'Step 1'}
-                  </div>
-                  <div className="text-sm font-bold mt-0.5">{isEs ? 'Inhala' : 'Inhale'}</div>
-                  <div className="text-xs font-mono opacity-80 mt-0.5">4 s</div>
-                </div>
+            <p className="font-body-md text-on-surface-variant leading-relaxed">
+              {breathingMode === '478'
+                ? (isEs
+                    ? 'Inhala por la nariz durante 4 segundos, mantén el aire 7 segundos y exhala suavemente por la boca durante 8 segundos. Esta cadencia estimula el nervio vago y desacelera el ritmo cardíaco.'
+                    : 'Inhale through your nose for 4s, hold for 7s, and exhale gently for 8s. This pattern stimulates the vagus nerve and slows your heart rate.')
+                : (isEs
+                    ? 'Inhala en 4s, sostén en 4s, exhala en 4s y espera en 4s. Es la técnica utilizada para despejar la mente antes de rendir exámenes o hablar en público.'
+                    : 'Inhale 4s, hold 4s, exhale 4s, hold 4s. Used to stabilize composure before exams or presentations.')}
+            </p>
 
-                <div
-                  className={`p-3 rounded-2xl border text-center transition-all ${
-                    breathingActive && breathingPhase === 'hold'
-                      ? 'bg-amber-500/15 border-amber-500 text-amber-800 dark:text-amber-200 font-bold shadow-xs ring-1 ring-amber-500/40'
-                      : breathingCompleted || (breathingActive && breathingPhase === 'exhale')
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-semibold'
-                      : 'bg-surface-container-low border-outline-variant/30 text-on-surface-variant'
-                  }`}
-                >
-                  <div className="text-[11px] uppercase tracking-wider font-bold opacity-80">
-                    {isEs ? 'Paso 2' : 'Step 2'}
-                  </div>
-                  <div className="text-sm font-bold mt-0.5">{isEs ? 'Mantén la respiración' : 'Hold breath'}</div>
-                  <div className="text-xs font-mono opacity-80 mt-0.5">7 s</div>
-                </div>
-
-                <div
-                  className={`p-3 rounded-2xl border text-center transition-all ${
-                    breathingActive && breathingPhase === 'exhale'
-                      ? 'bg-teal-500/15 border-teal-500 text-teal-800 dark:text-teal-200 font-bold shadow-xs ring-1 ring-teal-500/40'
-                      : breathingCompleted
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-semibold'
-                      : 'bg-surface-container-low border-outline-variant/30 text-on-surface-variant'
-                  }`}
-                >
-                  <div className="text-[11px] uppercase tracking-wider font-bold opacity-80">
-                    {isEs ? 'Paso 3' : 'Step 3'}
-                  </div>
-                  <div className="text-sm font-bold mt-0.5">{isEs ? 'Exhala lentamente' : 'Exhale slowly'}</div>
-                  <div className="text-xs font-mono opacity-80 mt-0.5">8 s</div>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-4 gap-2 py-1">
-                <div
-                  className={`p-2.5 rounded-xl border text-center transition-all ${
-                    breathingActive && breathingPhase === 'inhale'
-                      ? 'bg-primary/10 border-primary text-primary font-bold shadow-xs'
-                      : 'bg-surface-container-low border-outline-variant/30 text-on-surface-variant'
-                  }`}
-                >
-                  <div className="text-xs font-bold">{isEs ? 'Inhala' : 'Inhale'}</div>
-                  <div className="text-[11px] font-mono opacity-80">4s</div>
-                </div>
-                <div
-                  className={`p-2.5 rounded-xl border text-center transition-all ${
-                    breathingActive && breathingPhase === 'hold'
-                      ? 'bg-primary/10 border-primary text-primary font-bold shadow-xs'
-                      : 'bg-surface-container-low border-outline-variant/30 text-on-surface-variant'
-                  }`}
-                >
-                  <div className="text-xs font-bold">{isEs ? 'Mantén' : 'Hold'}</div>
-                  <div className="text-[11px] font-mono opacity-80">4s</div>
-                </div>
-                <div
-                  className={`p-2.5 rounded-xl border text-center transition-all ${
-                    breathingActive && breathingPhase === 'exhale'
-                      ? 'bg-primary/10 border-primary text-primary font-bold shadow-xs'
-                      : 'bg-surface-container-low border-outline-variant/30 text-on-surface-variant'
-                  }`}
-                >
-                  <div className="text-xs font-bold">{isEs ? 'Exhala' : 'Exhale'}</div>
-                  <div className="text-[11px] font-mono opacity-80">4s</div>
-                </div>
-                <div
-                  className={`p-2.5 rounded-xl border text-center transition-all ${
-                    breathingActive && breathingPhase === 'pause'
-                      ? 'bg-primary/10 border-primary text-primary font-bold shadow-xs'
-                      : 'bg-surface-container-low border-outline-variant/30 text-on-surface-variant'
-                  }`}
-                >
-                  <div className="text-xs font-bold">{isEs ? 'Pausa' : 'Pause'}</div>
-                  <div className="text-[11px] font-mono opacity-80">4s</div>
-                </div>
-              </div>
-            )}
-
-            {/* Automatic Completion Banner */}
-            {breathingCompleted && (
-              <div
-                data-testid="breathing-completion-banner"
-                className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 text-emerald-900 dark:text-emerald-200 flex items-center gap-3 animate-fade-in"
-              >
-                <span className="material-symbols-outlined text-2xl text-emerald-600 dark:text-emerald-400 shrink-0">
-                  task_alt
-                </span>
-                <div>
-                  <p className="font-bold text-sm">
-                    {isEs
-                      ? 'Ejercicio de respiración completado. ¡Muy bien!'
-                      : 'Breathing exercise completed. Well done!'}
-                  </p>
-                  <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">
-                    {isEs
-                      ? 'La secuencia de 19 segundos finalizó y se detuvo automáticamente. Pulsa "Repetir ejercicio" si deseas iniciar otra secuencia.'
-                      : 'The 19-second sequence has finished and stopped automatically. Click "Repeat exercise" if you wish to run another sequence.'}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Interactive Control Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              {!breathingActive && !breathingCompleted && (
-                <button
-                  type="button"
-                  data-testid="btn-start-breathing"
-                  onClick={startBreathing}
-                  className="h-12 px-6 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
-                >
-                  <span className="material-symbols-outlined text-[22px]">play_arrow</span>
-                  <span>
-                    {isEs
-                      ? `Iniciar ejercicio (${breathingMode === '478' ? '19s' : '16s'})`
-                      : `Start exercise (${breathingMode === '478' ? '19s' : '16s'})`}
-                  </span>
-                </button>
-              )}
-
-              {breathingActive && (
-                <button
-                  type="button"
-                  data-testid="btn-stop-breathing"
-                  onClick={() => {
-                    stopBreathing();
-                    setBreathingPhase('inhale');
-                    setTimerSeconds(4);
-                    onShowToast(isEs ? 'Ejercicio detenido inmediatamente.' : 'Exercise stopped immediately.');
-                  }}
-                  className="h-12 px-6 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-label-lg font-bold shadow-sm active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
-                >
-                  <span className="material-symbols-outlined text-[22px]">stop</span>
-                  <span>{isEs ? 'Detener' : 'Stop'}</span>
-                </button>
-              )}
-
-              {breathingCompleted && (
-                <>
-                  <button
-                    type="button"
-                    data-testid="btn-repeat-breathing"
-                    onClick={startBreathing}
-                    className="h-12 px-6 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
-                  >
-                    <span className="material-symbols-outlined text-[22px]">replay</span>
-                    <span>{isEs ? 'Repetir ejercicio' : 'Repeat exercise'}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    data-testid="btn-reset-breathing"
-                    onClick={resetBreathing}
-                    className="h-12 px-5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md font-bold border border-outline-variant/30 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
-                  >
-                    <span className="material-symbols-outlined text-[20px]">restart_alt</span>
-                    <span>{isEs ? 'Reiniciar' : 'Reset'}</span>
-                  </button>
-                </>
-              )}
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const next = !breathingActive;
+                setBreathingActive(next);
+                onShowToast(next ? 'Respiración iniciada. Sigue el círculo visual.' : 'Ejercicio pausado.');
+              }}
+              className="h-12 px-6 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-sm hover:opacity-95 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
+            >
+              <span className="material-symbols-outlined text-[22px]">
+                {breathingActive ? 'pause' : 'play_arrow'}
+              </span>
+              <span>{breathingActive ? (isEs ? 'Pausar ejercicio' : 'Pause exercise') : (isEs ? 'Iniciar respiración asistida' : 'Start paced breathing')}</span>
+            </button>
           </div>
 
-          {/* Animated visual orb (Synchronized with 4-7-8 and completed states) */}
+          {/* Animated visual orb */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-3xl border border-outline-variant/20 text-center">
-            <div className="relative w-48 h-48 flex items-center justify-center mb-4">
+            <div className="relative w-44 h-44 flex items-center justify-center mb-4">
               <div
-                className={`absolute inset-0 rounded-full transition-all duration-1000 ${
+                className={`absolute inset-0 rounded-full bg-primary/20 transition-all duration-1000 ${
                   breathingActive && breathingPhase === 'inhale'
-                    ? 'scale-125 opacity-80 bg-primary/25'
+                    ? 'scale-125 opacity-80'
                     : breathingActive && breathingPhase === 'hold'
-                    ? 'scale-110 opacity-70 bg-amber-500/25'
-                    : breathingActive && breathingPhase === 'exhale'
-                    ? 'scale-90 opacity-40 bg-teal-500/25'
-                    : breathingCompleted
-                    ? 'scale-100 opacity-80 bg-emerald-500/20 ring-4 ring-emerald-500/20'
-                    : 'scale-95 opacity-30 bg-primary/20'
+                    ? 'scale-110 opacity-60'
+                    : 'scale-90 opacity-40'
                 }`}
               />
               <div
-                className={`w-36 h-36 rounded-full flex flex-col items-center justify-center shadow-lg transition-all duration-1000 ${
+                className={`w-32 h-32 rounded-full bg-gradient-to-tr from-primary to-primary-container text-on-primary flex flex-col items-center justify-center shadow-lg transition-transform duration-1000 ${
                   breathingActive && breathingPhase === 'inhale'
-                    ? 'scale-110 bg-gradient-to-tr from-primary to-primary-container text-on-primary'
+                    ? 'scale-110'
                     : breathingActive && breathingPhase === 'hold'
-                    ? 'scale-105 bg-gradient-to-tr from-amber-600 to-amber-500 text-white'
-                    : breathingActive && breathingPhase === 'exhale'
-                    ? 'scale-95 bg-gradient-to-tr from-teal-600 to-teal-500 text-white'
-                    : breathingCompleted
-                    ? 'scale-100 bg-gradient-to-tr from-emerald-600 to-teal-600 text-white shadow-emerald-500/30'
-                    : 'scale-100 bg-gradient-to-tr from-primary to-primary-container text-on-primary'
+                    ? 'scale-105'
+                    : 'scale-95'
                 }`}
               >
-                {breathingCompleted ? (
-                  <div className="flex flex-col items-center justify-center text-center px-2">
-                    <span className="material-symbols-outlined text-4xl leading-none">task_alt</span>
-                    <span className="text-[11px] font-bold tracking-wider mt-1.5 uppercase">
-                      {isEs ? '¡Muy bien!' : 'Well done!'}
-                    </span>
-                  </div>
-                ) : (
-                  <>
-                    <span className="text-3xl font-extrabold font-mono tabular-nums leading-none">
-                      {timerSeconds}s
-                    </span>
-                    <span className="text-[11px] uppercase font-bold tracking-wider mt-1.5 text-center px-2 leading-tight">
-                      {breathingPhase === 'inhale'
-                        ? (isEs ? 'Inhala' : 'Inhale')
-                        : breathingPhase === 'hold'
-                        ? (isEs ? 'Mantén la respiración' : 'Hold breath')
-                        : breathingPhase === 'exhale'
-                        ? (isEs ? 'Exhala lentamente' : 'Exhale slowly')
-                        : (isEs ? 'Pausa' : 'Pause')}
-                    </span>
-                  </>
-                )}
+                <span className="text-3xl font-extrabold font-mono tabular-nums">{timerSeconds}s</span>
+                <span className="text-xs uppercase font-bold tracking-wider mt-1">
+                  {breathingPhase === 'inhale'
+                    ? (isEs ? 'Inhala' : 'Inhale')
+                    : breathingPhase === 'hold'
+                    ? (isEs ? 'Mantén' : 'Hold')
+                    : breathingPhase === 'exhale'
+                    ? (isEs ? 'Exhala' : 'Exhale')
+                    : (isEs ? 'Pausa' : 'Pause')}
+                </span>
               </div>
             </div>
-
-            <span className="text-xs font-medium max-w-xs transition-colors">
-              {breathingCompleted ? (
-                <span className="text-emerald-700 dark:text-emerald-300 font-semibold">
-                  {isEs ? 'Ejercicio de respiración completado. ¡Muy bien!' : 'Breathing exercise completed. Well done!'}
-                </span>
-              ) : breathingActive ? (
-                breathingPhase === 'inhale' ? (
-                  <span className="text-primary font-semibold">
-                    {isEs ? 'Inhala por la nariz suavemente (4s)' : 'Inhale through your nose gently (4s)'}
-                  </span>
-                ) : breathingPhase === 'hold' ? (
-                  <span className="text-amber-700 dark:text-amber-300 font-semibold">
-                    {isEs ? 'Mantén la respiración con calma (7s)' : 'Hold your breath calmly (7s)'}
-                  </span>
-                ) : (
-                  <span className="text-teal-700 dark:text-teal-300 font-semibold">
-                    {isEs ? 'Exhala lentamente por la boca (8s)' : 'Exhale slowly through mouth (8s)'}
-                  </span>
-                )
-              ) : (
-                <span className="text-on-surface-variant">
-                  {isEs
-                    ? 'Pulsa "Iniciar ejercicio" para comenzar la secuencia de 19 segundos.'
-                    : 'Press "Start exercise" to begin the 19-second sequence.'}
-                </span>
-              )}
+            <span className="text-xs text-on-surface-variant font-medium">
+              {breathingActive
+                ? (isEs ? 'Sigue la expansión y contracción del círculo' : 'Follow the rhythmic visual expansion')
+                : (isEs ? 'Presiona el botón para comenzar el ciclo' : 'Press start to begin the cycle')}
             </span>
           </div>
         </div>

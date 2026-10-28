@@ -4,13 +4,16 @@
  */
 
 export type AudiovisualCategory =
-  | 'emociones'
-  | 'estres'
-  | 'autoestima'
+  | 'salud_mental'
   | 'autocuidado'
+  | 'autoestima'
+  | 'emociones'
+  | 'relaciones'
   | 'convivencia'
-  | 'conflictos'
   | 'acoso'
+  | 'orientacion'
+  | 'estres'
+  | 'conflictos'
   | 'comunicacion';
 
 export type AudiovisualFormat = 'video' | 'presentacion' | 'infografia' | 'audio';
@@ -26,10 +29,15 @@ export interface AudiovisualResource {
   mediaUrl: string;
   youtubeId?: string;
   author: string;
+  institutionSource?: string;
+  audioLanguage?: string;
+  hasSubtitles?: boolean;
+  pedagogicalGoal?: string;
   description: string;
   takeaways: string[];
   transcript?: string;
   slides?: Array<{ title: string; content: string; keyIdea: string }>;
+  isRecommended?: boolean;
   isDemo?: boolean;
   publishedAt: string;
   tags: string[];
