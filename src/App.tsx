@@ -20,6 +20,7 @@ import { PWAInstallButton } from './components/PWAInstallButton';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { UserProfileDropdown } from './components/UserProfileDropdown';
 import { AudiovisualModal } from './components/AudiovisualModal';
+import { AudiovisualsView } from './components/AudiovisualsView';
 import { PhoneCall, Sun, Moon, Globe, Film } from 'lucide-react';
 
 export type ActiveScreen =
@@ -32,7 +33,8 @@ export type ActiveScreen =
   | 'panel-orientador'
   | 'login'
   | 'perfil'
-  | 'comprobante-eliminar';
+  | 'comprobante-eliminar'
+  | 'audiovisuales';
 
 export default function App() {
   const [lang, setLang] = useState<Language>('es');
@@ -154,8 +156,8 @@ export default function App() {
   };
 
   const handleNavigate = (screen: string) => {
-    // If not logged in, enforce that no platform content can be accessed
-    if (!isLoggedIn && screen !== 'login' && screen !== 'comprobante-eliminar') {
+    // If not logged in, allow access to 'login', 'comprobante-eliminar', and 'audiovisuales' (institutional wellness media hub)
+    if (!isLoggedIn && screen !== 'login' && screen !== 'comprobante-eliminar' && screen !== 'audiovisuales') {
       setActiveScreen('login');
       setMenuOpen(false);
       showToast(
@@ -211,8 +213,8 @@ export default function App() {
     if (key === 'panel-estudiante') {
       return activeScreen === 'panel-estudiante';
     }
-    if (key === 'recursos') {
-      return activeScreen === 'recursos';
+    if (key === 'recursos' || key === 'audiovisuales') {
+      return activeScreen === 'recursos' || activeScreen === 'audiovisuales';
     }
     if (key === 'autocuidado') {
       return activeScreen === 'autocuidado';
@@ -244,7 +246,7 @@ export default function App() {
           icon: 'dashboard_customize',
         },
         {
-          id: 'recursos',
+          id: 'audiovisuales',
           label: lang === 'es' ? 'Audiovisuales' : 'Media Hub',
           shortLabel: lang === 'es' ? 'Recursos' : 'Media',
           icon: 'smart_display',
@@ -270,7 +272,7 @@ export default function App() {
           icon: 'dashboard',
         },
         {
-          id: 'recursos',
+          id: 'audiovisuales',
           label: lang === 'es' ? 'Audiovisuales' : 'Media Hub',
           shortLabel: lang === 'es' ? 'Recursos' : 'Media',
           icon: 'smart_display',
@@ -364,7 +366,7 @@ export default function App() {
             {/* Botón de acceso directo: "Audiovisuales" */}
             <button
               type="button"
-              onClick={() => handleOpenAudiovisualModal()}
+              onClick={() => handleNavigate('audiovisuales')}
               title={lang === 'es' ? 'Abrir Centro de Videos y Audiovisuales' : 'Open Audiovisual Media Hub'}
               className="inline-flex items-center gap-1.5 h-8 sm:h-9 md:h-10 px-2.5 sm:px-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-teal-800 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0 shadow-[0_0_12px_rgba(6,182,212,0.15)] group"
             >
@@ -540,9 +542,9 @@ export default function App() {
                             icon: 'dashboard_customize',
                           },
                           {
-                            id: 'recursos',
-                            label: lang === 'es' ? 'Recursos Institucionales' : 'School Resources',
-                            icon: 'local_library',
+                            id: 'audiovisuales',
+                            label: lang === 'es' ? 'Centro de Audiovisuales' : 'Audiovisual Hub',
+                            icon: 'smart_display',
                           },
                           {
                             id: 'autocuidado',
@@ -558,6 +560,7 @@ export default function App() {
                       : [
                           { id: 'inicio', label: tSwitch.welcome, icon: 'home' },
                           { id: 'panel-estudiante', label: tSwitch.studentDashboard, icon: 'dashboard' },
+                          { id: 'audiovisuales', label: lang === 'es' ? 'Audiovisuales & Videos' : 'Audiovisual Media', icon: 'smart_display' },
                           { id: 'recursos', label: tSwitch.resources, icon: 'local_library' },
                           { id: 'autocuidado', label: tSwitch.selfcare, icon: 'spa' },
                           { id: 'orientacion', label: tSwitch.requestForm, icon: 'chat_bubble' },
@@ -602,6 +605,14 @@ export default function App() {
                       ? 'Inicia sesión con tu cuenta institucional para acceder a todos los contenidos, biblioteca de recursos y acompañamiento.'
                       : 'Please sign in with your institutional account to access platform content and guidance.'}
                   </p>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('audiovisuales')}
+                    className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-teal-800 dark:text-cyan-300 font-bold text-xs border border-cyan-500/30 cursor-pointer transition-all active:scale-98"
+                  >
+                    <Film className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+                    <span>{lang === 'es' ? 'Explorar Centro Audiovisual' : 'Explore Audiovisual Media'}</span>
+                  </button>
                 </div>
               )}
 
@@ -665,13 +676,13 @@ export default function App() {
       {/* Main Container: Centered vertically and horizontally before login, standard dashboard padding when logged in */}
       <main
         className={`w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col min-w-0 transition-all ${
-          !isLoggedIn
+          !isLoggedIn && activeScreen === 'login'
             ? 'flex-1 min-h-[calc(100vh-4.5rem)] pt-20 pb-8 sm:pt-24 sm:pb-12 max-w-7xl items-center justify-center'
             : 'flex-1 max-w-7xl pt-24 sm:pt-28 pb-16'
         }`}
       >
         {!isLoggedIn ? (
-          /* FIRST INTERFACE BEFORE LOGIN: Only LoginScreen or Deletion Receipt */
+          /* FIRST INTERFACE BEFORE LOGIN: Only LoginScreen, Deletion Receipt or Audiovisuals Hub */
           activeScreen === 'comprobante-eliminar' ? (
             <AccountDeletionReceiptScreen
               lang={lang}
@@ -689,6 +700,15 @@ export default function App() {
                 setUserGrade('');
                 setActiveScreen('login');
               }}
+              onShowToast={showToast}
+            />
+          ) : activeScreen === 'audiovisuales' ? (
+            <AudiovisualsView
+              lang={lang}
+              isLoggedIn={isLoggedIn}
+              userRole={userRole}
+              userName={userName}
+              onNavigate={handleNavigate}
               onShowToast={showToast}
             />
           ) : (
@@ -801,6 +821,17 @@ export default function App() {
                 userName={userName}
                 onShowToast={showToast}
                 onOpenAudiovisualModal={handleOpenAudiovisualModal}
+              />
+            )}
+
+            {activeScreen === 'audiovisuales' && (
+              <AudiovisualsView
+                lang={lang}
+                isLoggedIn={isLoggedIn}
+                userRole={userRole}
+                userName={userName}
+                onNavigate={handleNavigate}
+                onShowToast={showToast}
               />
             )}
 

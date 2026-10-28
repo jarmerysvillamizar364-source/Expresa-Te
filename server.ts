@@ -13,6 +13,8 @@ import {
   INSTITUTIONAL_DOMAIN,
 } from './src/utils/institutionalValidator.ts';
 import type { User, SessionMetadata } from './src/types/auth.ts';
+import type { AudiovisualResource } from './src/types/audiovisual.ts';
+import { INITIAL_AUDIOVISUAL_RESOURCES } from './src/data/audiovisualData.ts';
 
 dotenv.config();
 
@@ -413,6 +415,179 @@ app.get('/api/auth/users', (_req: Request, res: Response) => {
       isVerified: u.isVerified,
       createdAt: u.createdAt,
     })),
+  });
+});
+
+// ============================================================================
+// AUDIOVISUALES API ENDPOINTS (Educación Emocional & Orientación)
+// ============================================================================
+const inMemoryAudiovisuals: AudiovisualResource[] = [...INITIAL_AUDIOVISUAL_RESOURCES];
+
+/**
+ * GET /api/audiovisuales
+ * Supports query params: search, category, format
+ */
+app.get('/api/audiovisuales', (req: Request, res: Response) => {
+  const { search, category, format } = req.query;
+
+  let results = [...inMemoryAudiovisuals];
+
+  if (format && typeof format === 'string' && format !== 'all') {
+    results = results.filter((item) => item.format === format);
+  }
+
+  if (category && typeof category === 'string' && category !== 'all') {
+    results = results.filter((item) => item.category === category);
+  }
+
+  if (search && typeof search === 'string' && search.trim()) {
+    const q = search.toLowerCase().trim();
+    results = results.filter(
+      (item) =>
+        item.title.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q) ||
+        item.author.toLowerCase().includes(q) ||
+        (item.tags && item.tags.some((t) => t.toLowerCase().includes(q)))
+    );
+  }
+
+  return res.json({
+    success: true,
+    total: results.length,
+    data: results,
+  });
+});
+
+/**
+ * GET /api/audiovisuales/:id
+ */
+app.get('/api/audiovisuales/:id', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const item = inMemoryAudiovisuals.find((r) => r.id === id);
+
+  if (!item) {
+    return res.status(404).json({
+      success: false,
+      error: 'Recurso audiovisual no encontrado.',
+    });
+  }
+
+  return res.json({
+    success: true,
+    data: item,
+  });
+});
+
+/**
+ * POST /api/audiovisuales
+ * Creates new resource (prepares administration support)
+ */
+app.post('/api/audiovisuales', (req: Request, res: Response) => {
+  const {
+    title,
+    category,
+    categoryLabel,
+    format,
+    duration,
+    thumbnail,
+    mediaUrl,
+    author,
+    description,
+    takeaways,
+    transcript,
+    tags,
+  } = req.body;
+
+  if (!title || !category || !format || !mediaUrl) {
+    return res.status(400).json({
+      success: false,
+      error: 'Los campos title, category, format y mediaUrl son obligatorios.',
+    });
+  }
+
+  // Detect YouTube ID if applicable
+  const ytMatch = mediaUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  const youtubeId = ytMatch ? ytMatch[1] : undefined;
+  const safeEmbedUrl = youtubeId ? `https://www.youtube-nocookie.com/embed/${youtubeId}` : mediaUrl;
+
+  const newResource: AudiovisualResource = {
+    id: `av_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+    title: String(title).trim(),
+    category,
+    categoryLabel: categoryLabel || 'Recurso Institucional',
+    format: format || 'video',
+    duration: duration || '3:00 min',
+    thumbnail: thumbnail || '/src/assets/images/video_stop_technique_1792612453981.jpg',
+    mediaUrl: safeEmbedUrl,
+    youtubeId,
+    author: author || 'Equipo de Orientación Escolar',
+    description: description || '',
+    takeaways: Array.isArray(takeaways) ? takeaways : [],
+    transcript: transcript || '',
+    isDemo: false,
+    publishedAt: new Date().toISOString(),
+    tags: Array.isArray(tags) ? tags : ['institucional'],
+  };
+
+  inMemoryAudiovisuals.unshift(newResource);
+
+  return res.status(201).json({
+    success: true,
+    message: 'Recurso audiovisual agregado exitosamente.',
+    data: newResource,
+  });
+});
+
+/**
+ * PUT /api/audiovisuales/:id
+ */
+app.put('/api/audiovisuales/:id', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const index = inMemoryAudiovisuals.findIndex((r) => r.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({
+      success: false,
+      error: 'Recurso no encontrado.',
+    });
+  }
+
+  const existing = inMemoryAudiovisuals[index];
+  const updated: AudiovisualResource = {
+    ...existing,
+    ...req.body,
+    id: existing.id, // Immutable ID
+    publishedAt: existing.publishedAt,
+  };
+
+  inMemoryAudiovisuals[index] = updated;
+
+  return res.json({
+    success: true,
+    message: 'Recurso actualizado con éxito.',
+    data: updated,
+  });
+});
+
+/**
+ * DELETE /api/audiovisuales/:id
+ */
+app.delete('/api/audiovisuales/:id', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const index = inMemoryAudiovisuals.findIndex((r) => r.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({
+      success: false,
+      error: 'Recurso no encontrado.',
+    });
+  }
+
+  inMemoryAudiovisuals.splice(index, 1);
+
+  return res.json({
+    success: true,
+    message: 'Recurso eliminado correctamente.',
   });
 });
 

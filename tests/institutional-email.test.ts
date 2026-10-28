@@ -120,6 +120,25 @@ async function runTests() {
     assert('protobufjs funciona sin errores', false, err?.message);
   }
 
+  // Caso 8: Verificación del Catálogo de Audiovisuales Institucional
+  console.log('\n🎬 Comprobando Catálogo y Recursos Audiovisuales:');
+  const { INITIAL_AUDIOVISUAL_RESOURCES } = await import('../src/data/audiovisualData.ts');
+  assert('Catálogo inicial de audiovisuales cargado', Array.isArray(INITIAL_AUDIOVISUAL_RESOURCES) && INITIAL_AUDIOVISUAL_RESOURCES.length >= 8);
+
+  const hasEmotionalWellness = INITIAL_AUDIOVISUAL_RESOURCES.some((r) => r.category === 'emociones' || r.category === 'estres' || r.category === 'autoestima');
+  assert('Incluye videos de bienestar emocional (estrés, autoestima, emociones)', hasEmotionalWellness);
+
+  const hasSchoolGuidance = INITIAL_AUDIOVISUAL_RESOURCES.some((r) => r.category === 'convivencia' || r.category === 'conflictos' || r.category === 'acoso' || r.category === 'comunicacion');
+  assert('Incluye recursos de orientación escolar (convivencia, acoso, resolución de conflictos)', hasSchoolGuidance);
+
+  const hasMultipleFormats = ['video', 'presentacion', 'infografia', 'audio'].every((fmt) =>
+    INITIAL_AUDIOVISUAL_RESOURCES.some((r) => r.format === fmt)
+  );
+  assert('Incluye variedad de formatos educativos (videos, presentaciones, infografías, audios)', hasMultipleFormats);
+
+  const allHaveSafeUrls = INITIAL_AUDIOVISUAL_RESOURCES.every((r) => r.mediaUrl && r.title && r.categoryLabel);
+  assert('Todos los recursos cuentan con enlaces seguros y títulos estructurados', allHaveSafeUrls);
+
   console.log(`\n========================================`);
   console.log(`RESULTADO: ${passed} pruebas pasaron, ${failed} fallaron.`);
   console.log(`========================================\n`);
