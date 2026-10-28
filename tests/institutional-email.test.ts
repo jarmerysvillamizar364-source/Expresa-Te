@@ -139,6 +139,68 @@ async function runTests() {
   const allHaveSafeUrls = INITIAL_AUDIOVISUAL_RESOURCES.every((r) => r.mediaUrl && r.title && r.categoryLabel);
   assert('Todos los recursos cuentan con enlaces seguros y títulos estructurados', allHaveSafeUrls);
 
+  // Caso 9: Verificación de la técnica de Respiración 4-7-8 (Autocuidado)
+  console.log('\n🌬️ Comprobando Ejercicio Asistido de Respiración 4-7-8:');
+  const {
+    BREATHING_478_SEQUENCE,
+    TOTAL_478_DURATION_SECONDS,
+    getNext478Step,
+    COMPLETION_MESSAGE_ES,
+    playOvenTimerBeep,
+  } = await import('../src/utils/breathingEngine.ts');
+
+  assert(
+    'Secuencia 4-7-8 contiene exactamente 3 fases (Inhala: 4s, Mantén: 7s, Exhala: 8s)',
+    BREATHING_478_SEQUENCE.length === 3 &&
+      BREATHING_478_SEQUENCE[0].durationSeconds === 4 &&
+      BREATHING_478_SEQUENCE[1].durationSeconds === 7 &&
+      BREATHING_478_SEQUENCE[2].durationSeconds === 8
+  );
+
+  assert(
+    'Duración total de la secuencia es exactamente 19 segundos',
+    TOTAL_478_DURATION_SECONDS === 19
+  );
+
+  // Simulación paso a paso de los 19 segundos para verificar ciclo único y detención total
+  let phase: any = 'inhale';
+  let secs = 4;
+  let totalSteps = 0;
+  let reachedCompleted = false;
+
+  for (let i = 0; i < 30; i++) {
+    const step = getNext478Step(phase, secs);
+    phase = step.nextPhase;
+    secs = step.nextSeconds;
+    totalSteps++;
+
+    if (step.isCompleted) {
+      reachedCompleted = true;
+      break;
+    }
+  }
+
+  assert(
+    'El ejercicio completa en exactamente 19 pasos de 1 segundo',
+    totalSteps === 19 && reachedCompleted === true && phase === 'completed' && secs === 0
+  );
+
+  // Verificar que NO existe bucle infinito: al estar en completed, permanece en completed
+  const nextAfterCompleted = getNext478Step('completed', 0);
+  assert(
+    'Al finalizar la fase de exhalación, el sistema se detiene en completed y NO reinicia bucle a inhalar',
+    nextAfterCompleted.nextPhase === 'completed' && nextAfterCompleted.isCompleted === true
+  );
+
+  assert(
+    'Mensaje oficial de finalización corresponde exactamente a las instrucciones',
+    COMPLETION_MESSAGE_ES === 'Respiración completada. Tómate un momento para relajarte.'
+  );
+
+  // Comprobar que el sintetizador de pitido de horno se invoca de manera segura
+  const beepResult = playOvenTimerBeep(0.7, null);
+  assert('Sintetizador Web Audio del pitido de horno maneja entornos con o sin DOM limpiamente', typeof beepResult === 'boolean');
+
   console.log(`\n========================================`);
   console.log(`RESULTADO: ${passed} pruebas pasaron, ${failed} fallaron.`);
   console.log(`========================================\n`);
